@@ -1,0 +1,202 @@
+if scan 096-004600 and station L
+  skip true  *log: off source
+
+if scan 096-005200 and station L
+  start -180 *data + log: off source  (also, could be pointed badly)
+
+if scan 096-005200 and station L
+  start -150 *log: late
+
+* 0110 0128 0146 0158 0318 + many others: some low points at APEX
+
+if scan 096-020400 and station X
+  stop -140  *data
+
+if scan 096-023600 and station A
+  start -70  *data and log: late
+
+if scan 096-023600 and station P
+  start -130 *log: late
+
+if scan 096-024200 and station X
+  stop -270  *data
+
+if scan 096-025400 and station X
+  stop -90   *data
+if scan 096-025400 and station P
+  skip true  *log: off source
+
+if scan 096-030000 and station Z
+  skip true  *log: off source
+
+if scan 096-031800 and station Z
+  skip true  *log: off source
+
+if scan 096-033200 and station X
+  stop -160  *data
+if scan 096-033200 and station L
+  skip true  *log: off source
+
+if scan 096-033800 and station L
+  start -35  *data
+if scan 096-033800 and station X
+  stop -220  *data
+
+if scan 096-045200 and station X
+  stop -255  *data
+
+if scan 096-050800 and station X
+  stop -230  *data
+
+* 0518: SMA phasing is all over the place
+
+if scan 096-052400 and station X
+  stop -335  *data
+
+if scan 096-053400 and station X
+  start -7   *data
+
+if scan 096-060000 and station X
+  stop -205  *data
+
+if scan 096-061000 and station X
+  start -7   *data
+if scan 096-061000 and station Z
+  skip true  *log: off source
+
+if scan 096-061600 and station X
+  stop -260  *data
+
+* 0616: SMT had bad tuning?
+
+if scan 096-063200 and station X
+  skip true  *log: off source
+
+if scan 096-064800 and station X
+  stop -220  *data
+
+if scan 096-071800 and station L
+  skip true  *log: off source
+
+* 0724: brief ALMA dropout around 07:28:20
+
+* 0734: brief ALMA dropout around 07:34:35
+
+* 0750: LMT data have too much variation
+
+* 0750 onward: SPT mispointed?
+
+if scan 096-075600 and station X
+  stop -135  *data
+
+if scan 096-081700 and station X
+  stop -160  *data
+if scan 096-081700 and station L
+  skip true  *log: off source
+
+if scan 096-082400 and station X
+  stop -195  *data
+if scan 096-082400 and station L
+  skip true  *log: off source
+
+if scan 096-083500 and station X
+  stop -425  *data
+if scan 096-083500 and station L
+  skip true  *log: off source
+
+if scan 096-084700 and station X
+  start -8   *data
+
+if scan 096-085400 and station X
+  skip true  *log: off source
+
+if scan 096-090500 and station X
+  skip true  *log: off source
+
+if scan 096-091800 and station X
+  stop -95   *data
+
+if scan 096-092600 and station X
+  skip true  *log: off source
+
+* 0938: AL baseline has weird amplitude drop at beginning
+
+if scan 096-094900 and station L
+  start -82  *data + log: off source
+if scan 096-094900 and station A
+  start -420 *data + log: late
+if scan 096-094900 and station X
+  stop  -195 *data
+
+if scan 096-100000 and station X
+  stop -495  *data
+if scan 096-100000 and station L
+  start -80  *data
+
+if scan 096-101900 and station L
+  skip true  *log: off source
+
+if scan 096-104800 and station L
+  start -16  *log: late
+
+* Scans 1048 1059 1110 1121 (No0066-No0069) are ultra-short or missing
+*   entirely in the e17b06-1-hi tarballs.  These scans need to be
+*   recorrelated before they can be examined.
+
+if scan 096-111000 and station L
+  skip true  *log: off source
+
+if scan 096-112100 and station L
+  skip true  *log: off source
+
+if scan 096-113200 and station L
+  skip true  *log: off source
+
+if scan 096-114400 and station X
+  stop -130  *data
+if scan 096-114400 and station X
+  skip true  *log: off source
+
+if scan 096-115100 and station X
+  stop -490  *data
+if scan 096-115100 and station L
+  start -120 *data          Why is the LMT so weird here and in next scan?
+
+if scan 096-120200 and station L
+  start -60  *data
+if scan 096-120200 and station X
+  stop -75   *data
+
+if scan 096-121400 and station X
+  stop -120  *data
+
+* 1237 onward: LMT changing rapidly --- could be source-intrinsic, weather, telescope problems, ALMA phasing issues, ...
+
+if scan 096-123700 and station X
+  stop -405  *data
+
+if scan 096-130700 and station X
+  stop -285  *data
+
+if scan 096-131800 and station X
+  stop -50   *data
+
+if scan 096-133700 and station X
+  stop -445  *data
+if scan 096-133700 and station L
+  skip true  *log: off source
+
+if scan 096-135300 and station X
+  start -20  *log: late
+
+if scan 096-140400 and station X
+  stop -70   *data + log: ended early?
+
+if scan 096-142500 and station A
+  start -30  *data + log: late
+
+if scan 096-144400 and station L
+  skip true  *log: off source
+
+if scan 096-145300 and station L
+  skip true  *log: off source

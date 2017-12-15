@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+if [ -f /.dockerenv ]; then
+	echo "This script launches a HOPS docker container; \
+avoid running it inside a container"
+	exit 1
+fi
+
+if [ x"$1" == x ]; then
+	SRCDIR=/data
+else
+	SRCDIR="$1"
+fi
+
+case "$PWD" in
+	*/er*/hops-hi/*)
+	BAND='hi'
+	;;
+	*)
+	BAND='lo'
+	;;
+esac
+
+echo "0. Launching an interactive HOPS docker container"
+echo "	Host source: $SRCDIR"
+echo "	Host work:   $PWD"
+
+sudo docker run --rm -it \
+	-e BAND="$BAND" \
+	-v "$SRCDIR:/data:ro" \
+	-v "$PWD:/root" \
+	-v /usr/local/src:/usr/local/src \
+	eventhorizontelescope/hops-stack

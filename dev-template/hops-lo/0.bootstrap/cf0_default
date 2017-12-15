@@ -1,0 +1,13 @@
+* Global commands that won't affect fringe search
+weak_channel  0.0           * don't mark weak channels
+ref_freq      227070.703125 * needed for making closure phases
+
+* More global commands
+optimize_closure true   * minimize the contribution of non-closing delay
+pc_mode          manual * use manual phase-cal phase
+
+* Set up reasonable windows
+sb_win -0.1   0.1   * reasonable single band delay search window in us
+mb_win -0.009 0.009 * reasonable multiband delay search window in us
+dr_win -6.e-6 6.e-6 * reasonable delay-rate search window in us/s
+

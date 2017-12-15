@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+echo "4. Creating phase-cal phases for the right circular polarization"
+aedit -b "polarizations RR; read $DATADIR/alist.v6; param 72 54 55 22; pwrite temp/full_RR" >  log/aedit.out 2>  log/aedit.err
+(phases -f temp/full_RR | grep -v '^AA' | grep '^.A' > temp/full_RR_pcal) 2>  log/phases.err
+cat temp/full_RR_pcal | qextra | sed 's/^\(.\)A/if station \1 \
+  pc_phases_r abcdefghijklmnopqrstuvwxyzABCDEF/g' > temp/cf_pc_phases_r 2>> log/phases.err
+echo "DONE"
+
+echo "Creating phase-cal phases for the left circular polarization"
+aedit -b "polarizations LL; read $DATADIR/alist.v6; param 72 54 55 22; pwrite temp/full_LL" >> log/aedit.out 2>> log/aedit.err
+(phases -f temp/full_LL | grep -v '^AA' | grep '^.A' > temp/full_LL_pcal) 2>> log/phases.err
+cat temp/full_LL_pcal | qextra | sed 's/^\(.\)A/if station \1 \
+  pc_phases_l abcdefghijklmnopqrstuvwxyzABCDEF/g' > temp/cf_pc_phases_l 2>> log/phases.err
+echo "DONE"
+
+echo "Creating full phase-cal phases file"
+rm -f $DATADIR/cf2_pc_phases
+for s in J L P R S X Z; do
+	sed -n "/if station $s/{p;n;p;}" \
+		temp/cf_pc_phases_l >> $DATADIR/cf2_pc_phases 2>> log/phases.err
+	sed -n "/if station $s/{n;p;}" \
+		temp/cf_pc_phases_r >> $DATADIR/cf2_pc_phases 2>> log/phases.err
+	echo >> $DATADIR/cf2_pc_phases
+done
+echo "DONE"

@@ -1,0 +1,202 @@
+if scan 097-040100 and station A
+  start -110 *data + log: late
+
+if scan 097-042330 and station X
+  stop -170  *data
+
+if scan 097-044600 and station X
+  stop -52   *data
+
+if scan 097-045530 and station X
+  stop -450  *data
+
+if scan 097-051800 and station Y
+  start -5   *log: late
+
+if scan 097-054100 and station A
+  start -12  *data + log: late
+if scan 097-054100 and station X
+  stop -145  *data
+
+if scan 097-055300 and station Y
+  start -15  *log: late
+if scan 097-055300 and station X
+  stop -65   *data
+
+if scan 097-061200 and station X
+  stop -380  *data
+
+if scan 097-063430 and station L
+  start -210 *data
+
+if scan 097-070000 and station A
+  start -125 *data + log: late
+
+if scan 097-072000 and station X
+  stop -55   *data
+
+if scan 097-072930 and station X
+  stop -680  *data
+
+if scan 097-074700 and station X
+  stop -690  *data
+
+if scan 097-082800 and station X
+  start -15  *data
+  stop -135  *data
+
+* 0836: Was L late?
+
+if scan 097-083600 and station Y
+  start -70  *log: late
+if scan 097-083600 and station X
+  stop -505  *data
+
+if scan 097-084800 and station X
+  skip true  *log: late
+
+if scan 097-085800 and station X
+  start -10  *data
+
+if scan 097-090400 and station X
+  skip true  *log: late
+
+if scan 097-091300 and station X
+  skip true  *log: late
+
+if scan 097-092600 and station L
+  start -160 *log: late
+
+if scan 097-095000 and station X
+  stop -162  *data
+
+if scan 097-101100 and station X
+  stop -270  *data
+
+if scan 097-103500 and station X
+  stop -325  *data
+if scan 097-103500 and station J
+  skip true  *log: off source
+
+if scan 097-104600 and station J
+  skip true  *log: off source
+
+if scan 097-110800 and station A
+  start -15  *data + log: late
+
+if scan 097-110800 and station L
+  skip true  *log: off source
+
+if scan 097-111700 and station X
+  stop -320  *data
+if scan 097-111700 and station L
+  skip true  *log: Gunn out of lock
+
+if scan 097-113000 and station L
+  skip true  *log: Gunn out of lock
+
+if scan 097-113600 and station L
+  skip true  *data + log: may be mispointed
+
+if scan 097-113600 and station X
+  stop -458  *data
+
+if scan 097-114600 and station X
+  stop -245  *data
+
+if scan 097-122000 and station X
+  stop -285  *data
+if scan 097-122000 and station L
+  skip true  *log: off source
+
+if scan 097-123100 and station X
+  stop -85   *data
+
+if scan 097-132600 and station X
+  stop -68   *data
+if scan 097-132600 and station L
+  skip true  *log: off source
+
+if scan 097-133700 and station X
+  stop -116  *data
+if scan 097-133700 and station L
+  skip true  *log: off source
+
+if scan 097-134300 and station L
+  start -92  *data + log: late
+
+if scan 097-135600 and station L
+  stop -60   *data + log: left source early
+
+if scan 097-140700 and station L
+  skip true  *data + log: Gunn out of lock
+
+if scan 097-142000 and station X
+  stop -145  *data
+if scan 097-142000 and station L
+  skip true  *log: Gunn out of lock
+
+if scan 097-142800 and station X
+  stop -80   *data
+if scan 097-142800 and station L
+  skip true  *log: Gunn out of lock
+if scan 097-142800 and station Z
+  skip true  *log: off source
+
+if scan 097-143900 and station L
+  start -320 *data + log: late
+
+if scan 097-150100 and station X
+  start -15  *data
+
+if scan 097-154700 to 097-210000 and station L
+  skip true  *log: ended schedule early
+
+if scan 097-160800 and station J
+  start -70  *data + log: late
+
+if scan 097-164600 and station X
+  skip true  *log: off source
+
+if scan 097-165400 and station X
+  skip true  *log: off source
+
+if scan 097-170400 and station R
+  start -35  *data
+if scan 097-170400 and station S
+  start -35  *data
+
+if scan 097-183400 and station J
+  skip true  *log: off source
+
+if scan 097-185400 and station X
+  start -100 *log: late
+
+if scan 097-190400 and station X
+  stop -270  *data
+if scan 097-190400 and station R
+  skip true  *log: shadowing
+if scan 097-190400 and station S
+  skip true  *log: shadowing
+
+if scan 097-191400 and station X
+  stop -240  *data
+if scan 097-191400 and station R
+  skip true  *log: shadowing
+if scan 097-191400 and station S
+  skip true  *log: shadowing
+
+if scan 097-192400 and station X
+  stop -270  *data
+if scan 097-192400 and station S
+  skip true  *log: shadowing
+
+if scan 097-193700 and station Z
+  skip true  *data and log: schedule failure
+
+if scan 097-194600 and station J
+  start -60  *log: late
+
+if scan 097-202700 and station J
+  start -20  *log: late
+

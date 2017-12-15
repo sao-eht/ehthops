@@ -1,0 +1,140 @@
+* JSR: JCMT in S from 100-0046 through middle of 100-0108 (around 01:14)
+* SR: 0909 0925 funny jump in middle
+* S: Phasing poor until 100-0340
+* Z: 0631 0901 0917 0925 0941 0949 0957 in trees
+* A: dropouts in 0407 0445
+* L: 0159 0533 0611 0631 may be mispointed
+* L: problems in 0426?
+* L: cplane confusion between 0804 and 0814
+* Y: 0321 0359 0407 0437 0445 pointing problems at low elevation
+* Y: 0631 0639 may not be on source, 0631 late too
+* Y: 1506 may not be good at start
+
+if scan 099-231700 to 100-004500 and station L
+  skip true
+
+if scan 100-005700 and station X
+  stop -315
+
+if scan 100-012300 and station A
+  start -30
+
+if scan 100-022100 and station A   **double-check this one
+  start -60
+if scan 100-022100 and station X
+  stop -235
+if scan 100-022100 and station L
+  skip true
+if scan 100-022100 and baseline AX
+  skip true  * only 4 valid seconds of overlap
+
+if scan 100-030100 and station X
+  start -35
+
+if scan 100-035900 and station L
+  start -150
+
+if scan 100-043700 and station Y
+  start -25
+
+if scan 100-045300 and station X
+  stop -85
+
+if scan 100-050400 and station X
+  stop -85
+
+if scan 100-051700 and station A
+  start -100
+if scan 100-051700 and station S
+  start -130
+if scan 100-051700 and station R
+  start -130
+if scan 100-051700 and station X
+  stop -255
+* That doesn't leave any valid data on the following baselines
+if scan 100-051700 and baseline AX
+  skip true
+if scan 100-051700 and baseline XS
+  skip true
+if scan 100-051700 and baseline XR
+  skip true
+
+if scan 100-053300 and station X
+  start -92
+
+if scan 100-054400 and station X
+  stop -270
+
+if scan 100-060300 and station X
+  stop -275
+
+*if scan 100-063100 and station A
+*  start -45
+
+if scan 100-064900 and station X
+  start -75
+  stop -140
+
+if scan 100-064900 to 100-070600 and station Y
+  skip true
+
+if scan 100-070700 and station X
+  stop -200
+
+if scan 100-071500 and station X
+  stop -215
+
+if scan 100-073800 and station A
+  start -60
+if scan 100-073800 and station X
+  stop -210
+
+if scan 100-074600 and station X
+  stop -226
+
+if scan 100-084300 and station A
+  start -90
+if scan 100-084300 and station J
+  skip true
+
+if scan 100-090100 and station S
+  stop -80
+
+if scan 100-092500 and baseline JS
+  start -60
+
+if scan 100-095700 to 100-102000 and station L
+  skip true
+
+if scan 100-101200 and station X
+  start -155
+
+if scan 100-102100 and station X
+  stop -175
+if scan 100-102100 and station J
+  skip true
+
+if scan 100-103200 and station X
+  stop -375
+
+if scan 100-105200 and station X
+  stop -260
+
+if scan 100-110100 and station X
+  stop -500
+
+if scan 100-112300 and station Y
+  start -70
+
+if scan 100-115000 and station X
+  stop -545
+
+if scan 100-124100 and station L
+  start -515
+
+if scan 100-131600 and station L
+  start -25
+
+if scan 100-135400 and station L
+  start -545
+

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+if [ -f /.dockerenv ]; then
+	echo "This script copies control files to the next stage; \
+avoid running it inside a container"
+	exit 1
+fi
+
+CURR=$(echo $(basename $PWD) | sed 's/^\([0-9]*\)\..*/\1/')
+NEXT=$(echo ../$(expr $CURR + 1).*)
+
+#------------------------------------------------------------------------------
+echo "5. Copying standard scripts to the next stage"
+echo bin/{0..3}.* "-> $NEXT/bin"
+cp   bin/{0..3}.*    "$NEXT/bin"
+
+if [ ! -f $NEXT/bin/5.next ]; then
+	echo bin/5.next "-> $NEXT/bin"
+	cp   bin/5.next    "$NEXT/bin"
+fi
+
+#------------------------------------------------------------------------------
+echo "DONE"

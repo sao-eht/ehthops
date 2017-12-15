@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+echo "4. Visualize the bootstrap version fourfit output"
+echo "TODO: develop visualization tools"
+echo "DONE"

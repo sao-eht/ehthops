@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+echo "3. Creating summary alist"
+alist -v6 -o $DATADIR/alist.v6 $DATADIR/*/* \
+	>   log/alist.out \
+	2>  log/alist.err
+echo "DONE"
+
+echo "Creating 10s time resolution alist"
+fringex -i10 -r $DATADIR/alist.v6 \
+	>   $DATADIR/alist.v6.10s \
+	2>  log/fringex.err
+cat $DATADIR/alist.v6.10s | average \
+	>   $DATADIR/alist.v6.10s.avg \
+	2>  log/average.err
+echo "DONE"
+
+echo "Creating 5s time resolution alist"
+fringex -i5 -r $DATADIR/alist.v6 \
+	>   $DATADIR/alist.v6.5s \
+	2>> log/fringex.err
+cat $DATADIR/alist.v6.5s | average \
+	>   $DATADIR/alist.v6.5s.avg \
+	2>> log/average.err
+echo "DONE"
+
+echo "Creating 2s time resolution alist"
+fringex -i2 -r $DATADIR/alist.v6 \
+	>   $DATADIR/alist.v6.2s \
+	2>> log/fringex.err
+cat $DATADIR/alist.v6.2s | average \
+	>   $DATADIR/alist.v6.2s.avg \
+	2>> log/average.err
+echo "DONE"
+
+echo "Creating 1s time resolution alist"
+fringex -i1 -r $DATADIR/alist.v6 \
+	>   $DATADIR/alist.v6.1s \
+	2>> log/fringex.err
+cat $DATADIR/alist.v6.1s | average \
+	>   $DATADIR/alist.v6.1s.avg \
+	2>> log/average.err
+echo "DONE"

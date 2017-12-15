@@ -1,0 +1,226 @@
+* from Vincent: flags_e17c07_v1
+
+if scan 097-040100 and station A
+  start -105
+if scan 097-040100 and station X
+  skip true
+
+if scan 097-041400 and station X
+  stop -150
+
+if scan 097-043330 and station X
+  stop -370
+
+if scan 097-044600 and station X
+  stop -155
+
+if scan 097-045530 and station X
+  stop -365
+
+if scan 097-050630 and station X
+  stop -370
+
+if scan 097-051800 and station Y
+  start -5
+
+if scan 097-054100 and station A 
+  start -10 * was A late?
+if scan 097-054100 and station X
+  stop -395
+
+if scan 097-055300 and station X
+  stop -60
+if scan 097-055300 and station Y
+  start -15
+
+if scan 097-060230 and station X
+  stop -322
+
+if scan 097-061200 and station X
+  stop -440
+
+if scan 097-062500 and station X
+  stop -115
+
+* 063430-081200: station L has a lot of fluctuations
+
+if scan 097-063430 and station L
+  stop -480
+
+if scan 097-070000 and station A
+  start -122
+
+* 070930, 072000, 081200, 083600, others, 171700: station X has low segments
+
+if scan 097-072930 and station X
+  stop -150
+
+if scan 097-074700 and station X
+  stop -670
+
+if scan 097-082800 and station X
+  start -15
+
+if scan 097-083600 and station Y
+  start -70
+
+if scan 097-084800 and station X
+  skip true
+
+if scan 097-085800 and station X
+  start -15
+
+if scan 097-090400 to 097-092500 and station X
+  skip true
+
+if scan 097-092600 and station L
+  skip true * maybe last half-minute is good?
+if scan 097-092600 and station X
+  stop -132
+
+if scan 097-093700 and station X
+  stop -155
+
+if scan 097-095000 and station X
+  stop -146
+
+if scan 097-095800 and station X
+  stop -520
+
+if scan 097-101900 and station X
+  stop -402
+
+if scan 097-103500 and station X
+  stop -460
+if scan 097-103500 and station J
+  skip true
+
+if scan 097-104600 and station J
+  skip true
+
+if scan 097-104600 and station X
+  stop -285
+
+if scan 097-110800 and station A
+  start -10
+if scan 097-110800 and station X
+  stop -340
+
+if scan 097-110800 to 097-113500 and station L
+  skip true
+
+if scan 097-111700 and station X
+  stop -520
+
+if scan 097-113000 and station X
+  stop -125
+
+* L 1136 mispointed?
+if scan 097-113600 and station X
+  stop -348
+
+if scan 097-115800 and station X
+  stop -140
+
+if scan 097-120400 and station X
+  stop -390
+
+if scan 097-122000 and station L 
+  skip true
+
+if scan 097-123100 and station X
+  stop -100
+
+if scan 097-125000 and station X
+  stop -275
+
+if scan 097-130300 and station X
+  stop -115
+
+if scan 097-132600 to 097-134200 and station L
+  skip true
+
+if scan 097-133700 and station A
+  start -12
+if scan 097-133700 and station X
+  stop -152
+
+if scan 097-134300 and station L
+  start -80
+
+if scan 097-135600 and station L 
+  stop -60
+
+if scan 097-140700 and station L 
+  skip true
+
+if scan 097-142000 to 097-143800 and station L
+  skip true
+
+if scan 097-142800 and station Z
+  skip true
+
+* Y 1428 and 2039 may be bad at beginning, 1946 may be bad at end
+* Y pointing may be bad from 1953 to end
+
+if scan 097-143900 and station L 
+  start -310
+
+if scan 097-145000 and station X
+  stop -300
+
+if scan 097-150100 and station X
+  stop -90
+
+if scan 097-153900 and station X
+  stop -210
+
+if scan 097-154700 and station X
+  stop -200
+
+if scan 097-154700 to 097-210000 and station L
+  skip true
+
+if scan 097-160800 and station J
+  start -60
+if scan 097-160800 and station X
+  stop -50
+
+if scan 097-161800 and station X
+  stop -240
+
+if scan 097-162600 and station X
+  stop -235
+
+if scan 097-164600 to 097-170300 and station X
+  skip true
+
+if scan 097-172500 and station X
+  stop -265
+
+if scan 097-183400 and station J
+  skip true
+
+if scan 097-190400 and station S  * shadowing
+  skip true
+if scan 097-190400 and station R  * shadowing
+  skip true
+
+if scan 097-191400 and station S  * shadowing
+  skip true
+if scan 097-191400 and station R  * shadowing
+  skip true
+
+if scan 097-192400 and station S
+  skip true
+
+if scan 097-194600 and station J
+  start -60
+
+if scan 097-202700 and station J
+  start -30
+
+
+
+
+

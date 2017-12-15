@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+if [ x"$SRCDIR" == x ]; then
+	export SRCDIR=/data
+fi
+if [ x"$DATADIR" == x ]; then
+	export DATADIR="$PWD/data"
+fi
+
+echo "1. Linking HOPS directories"
+echo "	Container work directory: \"$PWD\""
+echo "	Container data source:    \"$SRCDIR\""
+echo "	Container data output:    \"$DATADIR\""
+
+mkdir -p "$DATADIR" tests temp log
+
+# Create and populate $DATADIR
+find $SRCDIR -mindepth 6 -maxdepth 6 -type d | grep "\/e17.*-$BAND-.*-hops\/" |
+	while read path; do
+		# Symlink the source data files
+		cp -rs "$path" "$DATADIR"
+		# Remove the log to avoid overwrite errors
+		rm -f "$DATADIR/$(basename $path)"/difx2mark4-*.log
+	done
+
+# Rename silly root files to standard names
+find $DATADIR -name '*_3*' |
+	while read bad; do
+		new=$(echo $bad | sed 's/_3//g')
+		echo "$bad |-> $new"
+		mv "$bad" "$new"
+		# Symlinking instead of renaming
+		# ln -s $(realbad "$bad") "$new"
+	done
