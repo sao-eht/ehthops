@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ x"$SRCDIR" == x ]; then
-	export SRCDIR=/data
+	export SRCDIR=/data/2017-april/corr/Rev1-Cal
 fi
 if [ x"$DATADIR" == x ]; then
 	export DATADIR="$PWD/data"
@@ -15,7 +15,7 @@ echo "	Container data output:    \"$DATADIR\""
 mkdir -p "$DATADIR" tests temp log
 
 # Create and populate $DATADIR
-find $SRCDIR -mindepth 6 -maxdepth 6 -type d | grep "\/e17.*-$BAND-.*-hops\/" |
+find $SRCDIR -mindepth 3 -maxdepth 3 -type d | grep "\/e17.*-$BAND-.*-hops\/" |
 	while read path; do
 		# Symlink the source data files
 		cp -rs "$path" "$DATADIR"
