@@ -29,5 +29,4 @@ sudo docker run --rm -it \
 	-e BAND="$BAND" \
 	-v "$SRCDIR:/data:ro" \
 	-v "$PWD:/root" \
-	-v /usr/local/src:/usr/local/src \
 	eventhorizontelescope/hops-stack
