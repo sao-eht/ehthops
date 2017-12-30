@@ -1,8 +1,7 @@
 * Global commands that won't affect fringe search
 weak_channel  0.0                             * don't mark weak channels
 ref_freq      229070.703125                   * needed for making closure phases
-freqs         abcdefghijklmnopqrstuvwxyzABCDE * polconvert bug causes the last channel
-                                              * not being converted
+
 * More global commands
 optimize_closure true   * minimize the contribution of non-closing delay
 pc_mode          manual * use manual phase-cal phase
@@ -11,6 +10,9 @@ pc_mode          manual * use manual phase-cal phase
 sb_win -0.09  0.08  * reasonable single band delay search window in us
 mb_win -0.009 0.009 * reasonable multiband delay search window in us
 dr_win -5.e-7 5.e-7 * reasonable delay-rate search window in us/s
+
+* polconvert bug causes the last channel not being converted
+freqs a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E
 
 * Common noise JR baseline
 if baseline JR
