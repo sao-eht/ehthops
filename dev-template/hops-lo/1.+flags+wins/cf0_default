@@ -24,7 +24,6 @@ if station A
   dr_win -1.5e-6 1.5e-6
 
 * [2017-12-12 23:07:32] lindy@eht-crunch:/data/2017-april/ce/er1/hops-lo/3.+adhoc/data$ /home/lindy/bin/alma_sbdmbd -c alist.v6
-
 if station A and scan 094-205959 to 095-210001 pc_delay_l 7.2790
 if station A and scan 094-205959 to 095-210001 pc_delay_r 7.2670
 if station A and scan 095-205959 to 096-210001 pc_delay_l 7.3710
@@ -35,3 +34,4 @@ if station A and scan 099-205959 to 100-210001 pc_delay_l 7.2876
 if station A and scan 099-205959 to 100-210001 pc_delay_r 7.2774
 if station A and scan 100-205959 to 101-210001 pc_delay_l 7.3329
 if station A and scan 100-205959 to 101-210001 pc_delay_r 7.3161
+

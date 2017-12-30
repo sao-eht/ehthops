@@ -1,7 +1,8 @@
 * Global commands that won't affect fringe search
-weak_channel  0.0           * don't mark weak channels
-ref_freq      229070.703125 * needed for making closure phases
-
+weak_channel  0.0                             * don't mark weak channels
+ref_freq      229070.703125                   * needed for making closure phases
+freqs         abcdefghijklmnopqrstuvwxyzABCDE * polconvert bug causes the last channel
+                                              * not being converted
 * More global commands
 optimize_closure true   * minimize the contribution of non-closing delay
 pc_mode          manual * use manual phase-cal phase
@@ -24,7 +25,6 @@ if station A
   dr_win -1.5e-6 1.5e-6
 
 * [2017-12-12 23:08:10] lindy@eht-crunch:/data/2017-april/ce/er1/hops-hi/3.+adhoc/data$ /home/lindy/bin/alma_sbdmbd -c alist.v6
-
 if station A and scan 094-205959 to 095-210001 pc_delay_l 7.1703
 if station A and scan 094-205959 to 095-210001 pc_delay_r 7.1458
 if station A and scan 095-205959 to 096-210001 pc_delay_l 7.2662
@@ -35,3 +35,4 @@ if station A and scan 099-205959 to 100-210001 pc_delay_l 7.1826
 if station A and scan 099-205959 to 100-210001 pc_delay_r 7.1604
 if station A and scan 100-205959 to 101-210001 pc_delay_l 7.1930
 if station A and scan 100-205959 to 101-210001 pc_delay_r 7.1728
+
