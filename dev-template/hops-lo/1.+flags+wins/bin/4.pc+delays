@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+echo "4. Compute phase-cal phases and delay offsets"
+alma_pc+delays $DATADIR/alist.v6 -c -o $DATADIR/cf2_pc+delays > log/pc+delay.out 2> log/pc+delay.err
+echo "DONE"
