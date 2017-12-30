@@ -9,7 +9,7 @@ pc_mode          manual * use manual phase-cal phase
 * Set up reasonable windows
 sb_win -0.02  0.035 * reasonable single band delay search window in us
 mb_win -0.009 0.009 * reasonable multiband delay search window in us
-dr_win -6.e-6 6.e-6 * reasonable delay-rate search window in us/s
+dr_win -5.e-7 5.e-7 * reasonable delay-rate search window in us/s
 
 * Common noise JR baseline
 if baseline JR
@@ -19,3 +19,19 @@ if baseline JR
 if station S
   sb_win -0.04 0.08
 
+* ALMA rate window
+if station A
+  dr_win -1.5e-6 1.5e-6
+
+* [2017-12-12 23:07:32] lindy@eht-crunch:/data/2017-april/ce/er1/hops-lo/3.+adhoc/data$ /home/lindy/bin/alma_sbdmbd -c alist.v6
+
+if station A and scan 094-205959 to 095-210001 pc_delay_l 7.2790
+if station A and scan 094-205959 to 095-210001 pc_delay_r 7.2670
+if station A and scan 095-205959 to 096-210001 pc_delay_l 7.3710
+if station A and scan 095-205959 to 096-210001 pc_delay_r 7.3526
+if station A and scan 096-205959 to 097-210001 pc_delay_l 7.3274
+if station A and scan 096-205959 to 097-210001 pc_delay_r 7.3138
+if station A and scan 099-205959 to 100-210001 pc_delay_l 7.2876
+if station A and scan 099-205959 to 100-210001 pc_delay_r 7.2774
+if station A and scan 100-205959 to 101-210001 pc_delay_l 7.3329
+if station A and scan 100-205959 to 101-210001 pc_delay_r 7.3161
