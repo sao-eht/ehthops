@@ -7,5 +7,5 @@ fi
 echo "4. Compute phase-cal phases and delay offsets"
 echo "	Container work directory: \"$PWD\""
 echo "	Container data output:    \"$DATADIR\""
-alma_pc+delays $DATADIR/alist.v6 -g $DATADIR/pc+delays.eps -c -o $DATADIR/cf2_pc+delays > log/pc+delay.out 2> log/pc+delay.err
+alma_pc+delays $DATADIR/alist.v6 -g -c -o $DATADIR/cf2_pc+delays > log/pc+delay.out 2> log/pc+delay.err
 echo "DONE"
