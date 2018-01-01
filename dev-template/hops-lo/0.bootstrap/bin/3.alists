@@ -39,6 +39,7 @@ fringex -i2 -r $DATADIR/alist.v6 \
 cat $DATADIR/alist.v6.2s | average \
 	>   $DATADIR/alist.v6.2s.avg \
 	2>> log/average.err
+gzip $DATADIR/alist.v6.2s
 echo "DONE"
 
 echo "Creating 1s time resolution alist"
@@ -48,4 +49,5 @@ fringex -i1 -r $DATADIR/alist.v6 \
 cat $DATADIR/alist.v6.1s | average \
 	>   $DATADIR/alist.v6.1s.avg \
 	2>> log/average.err
+gzip $DATADIR/alist.v6.1s
 echo "DONE"
