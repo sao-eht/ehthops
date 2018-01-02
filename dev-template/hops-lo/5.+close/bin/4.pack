@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-echo "4. Pack fringe and alist files into tar ball"
-echo "TODO: make tarball packing systematic"
-echo "DONE"

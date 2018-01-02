@@ -9,13 +9,6 @@ fi
 CURR=$(echo $(basename $PWD) | sed 's/^\([0-9]*\)\..*/\1/')
 NEXT=$(echo ../$(expr $CURR + 1).*)
 
-echo "5. Copying launch scripts to the next stage"
-echo bin/0.launch "-> $NEXT/bin"
-cp   bin/0.launch    "$NEXT/bin"
-
-if [ ! -f $NEXT/bin/5.next ]; then
-	echo bin/5.next "-> $NEXT/bin"
-	cp   bin/5.next    "$NEXT/bin"
-fi
-
+echo "5. Final stage of the HOPS pipeline; no need to copy scripts"
+echo "Please go back to the parent directory and pack the fringe files"
 echo "DONE"
