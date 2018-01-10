@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
+#
+# Usage: `0.launch [--docker] [data_source]`
 
 if [ -f /.dockerenv ]; then
 	echo "This script launches a HOPS docker container; \
 avoid running it inside a container"
 	exit 1
+fi
+
+if [ x"$1" == x"--docker" ]; then
+	USE_DOCKER=true
+        shift
 fi
 
 if [ x"$1" == x ]; then
@@ -21,12 +28,20 @@ case "$PWD" in
 	;;
 esac
 
-echo "0. Launching an interactive HOPS docker container"
-echo "	Host source: $SRCDIR"
-echo "	Host work:   $PWD"
-
-sudo docker run --rm -it \
-	-e BAND="$BAND" \
-	-v "$SRCDIR:/data:ro" \
-	-v "$PWD:/root" \
-	eventhorizontelescope/hops-stack
+if [ x"$USE_DOCKER" == x"true"]; then
+	echo "0. Launching an interactive HOPS docker container"
+	echo "	Host source: $SRCDIR"
+	echo "	Host work:   $PWD"
+	echo "  BAND:        $BAND"
+	sudo docker run --rm -it \
+		-e BAND="$BAND" \
+		-v "$SRCDIR:/data:ro" \
+		-v "$PWD:/root" \
+		eventhorizontelescope/hops-stack
+else
+	echo "0. Setting up an interactive HOPS environment"
+	echo "	Source: $SRCDIR"
+	echo "	Work:   $PWD"
+	echo "  BAND:   $BAND"
+	# Add HOPS setup scripts here
+fi
