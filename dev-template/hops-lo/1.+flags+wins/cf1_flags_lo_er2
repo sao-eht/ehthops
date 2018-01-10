@@ -4,3 +4,16 @@ if scan 096-053400 and station S
   skip true  * false fringes in low band (not understood)
 if scan 096-053400 and station R
   skip true  * false fringes in low band (not understood)
+
+* additional flags from scan log and data inspection
+
+if scan 100-004600 to 100-010800 and station J
+  skip true * JCMT left in phased sum
+
+* additional SPT flags from Vincent (1/9/2018)
+
+if scan 100-035900 and station Y
+  start -18
+
+if scan 100-043700 and station Y
+  stop -36
