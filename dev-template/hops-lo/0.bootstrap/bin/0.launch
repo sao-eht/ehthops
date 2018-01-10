@@ -14,7 +14,7 @@ if [ x"$1" == x"--docker" ]; then
 fi
 
 if [ x"$1" == x ]; then
-	SRCDIR=/data
+	SRCDIR=/data/2017-april/corr/Rev1-Cal
 else
 	SRCDIR="$1"
 fi
