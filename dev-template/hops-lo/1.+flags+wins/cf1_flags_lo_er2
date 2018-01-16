@@ -17,3 +17,8 @@ if scan 100-035900 and station Y
 
 if scan 100-043700 and station Y
   stop -36
+
+* from Vincent 1/16/2018
+
+if station A and scan 096-142500
+  start -30
