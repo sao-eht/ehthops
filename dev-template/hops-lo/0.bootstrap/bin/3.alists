@@ -14,21 +14,21 @@ alist -v6 -o $DATADIR/alist.v6 $DATADIR/*/* \
 	2>  log/alist.err
 echo "DONE"
 
-echo "Creating 10s time resolution alist"
-fringex -i10 -r $DATADIR/alist.v6 \
-	>   $DATADIR/alist.v6.10s \
+echo "Creating 30s time resolution alist"
+fringex -i30 -r $DATADIR/alist.v6 \
+	>   $DATADIR/alist.v6.30s \
 	2>  log/fringex.err
-cat $DATADIR/alist.v6.10s | average \
-	>   $DATADIR/alist.v6.10s.avg \
+cat $DATADIR/alist.v6.30s | average \
+	>   $DATADIR/alist.v6.30s.avg \
 	2>  log/average.err
 echo "DONE"
 
-echo "Creating 5s time resolution alist"
-fringex -i5 -r $DATADIR/alist.v6 \
-	>   $DATADIR/alist.v6.5s \
+echo "Creating 8s time resolution alist"
+fringex -i8 -r $DATADIR/alist.v6 \
+	>   $DATADIR/alist.v6.8s \
 	2>> log/fringex.err
-cat $DATADIR/alist.v6.5s | average \
-	>   $DATADIR/alist.v6.5s.avg \
+cat $DATADIR/alist.v6.8s | average \
+	>   $DATADIR/alist.v6.8s.avg \
 	2>> log/average.err
 echo "DONE"
 
@@ -42,12 +42,3 @@ cat $DATADIR/alist.v6.2s | average \
 gzip $DATADIR/alist.v6.2s
 echo "DONE"
 
-echo "Creating 1s time resolution alist"
-fringex -i1 -r $DATADIR/alist.v6 \
-	>   $DATADIR/alist.v6.1s \
-	2>> log/fringex.err
-cat $DATADIR/alist.v6.1s | average \
-	>   $DATADIR/alist.v6.1s.avg \
-	2>> log/average.err
-gzip $DATADIR/alist.v6.1s
-echo "DONE"
