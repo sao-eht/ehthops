@@ -5,6 +5,9 @@ if scan 096-053400 and station S
 if scan 096-053400 and station R
   skip true  * false fringes in low band (not understood)
 
+if scan 100-051700 and station S
+  skip true  * no sensitivity in SMA, low correlation SR, recording issue, R seems OK
+
 * additional flags from scan log and data inspection
 
 if scan 100-004600 to 100-010800 and station J
