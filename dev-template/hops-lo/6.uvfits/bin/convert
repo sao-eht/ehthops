@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-python hops2uvfits.py <path to fringe files>
