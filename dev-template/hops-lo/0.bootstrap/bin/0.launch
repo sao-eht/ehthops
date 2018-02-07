@@ -14,7 +14,7 @@ if [ x"$1" == x"--docker" ]; then
 fi
 
 if [ x"$1" == x ]; then
-	SRCDIR=/data/2017-april/corr/Rev1-Cal
+	SRCDIR=/data
 else
 	SRCDIR="$1"
 fi
@@ -32,7 +32,7 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 	echo "0. Launching an interactive HOPS docker container"
 	echo "	Host source: $SRCDIR"
 	echo "	Host work:   $PWD"
-	echo "  BAND:        $BAND"
+	echo "	BAND:        $BAND"
 	sudo docker run --rm -it \
 		-e BAND="$BAND" \
 		-v "$SRCDIR:/data:ro" \
@@ -42,6 +42,6 @@ else
 	echo "0. Setting up an interactive HOPS environment"
 	echo "	Source: $SRCDIR"
 	echo "	Work:   $PWD"
-	echo "  BAND:   $BAND"
+	echo "	BAND:   $BAND"
 	# Add HOPS setup scripts here
 fi
