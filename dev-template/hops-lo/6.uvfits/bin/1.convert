@@ -2,5 +2,5 @@
 
 for d in {3597..3601}; do
 	mkdir -p $d
-	hops2uvfits.py --clean --uv -outdir $d /data/$d
+	hops2uvfits.py --clean --uv --outdir $d /data/$d
 done

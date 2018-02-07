@@ -35,7 +35,7 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 	echo "	BAND:        $BAND"
 	sudo docker run --rm -it \
 		-e BAND="$BAND" \
-		-v "$SRCDIR:/data:ro" \
+		-v "$SRCDIR:/data" \
 		-v "$PWD:/root" \
 		eventhorizontelescope/eat
 else
