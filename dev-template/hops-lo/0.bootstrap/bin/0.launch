@@ -28,7 +28,7 @@ case "$PWD" in
 	;;
 esac
 
-if [ x"$USE_DOCKER" == x"true"]; then
+if [ x"$USE_DOCKER" == x"true" ]; then
 	echo "0. Launching an interactive HOPS docker container"
 	echo "	Host source: $SRCDIR"
 	echo "	Host work:   $PWD"
