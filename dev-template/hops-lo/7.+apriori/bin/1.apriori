@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+for d in {3597..3601}; do
+	mkdir -p $d
+	caluvfits.py --caldir /sefd/$d --outdir $d /data/$d
+done
