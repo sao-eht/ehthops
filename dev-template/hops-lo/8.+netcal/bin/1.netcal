@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+find /data -name '*.apriori.uvfits' -type f |\
+while read l; do
+	r=${l#/data/}
+	d=$(dirname  $r)
+	f=$(basename $r)
+	n=${f%.apriori.uvfits}
+        z=$(grep $(echo $n | tr '_' '\t' | cut -f3) zbl.csv | cut -f2)
+	echo "Network-cal \"$l\" with zbl-flux $z"
+	mkdir -p $d && pushd $d > /dev/null
+
+	calibrate.py -z $z -p R -r $l >> $n.RR.log 2>&1
+	if [ -d "/data/$d/$n.RR" ]; then
+		if [ -d "$n.RR" ]; then
+			mv "/data/$d/$n.RR"/* "$n.RR"
+			rmdir "/data/$d/$n.RR/"
+		else
+			mv "/data/$d/$n.RR" .
+		fi
+	fi
+
+	calibrate.py -z $z -p L -r $l >> $n.LL.log 2>&1
+	if [ -d "/data/$d/$n.LL" ]; then
+		if [ -d "$n.LL" ]; then
+			mv "/data/$d/$n.LL"/* "$n.LL"
+			rmdir "/data/$d/$n.LL/"
+		else
+			mv "/data/$d/$n.LL" .
+		fi
+	fi
+
+	popd > /dev/null
+done
