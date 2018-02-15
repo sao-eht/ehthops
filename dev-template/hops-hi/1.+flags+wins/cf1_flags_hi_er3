@@ -35,19 +35,21 @@ if scan 100-043700 and station Y
 if station A and scan 096-142500
   start -30
 
-* prob incomplete polconv at end of ALMA data low and high
-
-if station A and scan 101-091300
-  stop -10
-
-if station A and scan 101-124100
-  stop -30
-
-if station A and scan 096-073400
-  start -50
-
-if station A and scan 096-101200
-  stop -60 * overwrites an existing low band flag (X)
+* Take out these flags and revisit for Rev3
+* 
+* * prob incomplete polconv at end of ALMA data low and high
+* 
+* if station A and scan 101-091300
+*   stop -10
+* 
+* if station A and scan 101-124100
+*   stop -30
+* 
+* if station A and scan 096-073400
+*   start -50
+* 
+* if station A and scan 096-101200
+*   stop -60 * overwrites an existing low band flag (X)
 
 * SMT scan was probalby off-source (suspicious notes in log and no detection)
 
