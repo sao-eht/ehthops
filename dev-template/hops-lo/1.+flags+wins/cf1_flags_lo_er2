@@ -44,3 +44,9 @@ if station A and scan 096-101200
 
 if station L and scan 101-035800
   start -260
+
+* SMT scan was probalby off-source (suspicious notes in log and no detection)
+
+if station Z and scan 097-193700
+    skip true
+
