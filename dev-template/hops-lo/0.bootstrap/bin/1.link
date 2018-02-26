@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ x"$SRCDIR" == x ]; then
-	export SRCDIR=/data/2017-april/corr/Rev1-Cal
+	export SRCDIR=/data/2017-april/corr/Rev3-Cal
 fi
 if [ x"$DATADIR" == x ]; then
 	export DATADIR="$PWD/data"
