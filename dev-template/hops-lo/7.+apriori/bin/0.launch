@@ -20,7 +20,7 @@ else
 fi
 
 case "$PWD" in
-	*/er*/hops-hi/*)
+	*/hops-hi/*)
 	BAND='hi'
 	;;
 	*)
