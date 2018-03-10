@@ -28,20 +28,26 @@ case "$PWD" in
 	;;
 esac
 
+SHAREDIR="$PWD/../../share"
+
 if [ x"$USE_DOCKER" == x"true" ]; then
 	echo "0. Launching an interactive HOPS docker container"
 	echo "	Host source: $SRCDIR"
 	echo "	Host work:   $PWD"
 	echo "	BAND:        $BAND"
+	echo "	SHARE:       $SHAREDIR"
 	sudo docker run --rm -it \
 		-e BAND="$BAND" \
 		-v "$SRCDIR:/data:ro" \
 		-v "$PWD:/root" \
+		-v "$SHAREDIR:/usr/local/pipeline/share" \
 		eventhorizontelescope/hops-stack
 else
 	echo "0. Setting up an interactive HOPS environment"
 	echo "	Source: $SRCDIR"
 	echo "	Work:   $PWD"
 	echo "	BAND:   $BAND"
-	# Add HOPS setup scripts here
+	echo "	SHARE:  $SHAREDIR"
+	cp "$SHAREDIR/summary.ipynb" .
+	# Add more HOPS setup scripts here
 fi
