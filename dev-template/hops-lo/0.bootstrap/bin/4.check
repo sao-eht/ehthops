@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if [ x"$DATADIR" == x ]; then
+	export DATADIR="$PWD/data"
+fi
+
+echo "4. Sanity check"
+echo "	Container work directory: \"$PWD\""
+echo "	Container data output:    \"$DATADIR\""
+echo "TODO: develop summary notebook"
+echo "DONE"

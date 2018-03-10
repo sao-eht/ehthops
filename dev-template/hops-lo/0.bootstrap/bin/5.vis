@@ -4,8 +4,8 @@ if [ x"$DATADIR" == x ]; then
 	export DATADIR="$PWD/data"
 fi
 
-echo "4. Compute phase-cal phases and delay offsets"
+echo "5. Visualize the bootstrap version fourfit output"
 echo "	Container work directory: \"$PWD\""
 echo "	Container data output:    \"$DATADIR\""
-alma_pcal $DATADIR/alist.v6 -g -c -o $DATADIR/cf2_pcal > log/pcal.out 2> log/pcal.err
+echo "TODO: develop visualization tools"
 echo "DONE"
