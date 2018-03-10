@@ -9,6 +9,6 @@ fi
 CURR=$(echo $(basename $PWD) | sed 's/^\([0-9]*\)\..*/\1/')
 NEXT=$(echo ../$(expr $CURR + 1).*)
 
-echo "5. Final stage of the HOPS pipeline; no need to copy scripts"
-echo "Please go back to the parent directory and pack the fringe files"
+echo "9. Finish a-priori calibration; no need to copy scripts"
+echo "Please go back to the parent directory and pack the uvfits files"
 echo "DONE"
