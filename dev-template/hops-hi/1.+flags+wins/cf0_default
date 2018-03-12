@@ -24,7 +24,7 @@ if station S
 
 * Wide SPT window for intiial Rev3
 if station Y
-  sb_win -.09 0.190
+  sb_win -.190 0.190
 
 * ALMA rate window
 if station A
