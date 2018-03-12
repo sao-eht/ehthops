@@ -7,7 +7,7 @@ optimize_closure true   * minimize the contribution of non-closing delay
 pc_mode          manual * use manual phase-cal phase
 
 * Set up reasonable windows
-sb_win -0.1   0.1   * reasonable single band delay search window in us
+sb_win -0.2   0.2   * reasonable single band delay search window in us
 mb_win -0.009 0.009 * reasonable multiband delay search window in us
 dr_win -6.e-6 6.e-6 * reasonable delay-rate search window in us/s
 
