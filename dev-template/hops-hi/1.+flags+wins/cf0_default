@@ -22,6 +22,10 @@ if baseline JR
 if station S
   sb_win -0.120 0.100
 
+* Wide SPT window for intiial Rev3
+if station Y
+  sb_win -.09 0.190
+
 * ALMA rate window
 if station A
   dr_win -1.5e-6 1.5e-6
