@@ -1,53 +1,58 @@
 #!/usr/bin/env bash
 #
-# Usage: `0.launch [--docker] [data_source]`
+# Usage: `0.launch [data_source] [--docker [docker command]]`
 
 if [ -f /.dockerenv ]; then
-	echo "This script launches a HOPS docker container; \
-avoid running it inside a container"
+	echo "This script should:"
+	echo "1. sets up the host environment for HOPS, or"
+	echo "2. launches a HOPS docker container."
+	echo "Avoid running it inside a container."
 	exit 1
 fi
 
+# Define variables to their default values
+USE_DOCKER=${USE_DOCKER:-false}
+SRCDIR=${SRCDIR:-/data}
+BAND=${BAND:-$(pwd | sed 's|.*/hops-\(..\)$|\1|')}
+SHAREDIR="$PWD/../../share"
+
+# Parse arguments
+if [ -d "$1" ]; then
+	SRCDIR="$1"
+	shift
+fi
 if [ x"$1" == x"--docker" ]; then
 	USE_DOCKER=true
         shift
 fi
 
-if [ x"$1" == x ]; then
-	SRCDIR=/data
-else
-	SRCDIR="$1"
-fi
-
-case "$PWD" in
-	*/hops-hi/*)
-	BAND='hi'
-	;;
-	*)
-	BAND='lo'
-	;;
-esac
-
-SHAREDIR="$PWD/../../share"
-
+# Run docker or setup environment
 if [ x"$USE_DOCKER" == x"true" ]; then
 	echo "0. Launching an interactive HOPS docker container"
+
 	echo "	Host source: $SRCDIR"
 	echo "	Host work:   $PWD"
-	echo "	BAND:        $BAND"
-	echo "	SHARE:       $SHAREDIR"
-	sudo docker run --rm -it \
-		-e BAND="$BAND" \
+	echo "	Share:       $SHAREDIR"
+	echo "	Band:        $BAND"
+	echo "	Command:     $@"
+
+	docker run --rm -it \
 		-v "$SRCDIR:/data:ro" \
 		-v "$PWD:/root" \
 		-v "$SHAREDIR:/usr/local/pipeline/share" \
-		eventhorizontelescope/hops-stack
+		-e "BAND=$BAND" \
+		eventhorizontelescope/eat-notebook \
+		"$@"
 else
 	echo "0. Setting up an interactive HOPS environment"
-	echo "	Source: $SRCDIR"
-	echo "	Work:   $PWD"
-	echo "	BAND:   $BAND"
-	echo "	SHARE:  $SHAREDIR"
+
+	echo "	Host source: $SRCDIR"
+	echo "	Host work:   $PWD"
+	echo "	Share:       $SHAREDIR"
+	echo "	Band:        $BAND"
+	echo "	Command:     $@"
+
 	cp "$SHAREDIR/summary.ipynb" .
-	# Add more HOPS setup scripts here
+
+	# Add more HOPS setup scripts here if needed
 fi
