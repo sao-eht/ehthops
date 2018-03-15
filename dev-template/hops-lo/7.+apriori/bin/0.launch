@@ -11,17 +11,14 @@ if [ -f /.dockerenv ]; then
 fi
 
 # Define variables to their default values
-USE_DOCKER=${USE_DOCKER:-false}
-SRCDIR=${SRCDIR:-"$PWD/../6.uvfits"}
-SEFD=${SEFD:-"$PWD/../../SEFD/SEFD_${BAND^^}"}
-BAND=${BAND:-$(pwd | sed 's|.*/hops-\(..\)$|\1|')}
-SHAREDIR="$PWD/../../share"
+WRKDIR=${WRKDIR:-"$PWD"}
+SRCDIR=${SRCDIR:-"$WRKDIR/../6.uvfits"}
+SHRDIR=${SHRDIR:-"$WRKDIR/../../share"}
+SEFDIR=${SEFDIR:-"$WRKDIR/../../SEFD/SEFD_${BAND^^}"}
+BAND=${BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')}
 
 # Parse arguments
-if [ -d "$1" ]; then
-	SRCDIR="$1"
-	shift
-fi
+USE_DOCKER=${USE_DOCKER:-false}
 if [ x"$1" == x"--docker" ]; then
 	USE_DOCKER=true
         shift
@@ -31,28 +28,28 @@ fi
 if [ x"$USE_DOCKER" == x"true" ]; then
 	echo "0. Launching an interactive HOPS docker container"
 
+	echo "	Host work:   $WRKDIR"
 	echo "	Host source: $SRCDIR"
-	echo "  SEFD:        $SEFD"
-	echo "	Host work:   $PWD"
-	echo "	Share:       $SHAREDIR"
+	echo "	Share:       $SHRDIR"
+	echo "	SEFD:        $SEFDIR"
 	echo "	Band:        $BAND"
 	echo "	Command:     $@"
 
 	docker run --rm -it \
-		-v "$SRCDIR:/data:ro" \
-		-v "$SEFD:/sefd:ro" \
-		-v "$PWD:/root" \
-		-v "$SHAREDIR:/usr/local/pipeline/share" \
+		-v "$SRCDIR:/data" \
+		-v "$SEFDIR:/sefd" \
+		-v "$WRKDIR:/root" \
+		-v "$SHRDIR:/usr/local/pipeline/share" \
 		-e "BAND=$BAND" \
 		eventhorizontelescope/eat-notebook \
 		"$@"
 else
 	echo "0. Setting up an interactive HOPS environment"
 
+	echo "	Host work:   $WRKDIR"
 	echo "	Host source: $SRCDIR"
-	echo "  SEFD:        $SEFD"
-	echo "	Host work:   $PWD"
-	echo "	Share:       $SHAREDIR"
+	echo "	Share:       $SHRDIR"
+	echo "	SEFD:        $SEFDIR"
 	echo "	Band:        $BAND"
 	echo "	Command:     $@"
 
