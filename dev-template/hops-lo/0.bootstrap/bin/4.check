@@ -7,11 +7,14 @@ DATADIR=${DATADIR:-"$PWD/data"}
 echo "4. Sanity check"
 echo "	Container work directory: \"$PWD\""
 echo "	Container data output:    \"$DATADIR\""
+echo "	Notebook output:          \"OUTDIR\""
 
-for f in $(ls $SHRDIR); do
-	echo $f
-	jupyter nbconvert --execute --to notebook $SHRDIR/$f --output $OUTDIR/$f
-	jupyter nbconvert           --to html     $OUTDIR/$f --output $OUTDIR/${f%ipynb}html
+mkdir -p "$OUTDIR"
+
+for f in $(ls "$SHRDIR"); do
+	echo "$f"
+	jupyter nbconvert --execute --to notebook "$SHRDIR/$f" --output "$OUTDIR/$f"
+	jupyter nbconvert           --to html     "$OUTDIR/$f" --output "$OUTDIR/${f%ipynb}html"
 done
 
 echo "DONE"
