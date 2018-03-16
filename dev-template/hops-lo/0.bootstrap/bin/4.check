@@ -13,8 +13,14 @@ mkdir -p "$OUTDIR"
 
 for f in $(ls "$SHRDIR"); do
 	echo "$f"
-	jupyter nbconvert --execute --to notebook "$SHRDIR/$f" --output "$OUTDIR/$f"
-	jupyter nbconvert           --to html     "$OUTDIR/$f" --output "$OUTDIR/${f%ipynb}html"
+	jupyter nbconvert --execute --to notebook "$SHRDIR/$f" \
+		--output "$OUTDIR/$f"                          \
+		>            "log/$f.log"                      \
+		2>           "log/$f.err"
+	jupyter nbconvert           --to html     "$OUTDIR/$f" \
+		--output "$OUTDIR/${f%ipynb}html"              \
+		>            "log/${f%ipynb}html.log"          \
+		2>           "log/${f%ipynb}html.err"
 done
 
 echo "DONE"
