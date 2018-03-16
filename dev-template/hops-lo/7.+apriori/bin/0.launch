@@ -11,11 +11,11 @@ if [ -f /.dockerenv ]; then
 fi
 
 # Define variables to their default values
+BAND=${BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')}
 WRKDIR=${WRKDIR:-"$PWD"}
 SRCDIR=${SRCDIR:-"$WRKDIR/../6.uvfits"}
 SHRDIR=${SHRDIR:-"$WRKDIR/../../share"}
 SEFDIR=${SEFDIR:-"$WRKDIR/../../SEFD/SEFD_${BAND^^}"}
-BAND=${BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')}
 
 # Parse arguments
 USE_DOCKER=${USE_DOCKER:-false}
