@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+SHRDIR=${SHRDIR:-"/usr/local/pipeline/share"}
+DATADIR=${DATADIR:-"$PWD/data"}
+
+echo "5. Summary unexpected errors"
+echo "	Container work directory: \"$PWD\""
+echo "	Container data output:    \"$DATADIR\""
+
+for f in log/*.err; do
+	echo "======== $f ========"
+	grep -v Warning $f | uniq
+done |
+	grep -v 'alist: Successfully wrote'   |
+	grep -v 'alist: comprised of'         |
+	grep -v 'fringex: Getting files from' >\
+	tests/summary.log
+
+echo "DONE"
