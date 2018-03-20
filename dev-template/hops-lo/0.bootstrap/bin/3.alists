@@ -44,4 +44,11 @@ echo "DONE 2s" &
 
 wait $(jobs -p)
 
+echo y | aedit -b "polarization LL; read $DATADIR/alist.v6.8s; close; twrite $DATADIR/alist.v6.8s.LL.close"
+echo y | aedit -b "polarization RR; read $DATADIR/alist.v6.8s; close; twrite $DATADIR/alist.v6.8s.RR.close"
+average $DATADIR/alist.v6.8s.LL.close -o $DATADIR/alist.v6.8s.LL.close.avg
+average $DATADIR/alist.v6.8s.RR.close -o $DATADIR/alist.v6.8s.RR.close.avg
+
+echo "DONE aedit close + average"
+
 echo "DONE postproc"
