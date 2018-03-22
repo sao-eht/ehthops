@@ -6,9 +6,6 @@ avoid running it inside a container"
 	exit 1
 fi
 
-CURR=$(echo $(basename $PWD) | sed 's/^\([0-9]*\)\..*/\1/')
-NEXT=$(echo ../$(expr $CURR + 1).*)
-
 echo "9. Finish network calibration; no need to copy scripts"
 echo "Please go back to the parent directory and pack the uvfits files"
 echo "DONE"

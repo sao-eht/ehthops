@@ -6,30 +6,32 @@ avoid running it inside a container"
 	exit 1
 fi
 
-CURR=$(echo $(basename $PWD) | sed 's/^\([0-9]*\)\..*/\1/')
-NEXT=$(echo ../$(expr $CURR + 1).*)
+N=$(basename $PWD | sed 's/^\([0-9]*\)\..*/\1/')
+NEXT=$(echo ../$(expr $N + 1).*)
 
 #------------------------------------------------------------------------------
-echo "9. Copying standard scripts to the next stage"
-echo bin/[0-8].* "-> $NEXT/bin"
-cp   bin/[0-8].*    "$NEXT/bin"
-
-if [ ! -f $NEXT/bin/9.next ]; then
-	echo bin/9.next "-> $NEXT/bin"
-	cp   bin/9.next    "$NEXT/bin"
-fi
+echo "9. Copying standard scripts to the next stage \"$NEXT\""
+for n in {0..9}; do
+	curr=$(echo bin/$n.*)
+	next=$(echo $NEXT/bin/$n.*)
+	if [   -f "$curr" ] &&
+	   [ ! -f "$next" ]; then
+		echo "$curr" "-> $NEXT/bin"
+		cp   "$curr"    "$NEXT/bin"
+	fi
+done
 
 #------------------------------------------------------------------------------
 echo "Copying control files to the next stage"
 echo cf* data/cf* "-> $NEXT"
-cp   cf* data/cf* $NEXT
+cp   cf* data/cf*    "$NEXT"
 
 #------------------------------------------------------------------------------
 if [ -d data/adhoc ]; then
 	echo "Copying adhoc-phase files to the next stage"
 	echo data/adhoc "-> $NEXT/data"
-	mkdir -p $NEXT/data
-	cp -r data/adhoc $NEXT/data
+	mkdir -p           "$NEXT/data"
+	cp -r data/adhoc   "$NEXT/data"
 fi
 
 #------------------------------------------------------------------------------
