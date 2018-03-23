@@ -2,5 +2,7 @@
 
 for d in {3597..3601}; do
 	mkdir -p $d
-	caluvfits.py --caldir /sefd/$d --outdir $d /data/$d
+	caluvfits.py --caldir /sefd/$d --outdir $d /data/$d \
+		>  log/apriori.log \
+		2> log/apriori.err
 done
