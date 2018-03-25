@@ -55,3 +55,9 @@ if station A and scan 096-142500
 
 if station Z and scan 097-193700
     skip true
+
+* polconvert accidentally run on APEX -- ONLY REV3
+
+if station X and scan 100-032100
+    skip true
+
