@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+mkdir tests temp log
 find /data -name '*.apriori.uvfits' -type f |\
 while read l; do
 	r=${l#/data/}
@@ -10,7 +11,7 @@ while read l; do
 	echo "Network-cal \"$l\" with zbl-flux $z"
 	mkdir -p $d && pushd $d > /dev/null
 
-	calibrate.py -z $z -p R -r $l >> $n.RR.log 2>&1
+	calibrate.py -z $z -p R -r $l >> log/$n.RR.log 2>&1
 	if [ -d "/data/$d/$n.RR" ]; then
 		if [ -d "$n.RR" ]; then
 			mv "/data/$d/$n.RR"/* "$n.RR"
@@ -20,7 +21,7 @@ while read l; do
 		fi
 	fi
 
-	calibrate.py -z $z -p L -r $l >> $n.LL.log 2>&1
+	calibrate.py -z $z -p L -r $l >> log/$n.LL.log 2>&1
 	if [ -d "/data/$d/$n.LL" ]; then
 		if [ -d "$n.LL" ]; then
 			mv "/data/$d/$n.LL"/* "$n.LL"
