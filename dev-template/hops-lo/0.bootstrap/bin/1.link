@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
-if [ x"$SRCDIR" == x ]; then
-	export SRCDIR=/data/2017-april/corr/Rev3v2patched2-Cal
+if [ x"$SRC1DIR" == x ]; then
+	export SRC1DIR=/data/2017-april/corr/Rev3v2patched2-Cal
+fi
+if [ x"$SRC2DIR" == x ]; then
+	export SRC2DIR=/data/2017-april/corr/Rev3patched-Sci
 fi
 if [ x"$DATADIR" == x ]; then
 	export DATADIR="$PWD/data"
@@ -9,13 +12,22 @@ fi
 
 echo "1. Linking HOPS directories"
 echo "	Container work directory: \"$PWD\""
-echo "	Container data source:    \"$SRCDIR\""
+echo "	Container data source:    \"$SRC1DIR\""
+echo "	Container data source:    \"$SRC2DIR\""
 echo "	Container data output:    \"$DATADIR\""
 
 mkdir -p "$DATADIR" tests temp log
 
 # Create and populate $DATADIR
-find $SRCDIR -mindepth 3 -maxdepth 3 -type d | grep "\/e17.*-$BAND-.*-hops\/" |
+find $SRC1DIR -mindepth 3 -maxdepth 3 -type d | grep "\/e17.*-$BAND-.*-hops\/" |
+	while read path; do
+		# Symlink the source data files
+		cp -rs "$path" "$DATADIR"
+		# Remove the log to avoid overwrite errors
+		rm -f "$DATADIR/$(basename $path)"/difx2mark4-*.log
+	done
+
+find $SRC2DIR -mindepth 3 -maxdepth 3 -type d | grep "\/e17.*-$BAND-.*-hops\/" |
 	while read path; do
 		# Symlink the source data files
 		cp -rs "$path" "$DATADIR"
