@@ -7,12 +7,9 @@ optimize_closure true   * minimize the contribution of non-closing delay
 pc_mode          manual * use manual phase-cal phase
 
 * Set up reasonable windows
-sb_win -0.09  0.08  * reasonable single band delay search window in us
+sb_win -0.04  0.04  * updated for non-SPT non-SMA
 mb_win -0.009 0.009 * reasonable multiband delay search window in us
-dr_win -5.e-7 5.e-7 * reasonable delay-rate search window in us/s
-
-* polconvert bug causes the last channel not being converted
-freqs a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E
+dr_win -1.2e-6 1.2e-6 * expanded window same as low band
 
 * Common noise JR baseline
 if baseline JR
@@ -20,7 +17,7 @@ if baseline JR
 
 * Wider shifted SMAP window
 if station S
-  sb_win -0.120 0.100
+  sb_win -0.120 0.120 * symmetrize
 
 * Wide SPT window for intiial Rev3
 if station Y
@@ -28,7 +25,7 @@ if station Y
 
 * ALMA rate window
 if station A
-  dr_win -1.5e-6 1.5e-6
+  dr_win -2.4e-6 2.4e-6 * 2.13 and 2.32 on AS and AY for SGRA
 
 * [2017-12-12 23:08:10] lindy@eht-crunch:/data/2017-april/ce/er1/hops-hi/3.+adhoc/data$ /home/lindy/bin/alma_sbdmbd -c alist.v6
 if station A and scan 094-205959 to 095-210001 pc_delay_l 7.1703
