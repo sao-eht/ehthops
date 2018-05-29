@@ -30,8 +30,8 @@ J1733-1304	3599	Low	1.55	0.8	56.6	APP scans not imaged? data to be checked
 J1733-1304	3599	High	1.54	1.7	17.9	
 J0006-0623	3598	Low	1.89	12.5	16.3	
 J0006-0623	3598	High	1.84	12.6	16.6	
-J0006-0623	3599	Low	0.9	12.1	19.2	From ALMA catalogue: F=2Jy on 20170509
-J0006-0623	3599	High	0.9	12.1	19.5	
+J0006-0623	3599	Low	1.89	12.1	19.2	From ALMA catalogue: F=2Jy on 20170509, rescaled from network cal
+J0006-0623	3599	High	1.84	12.1	19.5	Rescaled from network cal
 J0132-1654	3598	Low	0.31	1.8	18	Copied from 3599
 J0132-1654	3598	High	0.31	2.3	23.9	Copied from 3599
 J0132-1654	3599	Low	0.31	1.8	18	
@@ -54,7 +54,7 @@ J1325-4301	3600	Low	5.35	0.1	29.6	No uvfits; CENA W slight DIFFERENT coordinates
 J1325-4301	3600	High	5.37	0.1	60.3	No uvfits
 M87	3597	Low	1.13	2.5	-8.6	
 M87	3597	High	1.12	2.6	-8.4	
-M87	3598	Low	0.59	20	-56.5	check spw=2 : to be flagged? fine in other sources
+M87	3598	Low	1.14	2.2	-9.1	Rescaled from network calibration, corrected faulty QA2 estimate 
 M87	3598	High	1.1	2.3	-8.9	
 M87	3600	Low	1.17	2.8	0.2	
 M87	3600	High	1.15	2.8	0	
@@ -70,15 +70,15 @@ SGRA	3600	Low	2.36	6.8	-47.7	Copied from 3601
 SGRA	3600	High	2.45	6.9	-47.3	Copied from 3601
 SGRA	3601	Low	2.36	6.8	-47.7	
 SGRA	3601	High	2.45	6.9	-47.3	
-CYGX-3	3597	Low	2.45	?	?	From Sara
-CYGX-3	3597	High	2.45	?	?	From Sara
-3C454.3	3599	Low	1	?	?	No info
-3C454.3	3599	High	1	?	?	No info
-CTA102	3599	Low	1	?	?	No info
-CTA102	3599	High	1	?	?	No info
-BLLAC	3599	Low	1	?	?	No info
-BLLAC	3599	High	1	?	?	No info
-1921-293	3600	Low	1	?	?	No info
-1921-293	3600	High	1	?	?	No info
-1749+096	3600	Low	1	?	?	No info
-1749+096	3600	High	1	?	?	No info
+CYGX-3	3597	Low	2.45	?	?	From PV measurement
+CYGX-3	3597	High	2.45	?	?	From PV measurement 
+3C454.3	3599	Low	11.09	?	?	From SMA catalog/ network cal 
+3C454.3	3599	High	11.09	?	?	From SMA catalog/ network cal
+CTA102	3599	Low	6.0	?	?	Rescaled from network cal, checked against SMA cat
+CTA102	3599	High	6.0	?	?	Rescaled from network cal, checked against SMA cat
+BLLAC	3599	Low	2.0	?	?	Rescaled from network cal, checked against SMA cat
+BLLAC	3599	High	2.0	?	?	Rescaled from network cal, checked against SMA cat
+1921-293	3600	Low	3.43	4.8	-52.4	Same as J1924-2914, copied from 3601
+1921-293	3600	High	3.41	4.9	-52.5	Same as J1924-2914, copied from 3601
+1749+096	3600	Low	1.93	?	?	Rescaled from network cal, checked against SMA cat
+1749+096	3600	High	1.93	?	?	Rescaled from network cal, checked against SMA cat
