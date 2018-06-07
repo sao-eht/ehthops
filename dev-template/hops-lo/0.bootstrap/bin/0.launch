@@ -15,7 +15,8 @@ WRKDIR=${WRKDIR:-"$PWD"}
 SRCDIR=${SRCDIR:-"/data"}
 SHRDIR=${SHRDIR:-"$WRKDIR/../../share"}
 BAND=${BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')}
-SEFDIR=${SEFDIR:-"$WRKDIR/../../SEFD/SEFD_${BAND^^}"}
+SEFDDIR=${SEFDDIR:-"$WRKDIR/../../sefd/SEFD_${BAND^^}"}
+FLUXDIR=${FLUXDIR:-"$WRKDIR/../../flux"}
 
 # Parse arguments
 USE_DOCKER=${USE_DOCKER:-false}
@@ -31,13 +32,15 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 	echo "	Host work:   $WRKDIR"
 	echo "	Host source: $SRCDIR"
 	echo "	Share:       $SHRDIR"
-	echo "	SEFD:        $SEFDIR"
+	echo "	SEFD:        $SEFDDIR"
+	echo "	Flux:        $FLUXDIR"
 	echo "	Band:        $BAND"
 	echo "	Command:     $@"
 
 	docker run --rm -it \
 		-v "$SRCDIR:/data" \
-		-v "$SEFDIR:/sefd" \
+		-v "$SEFDDIR:/sefd" \
+		-v "$FLUXDIR:/flux" \
 		-v "$WRKDIR:/root" \
 		-v "$SHRDIR:/usr/local/pipeline/share" \
 		-e "BAND=$BAND" \
@@ -49,7 +52,8 @@ else
 	echo "	Host work:   $WRKDIR"
 	echo "	Host source: $SRCDIR"
 	echo "	Share:       $SHRDIR"
-	echo "	SEFD:        $SEFDIR"
+	echo "	SEFD:        $SEFDDIR"
+	echo "	Flux:        $FLUXDIR"
 	echo "	Band:        $BAND"
 	echo "	Command:     $@"
 
