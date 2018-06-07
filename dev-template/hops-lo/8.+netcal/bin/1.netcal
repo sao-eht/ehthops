@@ -8,7 +8,7 @@ while read l; do
 	f=$(basename $r)
 	n=${f%.apriori.uvfits}
 	s=$(echo $n | tr '_' '\t' | cut -f3)
-	z=$(sed -n "/$s\t$d\t$BAND/Ip" zbl.tsv | cut -f 4)
+	z=$(sed -n "/$s\t$d\t$BAND/Ip" /flux/zbl.tsv | cut -f 4)
 	echo "Network-cal \"$l\" with zbl-flux $z"
 	mkdir -p $d && pushd $d > /dev/null
 
