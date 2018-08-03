@@ -15,8 +15,11 @@ dr_win -1.2e-6 1.2e-6 * expanded window same as low band
 freqs a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E
 
 * Common noise JR baseline
+* if baseline JR
+*   notches 227225.0 227227.0 227425.0 227427.0
+* JCMT HI 227.950-229.998, SMAR HI 227950 
 if baseline JR
-  notches 227225.0 227227.0 227425.0 227427.0
+  notches 228973.0 228975.0
 
 * Wider shifted SMAP window
 if station S
