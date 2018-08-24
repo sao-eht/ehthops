@@ -7,5 +7,9 @@ fi
 echo "5. Compute phase-cal phases and delay offsets"
 echo "	Container work directory: \"$PWD\""
 echo "	Container data output:    \"$DATADIR\""
-alma_pcal $DATADIR/alist.v6 -g -c -o $DATADIR/cf2_pcal > log/pcal.out 2> log/pcal.err
+# alma_pcal $DATADIR/alist.v6 -g -c -o $DATADIR/cf2_pcal > log/pcal.out 2> log/pcal.err
+alma_pcal $DATADIR/alist.v6 -g -c -o $DATADIR/temp_pcal > log/pcal.out 2> log/pcal.err
+# correct for HOPS channel label issue low band
+fix_lopcal $DATADIR/temp_pcal -b $BAND > $DATADIR/cf2_pcal 2>> log/pcal.err
+mv $DATADIR/temp_pcal log/temp_pcal
 echo "DONE"
