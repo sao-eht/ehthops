@@ -8,6 +8,8 @@ echo "2. Running fourfit..."
 echo "	Container work directory: \"$PWD\""
 echo "	Container data output:    \"$DATADIR\""
 
+md5sum `which fourfit` > log/fourfit.md5
+
 cat cf* > temp/cf_all
 (time parallel --bar --joblog log/parallel.log \
 	"fourfit -c temp/cf_all {} > {}.out 2> {}.err" \
