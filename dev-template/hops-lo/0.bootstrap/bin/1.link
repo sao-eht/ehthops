@@ -1,46 +1,35 @@
 #!/usr/bin/env bash
 
-if [ x"$SRC1DIR" == x ]; then
-	export SRC1DIR=/data/2017-april/corr/Rev3v2patched2-Cal
-fi
-if [ x"$SRC2DIR" == x ]; then
-	export SRC2DIR=/data/2017-april/corr/Rev3patched-Sci
-fi
-if [ x"$DATADIR" == x ]; then
-	export DATADIR="$PWD/data"
-fi
-
 echo "1. Linking HOPS directories"
-echo "	Container work directory: \"$PWD\""
-echo "	Container data source:    \"$SRC1DIR\""
-echo "	Container data source:    \"$SRC2DIR\""
-echo "	Container data output:    \"$DATADIR\""
+echo "  Container work directory: \"$WRKDIR\""
+echo "  Container data source:    \"$SRCDIR\""
+echo "  Container Corr release(s) \"$CORRDAT\""
+echo "  Container data output:    \"$DATADIR\""
 
+cd "$WRKDIR"
 mkdir -p "$DATADIR" tests temp log
 
-# Create and populate $DATADIR
-find $SRC1DIR -mindepth 3 -maxdepth 3 -type d | grep "\/e17.*-$BAND-.*-hops\/" |
-	while read path; do
-		# Symlink the source data files
-		cp -rs "$path" "$DATADIR"
-		# Remove the log to avoid overwrite errors
-		rm -f "$DATADIR/$(basename $path)"/difx2mark4-*.log
-	done
+# add some more token delimiters
+IFS=$' \t\n:,'
 
-find $SRC2DIR -mindepth 3 -maxdepth 3 -type d | grep "\/e17.*-$BAND-.*-hops\/" |
-	while read path; do
-		# Symlink the source data files
-		cp -rs "$path" "$DATADIR"
-		# Remove the log to avoid overwrite errors
-		rm -f "$DATADIR/$(basename $path)"/difx2mark4-*.log
-	done
+# Create and populate $DATADIR
+for d in $CORRDAT
+do
+    find $SRCDIR/$d -mindepth 3 -maxdepth 3 -type d | grep "\/e17.*-$BAND-.*-hops\/" |
+        while read path; do
+            # Symlink the source data files
+            cp -rs "$path" "$DATADIR"
+            # Remove the log to avoid overwrite errors
+            rm -f "$DATADIR/$(basename $path)"/difx2mark4-*.log
+        done
+done
 
 # Rename silly root files to standard names
-find $DATADIR -name '*_3*' |
-	while read bad; do
-		new=$(echo $bad | sed 's/_3//g')
-		echo "$bad |-> $new"
-		mv "$bad" "$new"
-		# Symlinking instead of renaming
-		# ln -s $(realbad "$bad") "$new"
-	done
+find "$DATADIR" -name '*_3*' |
+    while read bad; do
+        new=$(echo $bad | sed 's/_3//g')
+        echo "$bad |-> $new"
+        mv "$bad" "$new"
+        # Symlinking instead of renaming
+        # ln -s $(realbad "$bad") "$new"
+    done

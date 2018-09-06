@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
-if [ x"$DATADIR" == x ]; then
-	export DATADIR="$PWD/data"
-fi
-
 echo "3. Creating summary alist"
-echo "	Container work directory: \"$PWD\""
+echo "	Container work directory: \"$WRKDIR\""
 echo "	Container data output:    \"$DATADIR\""
+
+cd $WRKDIR
+
+# remove old files to prevent hanging
+rm -f $DATADIR/alist.v6*
 
 echo "Creating per-scan resolution alist"
 alist -v6 -o $DATADIR/alist.v6 $DATADIR/*/* \

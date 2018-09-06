@@ -1,13 +1,10 @@
 #!/usr/bin/env bash
 
-if [ x"$DATADIR" == x ]; then
-	export DATADIR="$PWD/data"
-fi
-
 echo "2. Running fourfit..."
-echo "	Container work directory: \"$PWD\""
+echo "	Container work directory: \"$WRKDIR\""
 echo "	Container data output:    \"$DATADIR\""
 
+cd $WRKDIR
 md5sum `which fourfit` > log/fourfit.md5
 
 cat cf* > temp/cf_all

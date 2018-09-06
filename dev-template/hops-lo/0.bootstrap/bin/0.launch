@@ -3,59 +3,78 @@
 # Usage: `0.launch [data_source] [--docker [docker command]]`
 
 if [ -f /.dockerenv ]; then
-	echo "This script should:"
-	echo "1. sets up the host environment for HOPS, or"
-	echo "2. launches a HOPS docker container."
-	echo "Avoid running it inside a container."
-	exit 1
+    echo "This script should:"
+    echo "1. sets up the host environment for HOPS, or"
+    echo "2. launches a HOPS docker container."
+    echo "Avoid running it inside a container."
+    exit 1
 fi
 
 # Define variables to their default values
-WRKDIR=${WRKDIR:-"$PWD"}
-SRCDIR=${SRCDIR:-"/data"}
-SHRDIR=${SHRDIR:-"$WRKDIR/../../share"}
-BAND=${BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')}
-SEFDDIR=${SEFDDIR:-"$WRKDIR/../../sefd/SEFD_${BAND^^}"}
-FLUXDIR=${FLUXDIR:-"$WRKDIR/../../flux"}
+# These can be adjusted by defining SET env variables prior to running launch
+TOPDIR=${SET_TOPDIR:-"$PWD/.."}               # top level dir for all stages
+WRKDIR=${SET_WRKDIR:-"$PWD"}                  # working directory for pipeline process
+SRCDIR=${SET_SRCDIR:-"/data/2017-april/corr"} # single input data location for correlator source data
+CORRDAT=${SET_CORRDAT:-"Rev5-Cal:Rev5-Sci"}   # correlation releases to use for SRC data
+DATADIR=${SET_DATADIR:-"$WRKDIR/data"}        # input/output data location for HOPS
+SHRDIR=${SET_SHRDIR:-"$WRKDIR/../../share"}   # location of shared resources (summary notebooks, etc)
+BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
+SEFDDIR=${SET_SEFDDIR:-"$WRKDIR/../../sefd/SEFD_${BAND^^}"} # location of SEFD tables
+FLUXDIR=${SET_FLUXDIR:-"$WRKDIR/../../flux"}  # location of ZBL flux estimates for netcal
+
+# HOPS will need DATADIR to be ENV variable
+export DATADIR
 
 # Parse arguments
-USE_DOCKER=${USE_DOCKER:-false}
+DOCKER=${USE_DOCKER:-false}
 if [ x"$1" == x"--docker" ]; then
-	USE_DOCKER=true
+    DOCKER=true
         shift
 fi
 
 # Run docker or setup environment
-if [ x"$USE_DOCKER" == x"true" ]; then
-	echo "0. Launching an interactive HOPS docker container"
+# When running docker, we link the DIR paths to absolute paths, and set corresponding ENV variables in docker with -v
+if [ x"$DOCKER" == x"true" ]; then
+    echo "0. Launching an interactive HOPS docker container"
 
-	echo "	Host work:   $WRKDIR"
-	echo "	Host source: $SRCDIR"
-	echo "	Share:       $SHRDIR"
-	echo "	SEFD:        $SEFDDIR"
-	echo "	Flux:        $FLUXDIR"
-	echo "	Band:        $BAND"
-	echo "	Command:     $@"
+    echo "  Host work:   $WRKDIR"
+    echo "  Host source: $SRCDIR"
+    echo "  Share:       $SHRDIR"
+    echo "  SEFD:        $SEFDDIR"
+    echo "  Flux:        $FLUXDIR"
+    echo "  Band:        $BAND"
+    echo "  Command:     $@"
 
-	docker run --rm -it \
-		-v "$SRCDIR:/data" \
-		-v "$SEFDDIR:/sefd" \
-		-v "$FLUXDIR:/flux" \
-		-v "$WRKDIR:/root" \
-		-v "$SHRDIR:/usr/local/pipeline/share" \
-		-e "BAND=$BAND" \
-		eventhorizontelescope/eat-notebook \
-		"$@"
+    docker run --rm -it \
+        -v "$TOPDIR:/top" \
+        -v "$SRCDIR:/data" \
+        -v "$SEFDDIR:/sefd" \
+        -v "$FLUXDIR:/flux" \
+        -v "$WRKDIR:/root" \
+        -v "$SHRDIR:/usr/local/pipeline/share" \
+        -e "TOPDIR=/top" \
+        -e "SRCDIR=/data" \
+        -e "CORRDAT=$CORRDAT" \
+        -e "DATADIR=/root/data" \
+        -e "SEFDDIR=/sefd" \
+        -e "FLUXDIR=/flux" \
+        -e "WRKDIR=/root" \
+        -e "SHRDIR=/usr/local/pipeline/share" \
+        -e "BAND=$BAND" \
+        eventhorizontelescope/eat-notebook \
+        "$@"
 else
-	echo "0. Setting up an interactive HOPS environment"
+    echo "0. Setting up an interactive HOPS environment"
+    echo "  Top level:   $TOPDIR"
+    echo "  Host work:   $WRKDIR"
+    echo "  Host source: $SRCDIR"
+    echo "  Corr data:   $CORRDAT"
+    echo "  HOPS data:   $DATADIR"
+    echo "  Share:       $SHRDIR"
+    echo "  SEFD:        $SEFDDIR"
+    echo "  Flux:        $FLUXDIR"
+    echo "  Band:        $BAND"
+    echo "  Command:     $@"
 
-	echo "	Host work:   $WRKDIR"
-	echo "	Host source: $SRCDIR"
-	echo "	Share:       $SHRDIR"
-	echo "	SEFD:        $SEFDDIR"
-	echo "	Flux:        $FLUXDIR"
-	echo "	Band:        $BAND"
-	echo "	Command:     $@"
-
-	# Add more HOPS setup scripts here if needed
+    # Add more HOPS setup scripts here if needed
 fi
