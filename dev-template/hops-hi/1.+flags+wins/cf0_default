@@ -12,7 +12,8 @@ mb_win -0.009 0.009 * reasonable multiband delay search window in us
 dr_win -1.2e-6 1.2e-6 * expanded window same as low band
 
 * polconvert bug causes the last channel not being converted (NOT fixed in Rev3)
-freqs a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E
+* NOW should be fixed in Rev5+ do not need to cut last channel
+* freqs a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E
 
 * Common noise JR baseline
 * if baseline JR
