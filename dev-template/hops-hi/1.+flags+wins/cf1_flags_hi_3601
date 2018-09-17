@@ -30,16 +30,18 @@ if scan 101-035800 and station L
 if scan 101-044430 and station X
   stop -30   *data
 
+* edited for ER5
 if scan 101-090000 and station L
-  start -90  *log: late
+  start -84  *log: late
 if scan 101-090000 and station X
   skip true  *log: late
 
 if scan 101-092000 and station X
   skip true  *log: late
 
+* edited for ER5
 if scan 101-095400 and station L
-  start -65  *data
+  start -60  *data
 
 if scan 101-100700 and station L
   stop -45   *data

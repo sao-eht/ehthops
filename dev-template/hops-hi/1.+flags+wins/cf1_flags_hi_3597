@@ -84,8 +84,9 @@ if scan 095-055700 and station L
 if scan 095-061200 and station A
   start -210 *data + log: late
 
+* edited for ER5
 if scan 095-065000 and station L
-  start -18  *data
+  start -16  *data
 
 if scan 095-070900 to 095-075100 and station X
   skip true  *log: off source

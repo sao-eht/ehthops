@@ -21,13 +21,15 @@ if scan 101-012400 and station X
 if scan 101-013800 and station A
   start -30
 
-if scan 101-023300 and station P
+* edited for ER5 (but no data anyway)
+if scan 101-023330 and station P
   skip true
 
 if scan 101-024800 and station A
   start -40
 
-if scan 101-030900 and station P
+* edited for ER5 (but no data anyway)
+if scan 101-030930 and station P
   skip true
 
 if scan 101-032200 and station X
@@ -57,18 +59,21 @@ if scan 101-073600 and station X
 if scan 101-081200 and station X
   stop -180
 
-if scan 100-090000 and station L
-  start -105
+* edited for ER5
+if scan 101-090000 and station L
+  start -84
 if scan 101-090000 and station X
   skip true
 
 if scan 101-092000 and station X
   skip true
 
-if scan 100-095400 and station L
+* edited for ER5
+if scan 101-095400 and station L
   start -60
 
-if scan 100-100700 and station L
+* edited for ER5
+if scan 101-100700 and station L
   stop -45
 
 if scan 101-103600 and station A

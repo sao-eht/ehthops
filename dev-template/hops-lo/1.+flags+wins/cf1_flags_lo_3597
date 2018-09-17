@@ -93,8 +93,9 @@ if scan 095-055700 and station L
 if scan 095-061200 and station A
   start -205
 
-if scan 096-065000 and station L
-  start -20
+* edited for ER5
+if scan 095-065000 and station L
+  start -16
 
 if scan 095-074700 and station Z
   skip true
