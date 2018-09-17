@@ -33,6 +33,16 @@ cat $DATADIR/alist.v6.8s | average \
 	2> log/average.8.err &&\
 echo "DONE 8s" &
 
+echo "Creating 4s time resolution alist"
+fringex -i4 -r $DATADIR/alist.v6 \
+    >  $DATADIR/alist.v6.4s \
+    2> log/fringex.4.err &&\
+cat $DATADIR/alist.v6.4s | average \
+    >  $DATADIR/alist.v6.4s.avg \
+    2> log/average.4.err &&\
+gzip $DATADIR/alist.v6.4s &&\
+echo "DONE 4s" &
+
 echo "Creating 2s time resolution alist"
 fringex -i2 -r $DATADIR/alist.v6 \
 	>  $DATADIR/alist.v6.2s \
