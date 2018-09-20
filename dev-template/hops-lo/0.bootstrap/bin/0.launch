@@ -45,6 +45,10 @@ if [ x"$DOCKER" == x"true" ]; then
     echo "  Band:        $BAND"
     echo "  Command:     $@"
 
+    if [ $# == 0 ]; then # no command line argument
+	PORTFORWARD='-p 8888:8888'
+    fi
+
     docker run --rm -it \
         -v "$TOPDIR:/top" \
         -v "$SRCDIR:/data" \
@@ -61,6 +65,7 @@ if [ x"$DOCKER" == x"true" ]; then
         -e "WRKDIR=/root" \
         -e "SHRDIR=/usr/local/pipeline/share" \
         -e "BAND=$BAND" \
+	$PORTFORWARD \
         eventhorizontelescope/eat-notebook \
         "$@"
 else
