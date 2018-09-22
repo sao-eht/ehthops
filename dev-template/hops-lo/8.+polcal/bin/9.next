@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if [ -f /.dockerenv ]; then
+	echo "This script copies control files to the next stage; \
+avoid running it inside a container"
+	exit 1
+fi
+
+echo "9. Finish polarization calibration; no need to copy scripts"
+echo "Please go back to the parent directory and pack the uvfits files"
+echo "DONE"

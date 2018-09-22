@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+#
+# Usage: `0.launch [data_source] [--docker [docker command]]`
+
+if [ -f /.dockerenv ]; then
+	echo "This script should:"
+	echo "1. sets up the host environment for HOPS, or"
+	echo "2. launches a HOPS docker container."
+	echo "Avoid running it inside a container."
+	exit 1
+fi
+
+# Define variables to their default values
+WRKDIR=${WRKDIR:-"$PWD"}
+SRCDIR=${SRCDIR:-"$WRKDIR/../8.+polcal"}
+SHRDIR=${SHRDIR:-"$WRKDIR/../../share"}
+BAND=${BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')}
+SEFDDIR=${SEFDDIR:-"$WRKDIR/../../sefd/SEFD_${BAND^^}"}
+FLUXDIR=${FLUXDIR:-"$WRKDIR/../../flux"}
+
+# Parse arguments
+USE_DOCKER=${USE_DOCKER:-false}
+if [ x"$1" == x"--docker" ]; then
+	USE_DOCKER=true
+        shift
+fi
+
+# Run docker or setup environment
+if [ x"$USE_DOCKER" == x"true" ]; then
+	echo "0. Launching an interactive HOPS docker container"
+
+	echo "	Host work:   $WRKDIR"
+	echo "	Host source: $SRCDIR"
+	echo "	Share:       $SHRDIR"
+	echo "	SEFD:        $SEFDDIR"
+	echo "	Flux:        $FLUXDIR"
+	echo "	Band:        $BAND"
+	echo "	Command:     $@"
+
+	docker run --rm -it \
+		-v "$SRCDIR:/data" \
+		-v "$SEFDDIR:/sefd" \
+		-v "$FLUXDIR:/flux" \
+		-v "$WRKDIR:/root" \
+		-v "$SHRDIR:/usr/local/pipeline/share" \
+		-e "BAND=$BAND" \
+		eventhorizontelescope/eat-notebook \
+		"$@"
+else
+	echo "0. Setting up an interactive HOPS environment"
+
+	echo "	Host work:   $WRKDIR"
+	echo "	Host source: $SRCDIR"
+	echo "	Share:       $SHRDIR"
+	echo "	SEFD:        $SEFDDIR"
+	echo "	Flux:        $FLUXDIR"
+	echo "	Band:        $BAND"
+	echo "	Command:     $@"
+
+	# Add more HOPS setup scripts here if needed
+fi
