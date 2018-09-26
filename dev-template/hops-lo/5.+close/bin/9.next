@@ -6,6 +6,17 @@ avoid running it inside a container"
 	exit 1
 fi
 
-echo "9. Final stage of the HOPS pipeline; no need to copy scripts"
-echo "Please go back to the parent directory and pack the fringe files"
-echo "DONE"
+N=$(basename $PWD | sed 's/^\([0-9]*\)\..*/\1/')
+NEXT=$(echo ../$(expr $N + 1).*)
+
+#------------------------------------------------------------------------------
+echo "9. Copying standard scripts to the next stage \"$NEXT\""
+for n in {0,1,9}; do
+        curr=$(echo bin/$n.*)
+        next=$(echo $NEXT/bin/$n.*)
+        if [   -f "$curr" ] &&
+           [ ! -f "$next" ]; then
+                echo "$curr" "-> $NEXT/bin"
+                cp   "$curr"    "$NEXT/bin"
+        fi
+done
