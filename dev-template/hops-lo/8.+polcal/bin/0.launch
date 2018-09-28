@@ -17,6 +17,7 @@ SHRDIR=${SET_SHRDIR:-"$WRKDIR/../../share"}
 BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')}
 SEFDDIR=${SET_SEFDDIR:-"$WRKDIR/../../sefd/SEFD_${BAND^^}"}
 FLUXDIR=${SET_FLUXDIR:-"$WRKDIR/../../flux"}
+POLGDIR=${SET_POLGDIR:-"$WRKDIR/../../polgains"}
 
 # Parse arguments
 USE_DOCKER=${USE_DOCKER:-false}
@@ -34,17 +35,19 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 	echo "	Share:       $SHRDIR"
 	echo "	SEFD:        $SEFDDIR"
 	echo "	Flux:        $FLUXDIR"
+	echo "	Pol Gains:   $POLGDIR"
 	echo "	Band:        $BAND"
 	echo "	Command:     $@"
 
-	docker run --rm -it \
-		-v "$SRCDIR:/data" \
+	docker run --rm -it         \
+		-v "$SRCDIR:/data"  \
 		-v "$SEFDDIR:/sefd" \
 		-v "$FLUXDIR:/flux" \
-		-v "$WRKDIR:/root" \
+		-v "$POLGDIR:/polg" \
+		-v "$WRKDIR:/root"  \
 		-v "$SHRDIR:/usr/local/pipeline/share" \
-		-e "BAND=$BAND" \
-		eventhorizontelescope/eat-notebook \
+		-e "BAND=$BAND"                        \
+		eventhorizontelescope/eat-notebook     \
 		"$@"
 else
 	echo "0. Setting up an interactive HOPS environment"
@@ -54,6 +57,7 @@ else
 	echo "	Share:       $SHRDIR"
 	echo "	SEFD:        $SEFDDIR"
 	echo "	Flux:        $FLUXDIR"
+	echo "	Pol Gains:   $POLGDIR"
 	echo "	Band:        $BAND"
 	echo "	Command:     $@"
 
