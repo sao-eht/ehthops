@@ -3,12 +3,12 @@
 mkdir tests temp log
 for d in {3597..3601}; do
 	mkdir -p $d
-	/usr/bin/time -v                   \
-	        cal_polcal_gains_uvfits.py \
-	        --calfile /polg/ratios.csv \
-	        --outdir $d                \
-	        /data/$d                   \
-		>  log/apriori-$d.log      \
-		2> log/apriori-$d.err      &
+	/usr/bin/time -v                             \
+	        cal_polcal_gains_uvfits.py           \
+	        --calfile /polg/ratios.csv --cal_amp \
+	        --outdir $d                          \
+	        /data/$d                             \
+		>  log/apriori-$d.log                \
+		2> log/apriori-$d.err                &
 done
 wait $(jobs -p)
