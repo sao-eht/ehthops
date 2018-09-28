@@ -7,3 +7,5 @@ for d in /usr/local/src/*/; do
     echo $d $(git rev-parse HEAD) >> ~/version
     popd
 done
+
+pip freeze >> ~/version
