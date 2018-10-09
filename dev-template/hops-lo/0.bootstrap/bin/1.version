@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-echo /usr/local/hops/ $HOPS_ARCH > ~/version
+echo /usr/local/hops/ $HOPS_ARCH > log/version
 
 for d in /usr/local/src/*/; do
     pushd $d
-    echo $d $(git rev-parse HEAD) >> ~/version
+    echo $d $(git rev-parse HEAD) >> log/version
     popd
 done
 
-pip freeze >> ~/version
+pip freeze >> log/version
