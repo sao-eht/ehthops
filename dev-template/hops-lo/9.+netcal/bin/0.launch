@@ -38,11 +38,16 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 	echo "	Command:     $@"
 
 	docker run --rm -it \
+		-v "$WRKDIR:/root" \
 		-v "$SRCDIR:/data" \
+		-v "$SHRDIR:/usr/local/pipeline/share" \
 		-v "$SEFDDIR:/sefd" \
 		-v "$FLUXDIR:/flux" \
-		-v "$WRKDIR:/root" \
-		-v "$SHRDIR:/usr/local/pipeline/share" \
+		-e "WRKDIR=/root" \
+		-e "SRCDIR=/data" \
+		-e "SHRDIR=/usr/local/pipeline/share" \
+		-e "SEFDDIR=/sefd" \
+		-e "FLUXDIR=/flux" \
 		-e "BAND=$BAND" \
 		eventhorizontelescope/eat-notebook \
 		"$@"
