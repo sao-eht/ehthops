@@ -5,7 +5,7 @@ for d in {3597..3601}; do
 	mkdir -p $d
 	/usr/bin/time -v hops2uvfits.py     \
 	        --clean --uv --fix_src_name \
-	        --outdir $d /data/$d        \
+	        --outdir $d $SRCDIR/$d      \
 		>  log/uvfits-$d.log        \
 		2> log/uvfits-$d.err        &
 done
