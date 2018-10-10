@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #
-# Usage: `0.launch [data_source] [--docker [docker command]]`
+# Usage: `[SET_ENVVAR=...] 0.launch --docker [docker command]` or
+#        `[SET_ENVVAR=...] && source 0.launch [docker command]`
 
 if [ -f /.dockerenv ]; then
 	echo "This script should:"
@@ -28,7 +29,7 @@ BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|' | tr a-z A-Z)} 
 DOCKER=${USE_DOCKER:-false}
 if [ x"$1" == x"--docker" ]; then
 	DOCKER=true
-        shift
+	shift
 fi
 
 # Run docker or setup environment
