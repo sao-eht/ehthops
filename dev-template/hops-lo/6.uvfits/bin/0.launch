@@ -13,7 +13,7 @@ fi
 
 # Define variables to their default values
 # These can be adjusted by defining SET env variables prior to running launch
-CORRDAT=${SET_CORRDAT:-"Rev5-Cal:Rev5-Sci"}   # correlation releases to use for SRC data
+CORRDAT=${SET_CORRDAT:-"Rev7-Cal:Rev7-Sci"}   # correlation releases to use for SRC data
 
 WRKDIR=${SET_WRKDIR:-"$PWD"}                  # working directory for pipeline process
 TOPDIR=${SET_TOPDIR:-"$WRKDIR/.."}            # top level dir for all stages
