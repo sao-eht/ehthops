@@ -1,0 +1,4 @@
+* set band-specific reference frequency
+
+ref_freq      227070.703125 * b3
+

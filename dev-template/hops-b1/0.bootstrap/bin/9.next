@@ -10,16 +10,22 @@ N=$(basename $PWD | sed 's/^\([0-9]*\)\..*/\1/')
 NEXT=$(echo ../$(expr $N + 1).*)
 
 #------------------------------------------------------------------------------
-echo "9. Copying standard scripts to the next stage \"$NEXT\""
-for n in {0..9}; do
-	curr=$(echo bin/$n.*)
-	next=$(echo $NEXT/bin/$n.*)
-	if [   -f "$curr" ] &&
-	   [ ! -f "$next" ]; then
-		echo "$curr" "-> $NEXT/bin"
-		cp   "$curr"    "$NEXT/bin"
-	fi
-done
+echo "9. Copying (no clobber) standard scripts 0--6, 9 to the next stage \"$NEXT\""
+echo bin/[01234569]* "-> $NEXT/bin"
+cp -n bin/[01234569]* "$NEXT/bin"
+
+#------------------------------------------------------------------------------
+echo "Copying (no clobber) control files to the next stage"
+echo cf* data/cf* "-> $NEXT"
+cp -n cf* data/cf*    "$NEXT"
+
+#------------------------------------------------------------------------------
+if [ -d data/adhoc ]; then
+	echo "Copying adhoc-phase files to the next stage"
+	echo data/adhoc "-> $NEXT/data"
+	mkdir -p           "$NEXT/data"
+	cp -r data/adhoc   "$NEXT/data"
+fi
 
 #------------------------------------------------------------------------------
 echo "DONE"

@@ -13,13 +13,14 @@ fi
 
 # Define variables to their default values
 # These can be adjusted by defining SET env variables prior to running launch
-CORRDAT=${SET_CORRDAT:-"Rev7-Cal:Rev7-Sci"}   # correlation releases to use for SRC data
+# CORRDAT=${SET_CORRDAT:-"Rev3-Cal:Rev3-Sci:Rev1-Cal:Rev1-Sci"}   # correlation releases to use for SRC data, higher precedence comes first
+CORRDAT=${SET_CORRDAT:-"Rev4-Cal:Rev4-Sci"}   # Rev4 should be the same as Rev3/Rev1 hybrid
 
 WRKDIR=${SET_WRKDIR:-"$PWD"}                  # working directory for pipeline process
 TOPDIR=${SET_TOPDIR:-"$WRKDIR/.."}            # top level dir for all stages
 DATADIR=${SET_DATADIR:-"$WRKDIR/data"}        # input/output data location for HOPS
 
-SRCDIR=${SET_SRCDIR:-"/data/2017-april/corr"} # single input data location for correlator source data
+SRCDIR=${SET_SRCDIR:-"/data/2018-april/corr"} # single input data location for correlator source data
 SHRDIR=${SET_SHRDIR:-"$TOPDIR/../share"}      # location of shared resources (summary notebooks, etc)
 METADIR=${SET_METADIR:-"$TOPDIR/../meta"}     # location of META tables, ZBL flux estimates for netcal, etc
 

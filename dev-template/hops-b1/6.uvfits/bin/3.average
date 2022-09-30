@@ -1,0 +1,21 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import glob
+import ehtim as eh
+
+for day in [3644, 3645, 3646, 3647, 3648, 3649]:
+    for uvf in glob.glob('%s/*.uvfits' % day):
+        try:
+            (base, ext) = os.path.splitext(uvf)
+            obs = eh.obsdata.load_uvfits(uvf, polrep='circ')
+            # use cuts in calibrate.py
+            obs = obs.flag_sites(["SR"])
+            obs = obs.flag_anomalous('llsnr', robust_nsigma_cut=3.0)
+            obs = obs.flag_anomalous('rrsnr', robust_nsigma_cut=3.0)
+            obs = obs.avg_coherent(10.)
+            obs.save_uvfits('%s+avg%s' % (base, ext))
+        except:
+            sys.stderr.write('failed to average: %s\n' % uvf)
+

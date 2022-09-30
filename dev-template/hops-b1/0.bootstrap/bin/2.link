@@ -15,12 +15,18 @@ IFS=$' \t\n:,'
 # Create and populate $DATADIR
 for d in $CORRDAT
 do
-    find $SRCDIR/$d -mindepth 3 -maxdepth 3 -type d | grep "\/e17.*-$BAND-.*-hops\/" |
+    find -L $SRCDIR/$d -mindepth 4 -maxdepth 4 -type d | grep "\/e18.*-$BAND-.*-hops\/" |
         while read path; do
+            # /data/2018-april/corr/Rev1-Sci/e18e22-sgra-sci/e18e22-1-b3-sgra-SGRA-hops/3645/112-0850
             # Symlink the source data files
-            cp -rs "$path" "$DATADIR"
+            scan=$(awk -F 'hops/' '{print $(NF)}' <<< $path)
+            if [ ! -d "$DATADIR/$scan" ]; then
+                mkdir -p "$DATADIR/$scan"
+                cp -s $path/* "$DATADIR/$scan"
+            fi
+            # below is not needed at find depth 4
             # Remove the log to avoid overwrite errors
-            rm -f "$DATADIR/$(basename $path)"/difx2mark4-*.log
+            # rm -f "$DATADIR/$(basename $path)"/difx2mark4-*.log
         done
 done
 

@@ -1,0 +1,7 @@
+* set band-specific reference frequency
+
+ref_freq      213070.703125 * b1
+* ref_freq      215070.703125 * b2
+* ref_freq      227070.703125 * b3
+* ref_freq      229070.703125 * b4
+
