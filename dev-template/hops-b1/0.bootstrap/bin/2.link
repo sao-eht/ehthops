@@ -15,7 +15,7 @@ IFS=$' \t\n:,'
 # Create and populate $DATADIR
 for d in $CORRDAT
 do
-    find -L $SRCDIR/$d -mindepth 4 -maxdepth 4 -type d | grep "\/e18.*-$BAND-.*-hops\/" |
+    find -L $SRCDIR/$d -mindepth 4 -maxdepth 4 -type d | grep "\/e21.*-$BAND-.*-hops\/" |
         while read path; do
             # /data/2018-april/corr/Rev1-Sci/e18e22-sgra-sci/e18e22-1-b3-sgra-SGRA-hops/3645/112-0850
             # Symlink the source data files

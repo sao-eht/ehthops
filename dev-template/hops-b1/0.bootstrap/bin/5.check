@@ -12,7 +12,7 @@ mkdir -p "$OUTDIR"
 
 for f in $(ls "$SHRDIR"); do
 	echo "$f"
-	jupyter nbconvert --execute --ExecutePreprocessor.timeout=300 \
+	jupyter nbconvert --execute --ExecutePreprocessor.timeout=300 --ExecutePreprocessor.kernel_name="python3" \
 	        --to notebook "$SHRDIR/$f"                            \
 		--output      "$OUTDIR/$f"                            \
 		>             "log/$f.log"                            \
