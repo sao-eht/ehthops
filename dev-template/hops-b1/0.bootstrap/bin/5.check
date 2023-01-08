@@ -12,9 +12,9 @@ mkdir -p "$OUTDIR"
 
 for f in $(ls "$SHRDIR"); do
 	echo "$f"
-	papermill "$SHRDIR/$f" "$OUTDIR/$f" > "log/$f.log" 2> "log/$f.err" &
+	papermill "$SHRDIR/$f" "$OUTDIR/$f" > "log/$f.log" 2> "log/$f.err" #& # uncomment to run notebooks concurrently
 done
-wait $(jobs -p)
+#wait $(jobs -p) # uncomment to run notebooks concurrently
 
 for f in $(ls "$SHRDIR"); do
         echo "$f"
