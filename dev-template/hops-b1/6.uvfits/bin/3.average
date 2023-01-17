@@ -5,7 +5,7 @@ import sys
 import glob
 import ehtim as eh
 
-for day in [3644, 3645, 3646, 3647, 3648, 3649]:
+for day in range(3762, 3770):
     for uvf in glob.glob('%s/*.uvfits' % day):
         try:
             (base, ext) = os.path.splitext(uvf)

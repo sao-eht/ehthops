@@ -2,7 +2,7 @@
 
 mkdir tests temp log
 
-for d in {3644..3649}; do
+for d in {3762..3769}; do
 	mkdir -p $d
 	/usr/bin/time -v hops2uvfits.py     \
 	        --clean --uv --fix_src_name \
