@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 
-echo /usr/local/hops/ $HOPS_ARCH > $WRKDIR/version
+#echo /usr/local/hops $HOPS_ARCH > $WRKDIR/version
+echo $HOPS_PREFIX $HOPS_ARCH > $WRKDIR/version
 
-for d in /usr/local/src/*/; do
-    pushd $d
-    echo $d $(git rev-parse HEAD) >> $WRKDIR/version
-    popd
-done
+#for d in /usr/local/src/*/; do
+#    pushd $d
+#    echo $d $(git rev-parse HEAD) >> $WRKDIR/version
+#    popd
+#done
 
-pip freeze >> $WRKDIR/version
+if command -v conda &> /dev/null
+then
+    conda list --export >> $WRKDIR/version
+else
+    pip freeze >> $WRKDIR/version
+fi
