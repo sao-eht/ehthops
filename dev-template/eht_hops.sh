@@ -1,8 +1,6 @@
 # To be run from within 'hops-bx' directories
 # set up envs
-source $HOME/.bashrc
-conda activate eht310
-source /home/swc/Software/installed/hops-3.24/bin/hops.bash
+source /home/swc/env/ehthops324.sh
 
 # list stages to be executed
 stages=("0.bootstrap" "1.+flags+wins" "2.+pcal" "3.+adhoc" "4.+delays" "5.+close" "6.uvfits")
@@ -50,7 +48,7 @@ do
     # run stage 6; the calibration stage finishes with stage 5
     if [ $stage == "6.uvfits" ]
     then
-	SET_SRCDIR=/home/iniyan/2021-hops-calibration/test-tutorial/2021-april/dev-template/hops-b4/5.+close/data && SET_CORRDAT="Rev1-Cal" && source bin/0.launch
+	SET_SRCDIR=/home/iniyan/2021-hops-calibration/tutorial-25jun/2021-april/dev-template/hops-b4/5.+close/data && SET_CORRDAT="Rev1-Cal" && source bin/0.launch
         source bin/1.convert
         source bin/2.import
         python bin/3.average
