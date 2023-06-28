@@ -25,6 +25,8 @@ METADIR=${SET_METADIR:-"$TOPDIR/../meta"}     # location of META tables, ZBL flu
 
 BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
 
+EHTIMPATH=${SET_EHTIMPATH:-"/usr/local/src/ehtim/"} # path to ehtim source (usually in dev branch)
+
 # Parse arguments
 USE_DOCKER=${USE_DOCKER:-false}
 if [ x"$1" == x"--docker" ]; then

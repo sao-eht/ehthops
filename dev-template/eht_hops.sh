@@ -48,7 +48,7 @@ do
     # run stage 6; the calibration stage finishes with stage 5
     if [ $stage == "6.uvfits" ]
     then
-	SET_SRCDIR=/home/iniyan/2021-hops-calibration/tutorial-25jun/2021-april/dev-template/hops-b4/5.+close/data && SET_CORRDAT="Rev1-Cal" && source bin/0.launch
+	SET_EHTIMPATH="/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/src/eht-imaging" && SET_SRCDIR=/home/iniyan/2021-hops-calibration/tutorial-25jun/2021-april/dev-template/hops-b4/5.+close/data && SET_CORRDAT="Rev1-Cal" && source bin/0.launch
         source bin/1.convert
         source bin/2.import
         python bin/3.average
