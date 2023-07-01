@@ -1,16 +1,15 @@
 * set band-specific reference frequency
 
 * 345 GHz observations. For 2021, only on April 19 (expt_no 3769 or track e21f19)
-* centre frequency computed using channel info in an ALMA autocorrelation fringe file 
-
+* centre frequencies computed using channel info from an ALMA autocorrelation fringe file 
 * ref_freq      335600.296875 * b1
-ref_freq      337541.703125 * b2
+* ref_freq      337541.703125 * b2
 * ref_freq      347600.296875 * b3
 * ref_freq      349600.296875 * b4
 
 * 230 GHz observations
 * ref_freq      213070.703125 * b1
-* ref_freq      215070.703125 * b2
+ref_freq      215070.703125 * b2
 * ref_freq      227070.703125 * b3
 * ref_freq      229070.703125 * b4
 
