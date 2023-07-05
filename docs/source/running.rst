@@ -9,50 +9,58 @@ Directory structure
 -------------------
 
 Stage 0 in band 1 (**hops-b1/0.bootstrap**) contains all the scripts that are common to all steps in each stage in each band.
-Step-specific scripts are hosted in the corresponding directory under **hops-b1**. All other bands symlink to these scripts so that only one physical copy of these scripts are necessary.
+Step-specific scripts are hosted in the corresponding directory under **hops-b1**. All other bands symlink to these scripts so that only one physical copy of this set of scripts is necessary.
 
-Stages 0 and 1 in band 1 (**hops-b1/0.bootstrap** and **hops-b1/1.+flags+wins**) contain all the control files that are common to all steps in each stage in each band.
-Other bands symlink to these control files where necessary. Band-specific control files can be found under the corresponding directories.
+Stages 0 and 1 in band 1 (**hops-b1/0.bootstrap** and **hops-b1/1.+flags+wins**) host the preset control files and flags.
+Other bands symlink to these control files where necessary, aside from hosting band-specific control files and flags at the corersponding stages.
 
-Running manually
-----------------
+Driver scripts
+--------------
 
-Activate the conda environment created in the installation step and activate the HOPS shell environment::
+The *dev-template/scripts* directory contains driver scripts to run the pipeline in two different enivironments.
 
-   source /path/to/hops-3.24/bin/hops.bash
+*driver_cannon.sh* and *hops2021.slurm* are sample scripts that can be modified to run on any SLURM cluster (e.g. the Harvard FAS cluster).
 
-Checkout the ehthops pipeline (the version for calibrating EHT2021 data) from `https://github.com/eventhorizontelescope/2021-april <https://github.com/eventhorizontelescope/2021-april>`_.
+*driver_cloud.sh* is a sample script tailored to run on eht-cloud. The environment setup lines are hidden inside another script hosted on eht-cloud.
 
-The **dev-template** directory hosts the template directory structure, HOPS control files (prefixed **cf**), and source code for the pipeline. 
-Data and scripts corresponding to each frequency band are contained in individual directories named **hops-bx** where **x** stands for the band number.
+The driver scripts must be run from the *dev-template/hops-bx* directories. They set the following environment variables that **must be** verified before each execution::
 
-The source code consists of a collection of shell scripts which are run in sequence.
-All scripts are run from within the corresponding **hops-bx** directory, by sourcing the scripts located in **hops-bx/<stage>/bin** in order. An example workflow looks like::
+   SET_SRCDIR -- sets the parent directory containing the various revisions of the data
+   SET_CORRDAT -- sets the revisions to be processed as a colon-separated list of directory names
+   SET_EHTIMPATH -- sets the path to the source code of eht-imaging
 
-   cd dev-template/hops-bx
-   cd <stage>
-   source bin/<script>
+.. note::
+   At all stages from 0 to 5, SRCDIR points to the directory that hosts the archival data.
+   At stage 6, SRCDIR must point to the directory '5.+close/data' in the current band.
 
-This basic workflow is the same from stages 0 to 5. Stage 6 is the post-processing step which is run as follows::
+*cleanup.sh* deletes all data generated as a result of a previous run and leaves the repo at the default state.
 
-   cd dev-template/hops-bx/6.uvfits
-   source bin/0.launch
-   source bin/1.uvfits
-   source bin/2.import # optional step; ensure that path_ehtim is set appropriately in the code
-   python bin/3.average
+The pipeline can be executed by typing the following in a linux terminal or a screen session (or in the case of a SLURM cluster,
+placing this line in the script submitted to SLURM)::
 
-Running as a slurm job
-----------------------
+   source <script-name>
 
-It is recommended to use system-specific driver shell scripts that set up the necessary environment to run the pipeline as a slurm job. This driver must
+On a SLURM cluster, the above line is placed inside *hops2021.slurm* and the SLURM job can be submitted by::
 
-- Set up the appropriate conda environment.
-- Set up the HOPS environment by running **source /path/to/hops-3.24/bin/hops.bash**.
-- Run each step in each stage (in each band, if necessary) by sourcing the appropriate scripts.
+   sbatch hops2021.slurm
 
-.. note:: As of now, the post-processing stage (6.uvfits) will not run properly when submitted as a slurm job and must be run manually. This will be updated in a future version.
+.. todo::
+   Instructions to run as a Docker image
 
-Running as a docker image
--------------------------
+EHT2021 data specific instructions
+----------------------------------
 
-.. note:: TODO
+HOPS operates by assigning single letter codes to frequency channels, restricting the number of channels that can be represented.
+Since the EHT 2021 campaign observed at two different frequency bands (230 GHz and 345 GHz), it is better to keep the reduction clean, by processing these data separately.
+
+The 2021 campaign observed at 345 GHz only on day 109 (expt_no 3769, track e21f19). Hence the preset flags corresponding to track e21f19 correspond only to 345 GHz observations.
+While reducing 230 GHz data, replace the contents of *hops-b1/1.+flags_wins/cf1_flags_e21f19* with the following:
+
+::
+ 
+  * Flag all 345 GHz scans
+  if scan > 109-000000
+    skip true  * 109 is the day of the 345 GHz obs in 2021
+
+*hops-b1/1.+flags_wins/cf1_flags_e21f19* is the only control file pertinent to 345 GHz data reduction.
+Hence, the other control files containing the flags (prefixed *cf1_flags_*) can safely be deleted from the working copy of the repo if only 345 GHz data are being processed.
