@@ -39,15 +39,17 @@ fi
 if [ x"$USE_DOCKER" == x"true" ]; then
 	echo "0. Launching a HOPS docker container"
 
-	echo "  Corr data:   $CORRDAT"
-	echo "  Host work:   $WRKDIR"
-	echo "  Top level:   $TOPDIR"
-	echo "  HOPS data:   $DATADIR"
-	echo "  Host source: $SRCDIR"
-	echo "  Share:       $SHRDIR"
-	echo "  Meta:        $METADIR"
-	echo "  Band:        $BAND"
-	echo "  Command:     $@"
+
+        echo "  Corr release(s), CORRDAT:   $CORRDAT"
+        echo "  Data source dir, SRCDIR: $SRCDIR"
+        echo "  Work dir, WRKDIR:   $WRKDIR"
+        echo "  Top level work dir, TOPDIR:   $TOPDIR"
+        echo "  HOPS data output, DATADIR:   $DATADIR"
+        echo "  Dir to share resources b/w stages, SHRDIR:       $SHRDIR"
+        echo "  Meta, METADIR:        $METADIR"
+        echo "  Band, BAND:        $BAND"
+	echo "  Path to ehtim, EHTIMPATH:    $EHTIMPATH"
+        echo "  Command:     $@"
 
 	if [ $# == 0 ]; then # no command line argument
 		PORTFORWARD='-p 8888:8888'
@@ -73,15 +75,16 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 else
 	echo "0. Setting up an interactive HOPS environment"
 
-	echo "  Corr data:   $CORRDAT"
-	echo "  Host work:   $WRKDIR"
-	echo "  Top level:   $TOPDIR"
-	echo "  HOPS data:   $DATADIR"
-	echo "  Host source: $SRCDIR"
-	echo "  Share:       $SHRDIR"
-	echo "  Meta:        $METADIR"
-	echo "  Band:        $BAND"
-	echo "  Command:     $@"
+        echo "  Corr release(s), CORRDAT:   $CORRDAT"
+        echo "  Data source dir, SRCDIR: $SRCDIR"
+        echo "  Work dir, WRKDIR:   $WRKDIR"
+        echo "  Top level work dir, TOPDIR:   $TOPDIR"
+        echo "  HOPS data output, DATADIR:   $DATADIR"
+        echo "  Dir to share resources b/w stages, SHRDIR:       $SHRDIR"
+        echo "  Meta, METADIR:        $METADIR"
+        echo "  Band, BAND:        $BAND"
+        echo "  Path to ehtim, EHTIMPATH:    $EHTIMPATH"
+        echo "  Command:     $@"
 
 	# Add more HOPS setup scripts here if needed
 	export DATADIR # HOPS will need DATADIR to be ENV variable

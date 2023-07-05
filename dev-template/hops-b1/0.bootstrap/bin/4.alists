@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 echo "3. Creating summary alist"
-echo "	Container work directory: \"$WRKDIR\""
-echo "	Container data output:    \"$DATADIR\""
+echo "	Container work directory, WRKDIR: \"$WRKDIR\""
+echo "	Container HOPS data output, DATADIR:    \"$DATADIR\""
 
 cd $WRKDIR
 

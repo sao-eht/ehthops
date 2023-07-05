@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo "5. Closing solution"
+echo "7. Closing solution"
 
 cd $WRKDIR
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-echo "5. Compute phase-cal phases and delay offsets"
-echo "	Container work directory: \"$WRKDIR\""
-echo "	Container data output:    \"$DATADIR\""
+echo "7. Compute phase-cal phases and delay offsets"
+echo "	Container work directory, WRKDIR: \"$WRKDIR\""
+echo "	Container HOPS data output, DATADIR:    \"$DATADIR\""
 
 cd $WRKDIR
 

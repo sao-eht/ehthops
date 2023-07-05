@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 echo "1. Linking HOPS directories"
-echo "  Container work directory: \"$WRKDIR\""
-echo "  Container data source:    \"$SRCDIR\""
-echo "  Container Corr release(s) \"$CORRDAT\""
-echo "  Container data output:    \"$DATADIR\""
+echo "  Container work directory, WRKDIR: \"$WRKDIR\""
+echo "  Container data source, SRCDIR:    \"$SRCDIR\""
+echo "  Container Corr release(s), CORRDAT \"$CORRDAT\""
+echo "  Container HOPS data output, DATADIR:    \"$DATADIR\""
 
 cd "$WRKDIR"
 mkdir -p "$DATADIR" tests temp log

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 echo "2. Running fourfit..."
-echo "	Container work directory: \"$WRKDIR\""
-echo "	Container data output:    \"$DATADIR\""
+echo "	Container work directory, WRKDIR: \"$WRKDIR\""
+echo "	Container HOPS data output, DATADIR:    \"$DATADIR\""
 
 cd $WRKDIR
 md5sum `which fourfit` > log/fourfit.md5

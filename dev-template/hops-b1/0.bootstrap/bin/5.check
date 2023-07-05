@@ -3,9 +3,9 @@
 OUTDIR=${SET_OUTDIR:-"$WRKDIR/tests"}
 
 echo "4. Sanity check"
-echo "	Container work directory: \"$WRKDIR\""
-echo "	Container data output:    \"$DATADIR\""
-echo "	Notebook output:          \"$OUTDIR\""
+echo "	Container work directory, WRKDIR: \"$WRKDIR\""
+echo "	Container HOPS data output, DATADIR:    \"$DATADIR\""
+echo "	Notebook output, OUTDIR:          \"$OUTDIR\""
 
 cd $WRKDIR
 mkdir -p "$OUTDIR"

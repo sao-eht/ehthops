@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo "5. Compute adhoc phases"
+echo "7. Compute adhoc phases"
 
 cd $WRKDIR
 
