@@ -44,8 +44,8 @@ On a SLURM cluster, the above line is placed inside *hops2021.slurm* and the SLU
 
    sbatch hops2021.slurm
 
-.. todo::
-   Instructions to run as a Docker image
+.. note::
+   Instructions to run as a Docker image to be added.
 
 EHT2021 data specific instructions
 ----------------------------------
