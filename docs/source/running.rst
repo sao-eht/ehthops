@@ -53,6 +53,9 @@ EHT2021 data specific instructions
 HOPS operates by assigning single letter codes to frequency channels, restricting the number of channels that can be represented.
 Since the EHT 2021 campaign observed at two different frequency bands (230 GHz and 345 GHz), it is better to keep the reduction clean, by processing these data separately.
 
+For 230 GHz data
+----------------
+
 The 2021 campaign observed at 345 GHz only on day 109 (expt_no 3769, track e21f19). Hence the preset flags corresponding to track e21f19 correspond only to 345 GHz observations.
 While reducing 230 GHz data, replace the contents of *hops-b1/1.+flags_wins/cf1_flags_e21f19* with the following:
 
@@ -62,12 +65,16 @@ While reducing 230 GHz data, replace the contents of *hops-b1/1.+flags_wins/cf1_
   if scan > 109-000000
     skip true  * 109 is the day of the 345 GHz obs in 2021
 
-*hops-b1/1.+flags_wins/cf1_flags_e21f19* is the only control file pertinent to 345 GHz data reduction.
+
+For 345 GHz data
+----------------
+
+(1) *hops-b1/1.+flags_wins/cf1_flags_e21f19* is the only control file pertinent to 345 GHz data reduction.
 Hence, the other control files containing the flags (prefixed *cf1_flags_*) can safely be deleted from the working copy of the repo if only 345 GHz data are being processed.
 
-Also, there is no need to symlink all the data from the archive. This can be accomplished by modifying the grep clause in *hops-b1/0.bootstrap/bin/2.link* as follows::
+(2) Also, there is no need to symlink all the data from the archive. This can be accomplished by modifying the grep clause in *hops-b1/0.bootstrap/bin/2.link* as follows::
 
   grep "\/e21.*-$BAND-.*-hops\/" # before
   grep "\/e21f19.*-$BAND-.*-hops\/" # after
 
-Also, in stage 6, instead of looping over a date range from 3762 to 3769 in *1.convert* and *3.average*, loop only once over 3769.
+(3) Also, in stage 6, instead of looping over a date range from 3762 to 3769 in *1.convert* and *3.average*, loop only once over 3769.
