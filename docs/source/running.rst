@@ -65,7 +65,9 @@ While reducing 230 GHz data, replace the contents of *hops-b1/1.+flags_wins/cf1_
 *hops-b1/1.+flags_wins/cf1_flags_e21f19* is the only control file pertinent to 345 GHz data reduction.
 Hence, the other control files containing the flags (prefixed *cf1_flags_*) can safely be deleted from the working copy of the repo if only 345 GHz data are being processed.
 
-Also, there is no need to symlink all the data from the archive. This can be accomplished by changing the grep clause in *hops-b1/0.bootstrap/bin/2.link* must be modified as follows::
+Also, there is no need to symlink all the data from the archive. This can be accomplished by modifying the grep clause in *hops-b1/0.bootstrap/bin/2.link* as follows::
 
   grep "\/e21.*-$BAND-.*-hops\/" # before
   grep "\/e21f19.*-$BAND-.*-hops\/" # after
+
+Also, in stage 6, instead of looping over a date range from 3762 to 3769 in *1.convert* and *3.average*, loop only once over 3769.
