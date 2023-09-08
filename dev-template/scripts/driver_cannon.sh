@@ -44,7 +44,7 @@ do
 
     if [ $stage == "6.uvfits" ]
     then
-	SET_EHTIMPATH="/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/src/eht-imaging" && SET_SRCDIR=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/calibrate/20230629_EHT2021_updateflags/230GHz/2021-april/dev-template/hops-b1/5.+close/data && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && source bin/0.launch
+	SET_EHTIMPATH="/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/src/eht-imaging" && SET_SRCDIR=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/eht2021mixedpol/calibrate/230GHz/2021-april/dev-template/hops-b1/5.+close/data && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && source bin/0.launch
         source bin/1.convert
         source bin/2.import
         python bin/3.average
