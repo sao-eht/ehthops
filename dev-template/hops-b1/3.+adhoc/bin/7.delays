@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
 # set polarization state of correlated products
-mixed=true
+mixed=false
 
 echo "7. Compute delay offsets"
 
 cd $WRKDIR
 
-if [ mixed -eq true ]; then
+if [[ "$mixed" == "true" ]]; then
     alma_delayoffs -c -m $DATADIR/alist.v6 > $DATADIR/cf4_delays 2> log/delays.err
-elif [ mixed -eq false ]; then
+elif [[ "$mixed" == "false" ]]; then
     alma_delayoffs -c $DATADIR/alist.v6 > $DATADIR/cf4_delays 2> log/delays.err
 else
     echo "Invalid value for mixed: $mixed"
