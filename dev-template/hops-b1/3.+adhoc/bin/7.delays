@@ -1,18 +1,27 @@
 #!/usr/bin/env bash
 
+# Run script as
+# source 7.delays true  (for mixed pol data)
+# source 7.delays false (for polconverted data)
+
 # set polarization state of correlated products
-mixed=false
+if [[ $# -ne 1 ]]; then
+    mixedpol=false
+    echo "Using default: mixedpol=$mixedpol"
+else
+    mixedpol=$1
+fi
 
 echo "7. Compute delay offsets"
 
 cd $WRKDIR
 
-if [[ "$mixed" == "true" ]]; then
+if [[ "$mixedpol" == "true" ]]; then
     alma_delayoffs -c -m $DATADIR/alist.v6 > $DATADIR/cf4_delays 2> log/delays.err
-elif [[ "$mixed" == "false" ]]; then
+elif [[ "$mixedpol" == "false" ]]; then
     alma_delayoffs -c $DATADIR/alist.v6 > $DATADIR/cf4_delays 2> log/delays.err
 else
-    echo "Invalid value for mixed: $mixed"
+    echo "Invalid value for mixedpol: $mixedpol"
 fi
 
 echo >> $DATADIR/cf4_delays
