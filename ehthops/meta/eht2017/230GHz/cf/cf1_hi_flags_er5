@@ -1,0 +1,14 @@
+* ALMA zero-visibility data error in Rev5 high band
+
+if scan 095-090800 and station A
+    stop -88
+
+if scan 096-161100 and station A
+    stop -44
+
+if scan 097-203900 and station A
+    stop -80
+
+if scan 101-135500 and station A
+    stop -194
+

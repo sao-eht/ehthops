@@ -1,0 +1,15 @@
+* additional flags from ER4 inspection
+
+* REMOVE flag for Rev5
+* * time when ALMA was NOT polconverted, identified from high polfrac in AX
+* * verified to include all ALMA R-L delay outliers
+* 
+* if scan 095-080600 and station A skip true
+* if scan 095-081400 and station A skip true
+* if scan 095-082900 and station A skip true
+* if scan 095-083900 and station A skip true
+* if scan 095-084900 and station A skip true
+* if scan 101-082100 and station A skip true
+* if scan 101-083000 and station A skip true
+* if scan 101-083900 and station A skip true
+

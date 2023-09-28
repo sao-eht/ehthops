@@ -1,0 +1,3 @@
+* apparent bad adhoc phase timing in APEX due to VEX start_offset parameter
+if station X and scan 097-051800 to 097-051850
+    skip true

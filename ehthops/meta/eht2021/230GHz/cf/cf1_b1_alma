@@ -1,0 +1,3 @@
+* custom mbd-sbd offset to handle IF phase jump in ALMA
+if station A pc_delay_l -1.8
+if station A pc_delay_r -1.8

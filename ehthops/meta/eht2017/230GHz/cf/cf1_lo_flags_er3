@@ -1,0 +1,54 @@
+* additional flags based on ER1 results
+
+if scan 096-053400 and station S
+  skip true  * false fringes in low band (not understood)
+if scan 096-053400 and station R
+  skip true  * false fringes in low band (not understood)
+
+if scan 100-051700 and station S
+  skip true  * no sensitivity in SMA, low correlation SR, recording issue, R seems OK
+
+* additional flags from scan log and data inspection
+
+if scan 100-004600 to 100-010800 and station J
+  skip true * JCMT left in phased sum
+
+* additional SPT flags from Vincent (1/9/2018)
+
+if scan 100-035900 and station Y
+  start -18
+
+if scan 100-043700 and station Y
+  stop -36
+
+* from Vincent 1/16/2018
+
+if station A and scan 096-142500
+  start -30
+
+* Take out these flags and revisit in Rev3
+*
+* * prob incomplete polconv at end of ALMA data low and high
+* 
+* if station A and scan 101-091300
+*   stop -10
+* 
+* if station A and scan 101-124100
+*   stop -30
+* 
+* if station A and scan 096-073400
+*   start -50
+* 
+* if station A and scan 096-101200
+*   stop -60 * overwrites an existing low band flag (X)
+
+* LMT dropout in LOW band only
+
+if station L and scan 101-035800
+  start -260
+
+* SMT scan was probalby off-source (suspicious notes in log and no detection)
+
+if station Z and scan 097-193700
+    skip true
+

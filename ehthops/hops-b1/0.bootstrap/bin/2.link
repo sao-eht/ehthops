@@ -1,10 +1,36 @@
 #!/usr/bin/env bash
 
+# USAGE: source 2.link (for polconverted data) or
+#        source 2.link -m (for mixedpol data)
+
+mixedpol=false
+
+OPTIND=1 # so that getopts can pick up the arguments when the script is 'source'd
+
+while getopts "m" opt; do
+        case $opt in
+                m)
+                        mixedpol=true
+                        ;;
+        esac
+done
+
+echo "mixedpol is $mixedpol"
+
+if [[ "$mixedpol" = true ]]; then
+	echo "Replacing polconverted ALMA data with non-polconverted data..."
+else
+	echo "NOT replacing polconverted ALMA data with non-polconverted data..."
+fi
+
 echo "1. Linking HOPS directories"
 echo "  Container work directory, WRKDIR: \"$WRKDIR\""
 echo "  Container data source, SRCDIR:    \"$SRCDIR\""
+echo "  Metadata directory, METADIR:    \"$METADIR\""
 echo "  Container Corr release(s), CORRDAT \"$CORRDAT\""
 echo "  Container HOPS data output, DATADIR:    \"$DATADIR\""
+echo "  Band, BAND:        $BAND"
+echo "  Observing frequency, OBSFREQ:        $OBSFREQ"
 
 cd "$WRKDIR"
 mkdir -p "$DATADIR" tests temp log
@@ -12,10 +38,13 @@ mkdir -p "$DATADIR" tests temp log
 # add some more token delimiters
 IFS=$' \t\n:,'
 
+# set dirname pattern to match while linking
+year=$(echo $SRCDIR | sed 's|.*/archive/20\(..\).*$|\1|')
+
 # Create and populate $DATADIR
 for d in $CORRDAT
 do
-    find -L $SRCDIR/$d -mindepth 4 -maxdepth 4 -type d | grep "\/e21.*-$BAND-.*-hops\/" |
+    find -L $SRCDIR/$d -mindepth 4 -maxdepth 4 -type d | grep "\/e$year.*-$BAND-.*-hops\/" |
         while read path; do
             # /data/2018-april/corr/Rev1-Sci/e18e22-sgra-sci/e18e22-1-b3-sgra-SGRA-hops/3645/112-0850
             # Symlink the source data files
@@ -23,12 +52,33 @@ do
             if [ ! -d "$DATADIR/$scan" ]; then
                 mkdir -p "$DATADIR/$scan"
                 cp -s $path/* "$DATADIR/$scan"
+		# for mixed pol data reduction, remove polconverted ALMA data
+		if [[ $mixedpol == true ]]; then
+			find "$DATADIR/$scan" -type l -regex "$DATADIR/$scan/A[A-Z]\.\..*" -exec rm {} \;
+			find "$DATADIR/$scan" -type l -regex "$DATADIR/$scan/A\.\..*" -exec rm {} \;
+			#find "$DATADIR/$scan" -type l -regex "$DATADIR/$scan/[A-Z0-9]+\.[A-Z0-9]+" -exec rm {} \;
+		fi
             fi
             # below is not needed at find depth 4
             # Remove the log to avoid overwrite errors
             # rm -f "$DATADIR/$(basename $path)"/difx2mark4-*.log
         done
 done
+
+# for mixed pol data reduction, copy ALMA data from haxp directories
+if [[ $mixedpol == true ]]; then
+        for d in $CORRDAT
+        do
+            find -L $SRCDIR/$d -mindepth 4 -maxdepth 4 -type d | grep "\/e$year.*-$BAND-.*-haxp\/" |
+                while read path; do
+        	    # hack path to replace 'haxp' with 'hops'
+        	    modpath=$(echo $path | awk -v replace="hops" '{gsub("haxp", replace)}1')
+                    # Symlink the source data files
+                    scan=$(awk -F 'hops/' '{print $(NF)}' <<< $modpath)
+                    cp -s $path/* "$DATADIR/$scan"
+                done
+        done
+fi
 
 # Rename silly root files to standard names
 find "$DATADIR" -name '*_3*' |
@@ -39,3 +89,8 @@ find "$DATADIR" -name '*_3*' |
         # Symlinking instead of renaming
         # ln -s $(realbad "$bad") "$new"
     done
+
+# unset variables set using command line arguments and set them again in future steps if necessary to avoid behavioural ambiguity between './' and 'source' for running shell scripts.
+# 'source' will keep these variable definitions while './' will not.
+unset mixedpol
+unset year

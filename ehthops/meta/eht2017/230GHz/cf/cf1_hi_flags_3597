@@ -1,0 +1,182 @@
+*
+* These flags are for e17d05-1-hi
+*
+
+if scan 094-223100 to 094-224900 and station L
+  skip true  *log: off source
+
+if scan 094-225300 and station X
+  skip true  *data + log: suspect
+
+if scan 094-230400 and station Z
+  start -3   *data
+if scan 094-230400 and station P
+  start -10  *data
+if scan 094-230400 and station L
+  start -330 *log: late
+
+if scan 094-231900 and station A
+  start -100 *data + log: late
+
+if scan 094-234400 and station L
+  start -70  *log: late
+
+if scan 094-235500 to 095-003800 and station L
+  skip true  *log: off source
+
+if scan 095-000900 and station A
+  start -150 *data + log: late
+
+if scan 095-000900 and station X
+  skip true  *log: off source
+
+if scan 095-010000 and station L
+  start -160 *log: late
+if scan 095-010000 and station A
+  start -180 *data + log: late
+if scan 095-010000 and station X
+  start -285 *data
+if scan 095-010000 and station S
+  skip true  *log: phasing off
+
+if scan 095-011000 and station L
+  start -90  *log: late
+if scan 095-011000 and station S
+  skip true  *log: phasing off
+if scan 095-011000 and station P
+  skip true  *data: drops out after 7 seconds
+
+if scan 095-011000 to 095-015600 and station X
+  skip true  *log: off source
+
+if scan 095-015900 to 095-022100 and station L 
+  skip true  *log: off source
+
+if scan 095-021400 and station A
+  start -105 *data + log: late
+
+if scan 095-022500 and station L
+  start -80  *log: late
+
+if scan 095-025800 and station A
+  start -12  *data + log: small ALMA early
+
+if scan 095-031000 and station J
+  start -10  *data
+
+if scan 095-034500 and station Z
+  start -40  *data + log: late
+
+if scan 095-035900 to 095-065400 and station X
+  skip true  *log: off source
+
+if scan 095-051100 to 095-053400 and station Z
+  skip true  *log: off source
+
+if scan 095-054900 and station R
+  skip true  *log: off source
+if scan 095-054900 and station S
+  skip true  *log: off source
+
+if scan 095-055700 and station L
+  skip true  *log: off source
+
+if scan 095-061200 and station A
+  start -210 *data + log: late
+
+* edited for ER5
+if scan 095-065000 and station L
+  start -16  *data
+
+if scan 095-070900 to 095-075100 and station X
+  skip true  *log: off source
+
+if scan 095-074700 and station Z
+  skip true  *log: off source
+
+if scan 095-080600 and station J
+  start -65  *data + log: late
+
+if scan 095-082900 and station R
+  stop -25   *log: Tsys
+if scan 095-082900 and station S
+  stop -25   *log: Tsys
+if scan 095-082900 and station L
+  skip true  *log: off source
+
+if scan 095-084900 and station L
+  start -20  *log: late
+
+if scan 095-090800 and station Z
+  skip true  *log: off source
+
+*----last scan inspected by data---
+* Scans 0059 and later don't have ALMA
+
+if scan 095-092300 and station X
+  skip true  *log: off source
+
+if scan 095-095400 and station X
+  stop -170  *data
+
+if scan 095-100500 and station L
+  skip true  *log: off source
+if scan 095-100500 and station Y
+  skip true  *log: off source
+
+if scan 095-101200 and station X
+  start -370 *log: late
+
+if scan 095-103600 and station X
+  start -80  *data
+if scan 095-103600 and station Z
+  skip true  *log: off source
+
+if scan 095-104500 and station L
+  skip true  *log: off source
+if scan 095-104500 and station Y
+  skip true  *log: off source
+
+if scan 095-113600 and station S
+  skip true  *log: ant 1 not tracking
+
+if scan 095-114800 and station L
+  skip true  *log: off source
+
+if scan 095-115600 and station X
+  start -130 *log: late
+if scan 095-115600 and station L
+  start -250 *log: late
+
+if scan 095-120900 and station X
+  start -130 *log: late
+
+if scan 095-122300 and station L
+  skip true  *log: off source
+
+if scan 095-123000 and station L
+  start -515 *log: late
+
+if scan 095-125700 and station L
+  skip true  *log: off source
+
+if scan 095-135500 to 095-145400 and station L
+  skip true  *log: off source
+
+if scan 095-143100 to 095-144600 and station Z
+  skip true  *log: off source
+
+if scan 095-150500 and station X
+  skip true  *log: off source
+
+if scan 095-150500 to 095-170700 and station L
+  skip true  *log: off source
+
+if scan 095-155800 and station J
+  skip true  *log: off source
+
+if scan 095-161200 to 095-164600 and station X
+  skip true  *log: off source
+
+if scan 095-161900 and station J
+  skip true  *log: off source

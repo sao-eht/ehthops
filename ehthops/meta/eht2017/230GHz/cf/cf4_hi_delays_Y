@@ -1,0 +1,14 @@
+* manual delays high band because no ALMA-SPT on D05, note R-L flipped day 1 high band Rev3 and Rev5
+
+* delay_off_l [LCP] because of polarization label swap during high band correlation
+
+* these are the Rev3/Rev5 values due to the high band polarization swap at correlation
+* if station Y and scan 094-205959 to 095-210001
+*     delay_offs_l abcdefghijklmnopqrstuvwxyzABCDEF 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010 4.5010
+*     pc_delay_l 4.5010
+
+* Rev7 does not have the polarization swap
+if station Y and scan 094-205959 to 095-210001
+    delay_offs_r abcdefghijklmnopqrstuvwxyzABCDEF 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830 4.4830
+    pc_delay_r 4.4830
+

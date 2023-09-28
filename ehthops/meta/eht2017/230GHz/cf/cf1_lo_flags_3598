@@ -1,0 +1,187 @@
+* Flags from Vincent (3598_c2_flags)
+
+* X many scans missed on one recorder or the other
+* There are probably a lot of dropouts on the other scans too!
+
+* Y probably mispointed from beginning (096-0750)
+
+if scan 096-005200 and station L
+  skip true
+
+* P: unpointed 096-0046 to 096-0120, bad pointing 096-1505
+
+if scan 096-010400 and station X
+  stop -150
+
+if scan 096-015800 and station A
+  start -10
+if scan 096-015800 and station X
+  stop -130
+
+if scan 096-023600 and station A
+  start -65
+if scan 096-023600 and station P
+  start -120
+
+*if scan 096-024200 and station P
+*  start ??
+
+*if scan 096-025400 and station P
+*  skip true ??
+
+if scan 096-030000 and station Z
+  skip true
+
+if scan 096-031800 and station Z
+  skip true
+
+if scan 096-035000 and station X
+  stop -90
+
+if scan 096-035600 and station X
+  stop -290
+
+* 0414 has dropout in middle, station X
+
+if scan 096-043200 and station X
+  stop -325
+
+if scan 096-044600 and station X
+  stop -120
+
+* 0452 has further dropout in middle of scan, station X
+if scan 096-045200 and station X
+  stop -270
+
+if scan 096-050200 and station X
+  stop -100
+
+if scan 096-050800 and station X
+  stop -150
+
+if scan 096-051800 and station X
+  stop -150
+
+if scan 096-052400 and station X
+  stop -340
+
+* S: 096-0534 was below limit
+if scan 096-053400 and station X
+  stop -152
+
+if scan 096-055400 and station X
+  stop -160
+
+if scan 096-060000 and station X
+  stop -270
+
+if scan 096-061000 and station Z
+  skip true
+if scan 096-061000 and station X
+  stop -75
+  start -7
+
+* Z: 0616 bad? 
+if scan 096-061600 and station X
+  stop -305
+
+if scan 096-062600 and station X
+  stop -60
+
+if scan 096-063200 and station X
+  skip true
+
+if scan 096-064800 and station X
+  stop -335
+
+if scan 096-070800 and station X
+  stop -110
+
+if scan 096-071800 and station A
+  stop -20
+
+* Dropouts in 0750 station A
+
+* Z: 0817 0854 0905 1041 trees
+
+if scan 096-082400 and station X
+  stop -410
+
+if scan 096-083500 and station X
+  stop -140
+
+if scan 096-084700 and station X
+  stop -150
+  start -8
+
+if scan 096-091800 and station X
+  stop -120
+
+* Did LMT fail after the beginning of 0938?
+if scan 096-093800 and station L
+  skip true
+if scan 096-093800 and station X
+  stop -52
+
+if scan 096-085400 and station X
+  skip true
+
+if scan 096-090500 and station X
+  skip true
+
+if scan 096-092600 and station X
+  skip true
+
+if scan 096-094900 and station A
+  start -420
+*if scan 096-094900 and station X
+  *do something here
+
+if scan 096-100000 and station X
+  stop -400
+
+if scan 096-101200 and station X
+  stop -50
+
+if scan 096-101900 and station X
+  stop -350
+
+if scan 096-103000 and station X
+  stop -405
+
+if scan 096-105900 and station X
+  stop -400
+
+if scan 096-112100 and station X
+  stop -435
+
+if scan 096-113200 and station X
+  stop -330
+
+if scan 096-114400 and station X
+  stop -120
+
+if scan 096-115100 and station X
+  stop -165
+
+if scan 096-120200 and station X
+  stop -245
+
+if scan 096-122100 and station X
+  stop -395
+
+if scan 096-123700 and station X
+  stop -320
+
+if scan 096-135300 and station X
+  start -20
+  stop -150
+
+if scan 096-140400 and station X
+  stop -285
+
+if scan 096-143700 and station X
+  stop -160
+
+if scan 096-144400 and station X
+  stop -185

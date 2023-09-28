@@ -1,0 +1,83 @@
+if scan 100-221600 to 101-020600 and station L
+  skip true  *log: off source
+
+* What happened to scan No0007?
+
+if scan 100-234300 and station P
+  start -40  *log: late
+
+if scan 101-011500 and station X
+  stop -310  *data
+
+if scan 101-013800 and station A
+  start -35  *data + log
+
+if scan 101-023330 and station P
+  skip true  *log: off source
+
+if scan 101-024800 and station A
+  start -35  *data + log
+
+if scan 101-030930 and station P
+  skip true  *log: off source
+
+if scan 101-032200 and station X
+  start -160 *data + log: late
+
+if scan 101-035800 and station L
+  start -260 *log: late
+
+if scan 101-044430 and station X
+  stop -30   *data
+
+* edited for ER5
+if scan 101-090000 and station L
+  start -84  *log: late
+if scan 101-090000 and station X
+  skip true  *log: late
+
+if scan 101-092000 and station X
+  skip true  *log: late
+
+* edited for ER5
+if scan 101-095400 and station L
+  start -60  *data
+
+if scan 101-100700 and station L
+  stop -45   *data
+if scan 101-100700 and station A
+  stop -50   *data: weird low/high points
+
+if scan 101-103600 and station A
+  start -75  *data + log: late
+if scan 101-103600 and station X
+  skip true  *log: off source
+
+if scan 101-105300 and station R
+  start -40  *log: late
+if scan 101-105300 and station S
+  start -40  *log: late
+
+if scan 101-120800 and station A
+  skip true  *log: off source
+if scan 101-120800 and station A
+  skip true  *log: off source
+
+if scan 101-121500 and station L
+  start -20  *log: late
+if scan 101-121500 and station A
+  start -60  *data + log: late
+
+if scan 101-132400 and station A
+  start -75  *data + log: late
+if scan 101-132400 and station L
+  skip true  *log: off source
+
+if scan 101-133500 and station L
+  start -110 *log: late
+
+if scan 101-144200 and station L
+  skip true  *log: off source
+
+if scan 101-145300 and station L
+  start -310 *log: late

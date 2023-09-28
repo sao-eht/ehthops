@@ -1,0 +1,6 @@
+* additional flags based on looking at Rev3-Sci data
+
+* REMOVE flag for Rev5
+* * ALMA was NOT polconverted, some LZ data
+* if scan 096-085400 and station A skip true
+

@@ -1,0 +1,113 @@
+* J: may be out of focus/mispointed 0410 0419
+* L: may be mispointed 0535 0606
+* X: Bad timeranges on AX baseline are for LCP
+* X: Partial valid data in RCP in some of the excluded ranges
+
+if scan 100-220000 to 101-021000 and station L
+  skip true
+
+if scan 100-231600 and station A
+  start -20
+
+if scan 100-234300 and station P
+  start -40
+
+if scan 101-004100 and station X
+  stop -335
+
+if scan 101-012400 and station X
+  stop -280
+
+if scan 101-013800 and station A
+  start -30
+
+* edited for ER5 (but no data anyway)
+if scan 101-023330 and station P
+  skip true
+
+if scan 101-024800 and station A
+  start -40
+
+* edited for ER5 (but no data anyway)
+if scan 101-030930 and station P
+  skip true
+
+if scan 101-032200 and station X
+  start -160
+
+if scan 101-044430 and station X
+  stop -20
+
+if scan 101-051500 and station X
+  stop -240
+
+if scan 101-052400 and station X
+  stop -150
+
+if scan 101-062900 and station X
+  stop -105
+
+if scan 101-070000 and station X
+  stop -250
+
+if scan 101-071100 and station X
+  stop -210
+
+if scan 101-073600 and station X
+  stop -330
+
+if scan 101-081200 and station X
+  stop -180
+
+* edited for ER5
+if scan 101-090000 and station L
+  start -84
+if scan 101-090000 and station X
+  skip true
+
+if scan 101-092000 and station X
+  skip true
+
+* edited for ER5
+if scan 101-095400 and station L
+  start -60
+
+* edited for ER5
+if scan 101-100700 and station L
+  stop -45
+
+if scan 101-103600 and station A
+  start -80
+if scan 101-103600 and station X
+  skip true
+
+if scan 101-105300 and station S
+  start -40
+if scan 101-105300 and station R
+  start -40
+
+if scan 101-112000 and station X
+  stop -70
+
+if scan 101-120800 and station L
+  skip true
+if scan 101-120800 and station A
+  skip true
+
+if scan 101-121500 and station A
+  start -60
+
+if scan 101-132400 and station A
+  start -70
+if scan 101-132400 and station L
+  skip true
+
+if scan 101-133500 and station L
+  start -110
+
+if scan 101-144200 and station L
+  skip true
+
+if scan 101-145300 and station L
+  stop -190
+

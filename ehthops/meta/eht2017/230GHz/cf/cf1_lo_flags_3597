@@ -1,0 +1,227 @@
+* from Vincent's original draft CF
+
+if scan 094-223100 to 094-225200 and station L
+  skip true
+
+if scan 094-224200 and station X
+  stop -310
+
+if scan 094-225300 and station L
+  skip true  * multiple dropouts
+if scan 094-225300 and station X
+  stop -365
+
+if scan 094-230400 and station A
+  start -10
+if scan 094-230400 and station L
+  start -395
+
+if scan 094-231900 and station A
+  start -110
+
+if scan 094-234400 and station L
+  start -70
+if scan 094-234400 and station X
+  stop -120
+
+if scan 094-235500 to 095-003500 and station L
+  skip true
+if scan 094-235500 and station P
+  start -5
+if scan 094-235500 and station X
+  stop -320
+
+if scan 095-000900 and station A
+  start -150
+if scan 095-000900 and station X
+  skip true
+
+if scan 095-003100 and station X
+  *stop -340
+  skip true
+
+if scan 095-010000 to 095-012000 and station S
+  skip true
+
+if scan 095-010000 and station A
+  start -180
+if scan 095-010000 and station X
+  skip true
+
+if scan 095-011000 to 095-015400 and station X
+  skip true
+
+if scan 095-011000 and station L
+  start -80
+if scan 095-011000 and station P
+  skip true
+
+if scan 095-015900 to 095-021900 and station L
+  skip true
+
+if scan 095-021400 and station A
+  start -105
+
+if scan 095-022500 and station L
+  start -50
+if scan 095-022500 and station X
+  stop -140
+
+if scan 095-025800 and station A
+  start -10
+
+if scan 095-031000 and station J
+  start -10
+
+if scan 095-034500 and station Z
+  start -40
+
+if scan 095-035900 to 095-075400 and station X
+  skip true
+
+if scan 095-051100 to 095-053500 and station Z
+  skip true
+
+if scan 095-054900 and station S
+  skip true
+if scan 095-054900 and station R
+  skip true
+
+if scan 095-055700 and station L
+  skip true
+
+if scan 095-061200 and station A
+  start -205
+
+* edited for ER5
+if scan 095-065000 and station L
+  start -16
+
+if scan 095-074700 and station Z
+  skip true
+
+if scan 095-080600 and station J
+  start -70
+
+if scan 095-082900 and station L
+  skip true
+if scan 095-082900 and station S
+  stop -30
+if scan 095-082900 and station R
+  stop -30
+if scan 095-082900 and station J
+  stop -30
+
+if scan 095-084900 and station L
+  start -5
+
+if scan 095-090800 and station Z
+  skip true
+
+if scan 095-092300 to 095-101000 and station Y
+  skip true
+
+* if scan 095-092300 and station X
+*  skip true
+
+if scan 095-093500 and station X
+  stop -120
+
+if scan 095-100500 and station L
+  skip true
+if scan 095-100500 and station X
+  stop -105
+
+if scan 095-101200 and station X
+  start -360
+
+if scan 095-102500 and station X
+  stop -315
+
+if scan 095-103600 and station Z
+  skip true
+if scan 095-103600 and station X
+  stop -210
+
+if scan 095-104500 and station L
+  skip true
+if scan 095-104500 and station Y
+  skip true
+if scan 095-104500 and station X
+  stop -55
+
+if scan 095-105200 and station X
+  stop -540
+
+if scan 095-114800 and station L
+  skip true
+
+if scan 095-115600 and station X
+  start -150
+if scan 095-115600 and station L
+  start -240
+
+if scan 095-120900 and station X
+  start -120
+  stop -335
+
+if scan 095-122300 and station L
+  skip true
+* if scan 095-122300 and station X
+*  skip true
+
+if scan 095-123000 and station L
+  start -510
+
+if scan 095-125700 and station L
+  skip true
+
+if scan 095-135500 to 095-145400 and station L
+  skip true
+if scan 095-135500 and station J
+  stop -110
+
+if scan 095-141900 and station X
+  start -120
+
+if scan 095-143100 to 095-144500 and station Z
+  skip true
+
+if scan 095-143100 and station X
+  stop -90
+
+if scan 095-144900 and station X
+  start -120
+
+if scan 095-150500 to 095-180000 and station L
+  skip true
+
+if scan 095-150500 and station X
+  skip true
+
+if scan 095-152600 and station X
+  stop -110
+
+if scan 095-155800 and station J
+  skip true
+
+if scan 095-155800 and station X
+  stop -105
+
+if scan 095-161200 to 095-164500 and station X
+  skip true
+
+if scan 095-161900 and station J
+  skip true
+
+
+
+* A: 0450 has dropout in middle
+* L: 0942 may be mispointed, 0954 too
+* Z: 2231 may be in trees, 2242 may not be great either
+* Z: 0138 may be behind LBT
+* Z: 0538 may be mispointed
+* S: 1136 one of the antennas stopped tracking source
+* X: bad spots in middle of 0849 0859
+* X: 1547 lost on one of the recorders
+* Y: potential problems in 1012 1025 1619

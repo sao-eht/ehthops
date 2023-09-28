@@ -7,4 +7,4 @@
 #SBATCH -o slurm-%j.out
 
 # run script
-./driver_cannon.sh
+source driver_cannon.sh

@@ -1,0 +1,90 @@
+* may want to skip all of SWARM before 100-033500
+
+if scan 099-230000 to 100-004000 and station L
+  skip true  *log: off source
+
+if scan 100-004600 to 100-011500 and baseline JS
+  skip true  *log: JCMT supposedly in phased sum, but then why are amplitudes low?
+
+if scan 100-012300 and station A
+  start -25  *data
+if scan 100-012300 and station X
+  stop -165  *data
+
+if scan 100-022100 and station A
+  start -50  *data + log: late
+if scan 100-022100 and station L
+  skip true  *log: off source
+
+if scan 100-030100 and station X
+  start -35  *data
+
+if scan 100-035900 and station L
+  start -150 *log: late
+
+if scan 100-040700 and station X
+  stop -150  *data
+
+if scan 100-051700 and station A
+  start -100 *data and log: late
+
+* first minute of 100-0611 looks like A is having trouble with phasing
+
+if scan 100-063100 and station Y
+  start -30  *log: late
+
+if scan 100-064900 and station X
+  start -50  *data
+if scan 100-064900 and station Y
+  skip true  *log: off source
+
+if scan 100-065700 and station Y
+  skip true  *log: off source
+
+if scan 100-073800 and station A
+  start -60  *data + log: late
+
+* first minute of 100-0822 looks like A is having trouble with phasing
+
+if scan 100-084300 and station A
+  start -105 *data + log: late
+
+if scan 100-084300 and station J
+  skip true  *log: off source
+
+* 0901: either J or S needs a stop -140
+
+* why is amplitude so high at start of 100-0909 on AL?
+* JS amplitude is weird on 100-0909 too
+
+if scan 100-093300 and station X
+  stop -135  *data
+
+if scan 100-095700 and station L
+  skip true  *log: off source
+
+if scan 100-101200 and station X
+  start -160 *log: late
+if scan 100-101200 and station L
+  skip true  *log: off source
+
+if scan 100-102100 and station J
+  skip true  *log: off source
+
+if scan 100-103200 and station Y
+  skip true  *log: off source ?
+
+if scan 100-112300 and station Y
+  start -70  *log: late
+
+if scan 100-115000 and station X
+  stop -40   *log: started calibration too early
+
+if scan 100-124100 and station L
+  start -400 *log: late
+
+if scan 100-131600 and station L
+  start -30  *log: late
+
+if scan 100-135400 and station L
+  start -550 *log: late
