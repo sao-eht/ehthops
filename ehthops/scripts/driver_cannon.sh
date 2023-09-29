@@ -13,7 +13,7 @@ do
 
     if [ $stage != "6.uvfits" ]
     then
-        SET_SRCDIR=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/archive/2021March/extracted && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && source bin/0.launch -f 230
+        SET_SRCDIR=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/archive/2021March/extracted && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && source bin/0.launch -f 230 -t eht
         source bin/1.version
         source bin/2.link #-m # for mixedpol
         source bin/3.fourfit
