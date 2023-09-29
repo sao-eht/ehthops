@@ -5,7 +5,7 @@
 
 OPTIND=1 # so that getopts can pick up the arguments when the script is 'source'd
 
-while getopts "ft:" opt; do
+while getopts "f:t:" opt; do
         case $opt in
                 f)
                         OBSFREQ=$OPTARG
@@ -38,7 +38,7 @@ SHRDIR=${SET_SHRDIR:-"$TOPDIR/../share"}      # location of shared resources (su
 METADIR=${SET_METADIR:-"$TOPDIR/../meta"}     # location of META tables, ZBL flux estimates for netcal, etc
 
 OBSFREQ=${SET_OBSFREQ:-"$OBSFREQ"}            # observing frequency: 230 or 345 (GHz)
-TELESCOPE=${SET_TELESCOPE:-"$TELESCOPE"}            # observing frequency: 230 or 345 (GHz)
+TELESCOPE=${SET_TELESCOPE:-"$TELESCOPE"}            # Telescope/facility name
 
 # for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
 year=$(echo $SRCDIR | sed 's|.*/archive/20\(..\).*$|\1|')
