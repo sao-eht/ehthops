@@ -23,7 +23,21 @@ SRCDIR=${SET_SRCDIR:-"$TOPDIR/5.+close/data"} # single input data location for c
 SHRDIR=${SET_SHRDIR:-"$TOPDIR/../share"}      # location of shared resources (summary notebooks, etc)
 METADIR=${SET_METADIR:-"$TOPDIR/../meta"}     # location of META tables, ZBL flux estimates for netcal, etc
 
-BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
+#BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
+
+# for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
+year=$(echo $SRCDIR | sed 's|.*/archive/20\(..\).*$|\1|')
+
+if [[ $year = "17" ]]; then
+	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
+	if [[ $BAND = "b3" ]]; then
+		BAND="lo"
+	elif [[ $BAND = "b4" ]]; then
+		BAND="hi"
+	fi
+else
+	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
+fi
 
 EHTIMPATH=${SET_EHTIMPATH:-"/usr/local/src/ehtim/"} # path to ehtim source (usually in dev branch)
 
