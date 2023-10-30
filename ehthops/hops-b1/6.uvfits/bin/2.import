@@ -10,7 +10,7 @@
 observation='EHT2021' # observation code recognizable by eat -- 'EHT2017', 'EHT2018', 'EHT2021'
 pipeline_name='hops' #just a label
 path_out="$WRKDIR/" #where to dump output
-path_vex="$METADIR/VEX/" #vex for meaningful scan-averaging
+path_vex="$METADIR/eht2021/VEX/" #vex for meaningful scan-averaging
 path_ehtim="$EHTIMPATH" # ehtim in dev branch
 filend='.uvfits' #how do filenames end
 polrep='circ'
