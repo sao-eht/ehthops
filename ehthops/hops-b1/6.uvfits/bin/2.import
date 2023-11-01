@@ -6,57 +6,46 @@
 # CHANGED TO PROCESS WORKING DIRECTORY (NOT PREVIOUS SRCDIR)
 # LLB 2/11/2020
 
-#COMMON STUFF
+# UPDATED TO USE THE NEW IMPORT_UVFITS.PY FROM THE EAT LIBRARY
+# IN 31/Oct/2023
+
+# common parameters
 observation='EHT2021' # observation code recognizable by eat -- 'EHT2017', 'EHT2018', 'EHT2021'
-pipeline_name='hops' #just a label
-path_out="$WRKDIR/" #where to dump output
-path_vex="$METADIR/eht2021/VEX/" #vex for meaningful scan-averaging
-path_ehtim="$EHTIMPATH" # ehtim in dev branch
-filend='.uvfits' #how do filenames end
+outdir="$WRKDIR/" #where to dump output
+vexdir="$METADIR/eht2021/VEX/" #vex for meaningful scan-averaging
+ehtimpath="$EHTIMPATH" # ehtim in dev branch
+infileext='uvfits' #input filename extension
 polrep='circ'
-out_type='both' #'pic', 'hdf' or 'both'
+outfiletype='both' #'hdf5', 'pickle', 'both'
 
+# band-specific parameters
+datadir="$WRKDIR/" #data to process
+band="$BAND" #label to denote band (e.g. 'b1') derived from environment variable
 
-############################
-# ONE BAND ONLY
-############################
-
-path_data_0="$WRKDIR/" #data to process
-bandname="$BAND" #just a label
 mkdir -p log
 
 # FIRST: COHERENT SCAN-LONG AVERAGE
-out_name='vis_sc'
-tavg='scan'
+idtag='vis_sc'
+tavg=-1.0 # -1.0 => scan-average
 
-/usr/bin/time -v \
-import_uvfits.py --filend $filend \
---bandname $bandname --path_vex $path_vex --tavg $tavg --polrep $polrep --ehtdir $path_ehtim \
---outname $out_name --outdir $path_out --observation $observation --pipeline $pipeline_name --out_type $out_type --datadir $path_data_0 \
->  log/import-sc.log \
-2> log/import-sc.err &
+/usr/bin/time -v import_uvfits.py $datadir $vexdir $outdir --band $band --infileext $infileext --tavg $tavg --polrep $polrep --ehtimpath $ehtimpath \
+--idtag $idtag --observation $observation --outfiletype $outfiletype > log/import-sc.log 2> log/import-sc.err &
 
 # SECOND: COHERENT 10s AVERAGE AND SAVE CLOSURE QUANTITIES
-out_name='vis_10s'
-tavg=10.
-tavg_closures='scan'
+idtag='vis_10s'
+tavg=10. # 10 second average
+tavgclosure=10. # or -1.0 => scan average
+closure='both' # both 'cphase' and 'lcamp'
 
-/usr/bin/time -v \
-import_uvfits.py --filend $filend \
---bandname $bandname --path_vex $path_vex --tavg $tavg --polrep $polrep --ehtdir $path_ehtim \
---outname $out_name --outdir $path_out --observation $observation --pipeline $pipeline_name --out_type $out_type --datadir $path_data_0 --cphase \
->  log/import-10s.log \
-2> log/import-10s.err &
+/usr/bin/time -v import_uvfits.py $datadir $vexdir $outdir --band $band --infileext $infileext --tavg $tavg --polrep $polrep --ehtimpath $ehtimpath \
+--tavgclosure $tavgclosure --idtag $idtag --observation $observation --outfiletype $outfiletype --closure $closure > log/import-10s.log 2> log/import-10s.err &
 
 # THIRD: SCAN LONG INCOHERENT
-out_name='vis_sc_inc'
-tavg='scan'
+idtag='vis_sc_inc'
+tavg=-1.0 # -1.0 => scan-average
+tavgprecoh=2.0
 
-/usr/bin/time -v \
-import_uvfits.py --filend $filend \
---bandname $bandname --path_vex $path_vex --tavg $tavg --polrep $polrep --ehtdir $path_ehtim --precoh_avg_time 2. \
---outname $out_name --outdir $path_out --observation $observation --pipeline $pipeline_name --out_type $out_type --datadir $path_data_0 --incoh_avg \
->  log/import-sc_inc.log \
-2> log/import-sc_inc.err &
+/usr/bin/time -v import_uvfits.py $datadir $vexdir $outdir --band $band --infileext $infileext --tavg $tavg --polrep $polrep --ehtimpath $ehtimpath \
+--tavgprecoh $tavgprecoh --idtag $idtag --observation $observation --outfiletype $outfiletype --incoh_avg > log/import-sc_incoh.log 2> log/import-sc_incoh.err &
 
 wait $(jobs -p)
