@@ -5,8 +5,8 @@ mkdir tests temp log
 for d in {3762..3769}; do
 	mkdir -p $d
 	/usr/bin/time -v hops2uvfits.py     \
-	        --clean --uv --fix_src_name \
-	        --outdir $d $SRCDIR/$d      \
+	        --recomputeblfits --clean --recomputeuv --fixsrcname \
+	        $SRCDIR/$d $d      \
 		>  log/uvfits-$d.log        \
 		2> log/uvfits-$d.err        &
 done
