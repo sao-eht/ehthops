@@ -2,50 +2,72 @@
 Running ehthops
 ===============
 
-The ehthops pipeline consists of multiple stages, each consisting of multiple steps. A detailed description of the working of the pipeline can be found in 
+The ehthops pipeline consists of multiple stages, each consisting of multiple steps. A detailed description of how the pipeline works can be found in 
 `Blackburn et al. (2019) <https://ui.adsabs.harvard.edu/abs/2019ApJ...882...23B/abstract>`_.
 
-Directory structure
+Repository structure
 -------------------
 
 Stage 0 in band 1 (**hops-b1/0.bootstrap**) contains all the scripts that are common to all steps in each stage in each band.
 Step-specific scripts are hosted in the corresponding directory under **hops-b1**. All other bands symlink to these scripts so that only one physical copy of this set of scripts is necessary.
 
-Stages 0 and 1 in band 1 (**hops-b1/0.bootstrap** and **hops-b1/1.+flags+wins**) host the preset control files and flags.
-Other bands symlink to these control files where necessary, aside from hosting band-specific control files and flags at the corersponding stages.
+The **meta** directory hosts the metadata and is structured as follows.
+
+- meta
+  - <telescope><year>
+    - <frequency-in-GHz>GHz
+      - cf
+        - cf<stage>_b<bandno>_*
+      - SEFD
+        - b<bandno>
+          - <HOPS-expt-no>
+            - <source>_<two-letter-station-code>.txt
+    - VEX
+      - <track>.vex
+
+Currently, the metadata include HOPS control files (**cf**), VEX files (**VEX**), station and source relevant SEFDs (**SEFD**) for each observing campaign.
+
+The pipeline scripts pick the appropriate control files (from the **cf** subdirectory) and other relevant metadata during execution as long as the above directory organization and naming conventions
+are followed.
 
 Driver scripts
 --------------
 
-The *dev-template/scripts* directory contains driver scripts to run the pipeline in two different enivironments.
+The **scripts** directory contains driver scripts required to run the pipeline in two different enivironments.
 
-*driver_cannon.sh* and *hops2021.slurm* are sample scripts that can be modified to run on any SLURM cluster (e.g. the Harvard FAS cluster).
+**driver_cannon.sh** and **driver_cloud.sh** are sample scripts that can be modified to run on any SLURM cluster (e.g. Harvard FASRC) and on the eht-cloud machines respectively.
+For **driver_cloud.sh** the eht-cloud specific environment setup is done by scripts stored on the cloud.
 
-*driver_cloud.sh* is a sample script tailored to run on eht-cloud. The environment setup lines are hidden inside another script hosted on eht-cloud.
+The 
 
-The driver scripts must be run from the *dev-template/hops-bx* directories. They set the following environment variables that **must be** verified before each execution::
+The driver scripts are run from within the **hops-b<bandno>** directories. They set the following environment variables that **must be** verified before each execution::
 
    SET_SRCDIR -- sets the parent directory containing the various revisions of the data
    SET_CORRDAT -- sets the revisions to be processed as a colon-separated list of directory names
    SET_EHTIMPATH -- sets the path to the source code of eht-imaging
+   OBSFREQ -- sets the observing frequency in GHz (must match the frequency in the meta directory)
+   TELESCOPE -- sets the telescope/facility name (must match the name in the meta directory)
 
 .. note::
    At all stages from 0 to 5, SRCDIR points to the directory that hosts the archival data.
    At stage 6, SRCDIR must point to the directory '5.+close/data' in the current band.
 
-*cleanup.sh* deletes all data generated as a result of a previous run and leaves the repo at the default state.
+**cleanup.sh** deletes all data generated as a result of a previous run and leaves the repo at the default state.
 
 The pipeline can be executed by typing the following in a linux terminal or a screen session (or in the case of a SLURM cluster,
 placing this line in the script submitted to SLURM)::
 
    source <script-name>
 
-On a SLURM cluster, the above line is placed inside *hops2021.slurm* and the SLURM job can be submitted by::
+On a SLURM cluster, the above line is placed inside **ehthops.slurmconf** and the SLURM job can be submitted by running::
 
-   sbatch hops2021.slurm
+   sbatch ehthops.slurmconf
 
 .. note::
    Instructions to run as a Docker image to be added.
+
+.. note::
+   The following instructions are EHT2021 campaign-specific and will be removed from repo documentation before release.
 
 EHT2021 data specific instructions
 ----------------------------------
