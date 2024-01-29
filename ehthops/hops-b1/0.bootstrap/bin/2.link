@@ -54,9 +54,7 @@ do
                 cp -s $path/* "$DATADIR/$scan"
 		# for mixed pol data reduction, remove polconverted ALMA data
 		if [[ $mixedpol == true ]]; then
-			find "$DATADIR/$scan" -type l -regex "$DATADIR/$scan/A[A-Z]\.\..*" -exec rm {} \;
-			find "$DATADIR/$scan" -type l -regex "$DATADIR/$scan/A\.\..*" -exec rm {} \;
-			#find "$DATADIR/$scan" -type l -regex "$DATADIR/$scan/[A-Z0-9]+\.[A-Z0-9]+" -exec rm {} \;
+			rm -f $DATADIR/$scan/A?.*
 		fi
             fi
             # below is not needed at find depth 4

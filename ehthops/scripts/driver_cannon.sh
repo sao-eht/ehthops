@@ -9,7 +9,7 @@ for stage in ${stages[@]}
 do
     echo "Starting stage $stage..."
     cd $stage
-    pwd
+    echo "cd into $(pwd)"
 
     if [ $stage != "6.uvfits" ]
     then
@@ -56,5 +56,6 @@ do
     fi
 
     cd ..
+    echo "cd up to $(pwd)"
     echo "Finished stage $stage..."
 done
