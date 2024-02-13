@@ -12,7 +12,7 @@ do
 
     if [ $stage == "1.+flags+wins" ]
     then
-        rm cf0*
+        rm cf*
 	rm bin/[0-6]* bin/9*
 	rm pc*.pdf
     elif [ $stage == "6.uvfits" ]

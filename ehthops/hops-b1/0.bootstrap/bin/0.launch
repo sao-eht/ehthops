@@ -5,13 +5,16 @@
 
 OPTIND=1 # so that getopts can pick up the arguments when the script is 'source'd
 
-while getopts "f:t:" opt; do
+while getopts "f:t:y:" opt; do
         case $opt in
                 f)
                         OBSFREQ=$OPTARG
                         ;;
                 t)
                         TELESCOPE=$OPTARG
+                        ;;
+                y)
+                        YEAR=$OPTARG
                         ;;
         esac
 done
@@ -39,11 +42,11 @@ METADIR=${SET_METADIR:-"$TOPDIR/../meta"}     # location of META tables, ZBL flu
 
 OBSFREQ=${SET_OBSFREQ:-"$OBSFREQ"}            # observing frequency: 230 or 345 (GHz)
 TELESCOPE=${SET_TELESCOPE:-"$TELESCOPE"}            # Telescope/facility name
+YEAR=${SET_YEAR:-"$YEAR"}                     # Campaign year
 
 # for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
-year=$(echo $SRCDIR | sed 's|.*/archive/20\(..\).*$|\1|')
 
-if [[ $year = "17" ]]; then
+if [[ $YEAR = "2017" ]]; then
 	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
 	if [[ $BAND = "b3" ]]; then
 		BAND="lo"
@@ -76,6 +79,7 @@ if [ x"$USE_DOCKER" == x"true" ]; then
         echo "  Band, BAND:        $BAND"
         echo "  Observing frequency, OBSFREQ:        $OBSFREQ"
         echo "  Telescope, TELESCOPE:        $TELESCOPE"
+        echo "  Campaign year, YEAR:        $YEAR"
         echo "  Command:     $@"
 
 	if [ $# == 0 ]; then # no command line argument
@@ -97,7 +101,8 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 		-e "METADIR=/meta"                     \
 		-e "BAND=$BAND"                        \
 		-e "OBSFREQ=$OBSFREQ"                  \
-		-e "TELESCOPE=$TELESCOPE"                  \
+		-e "TELESCOPE=$TELESCOPE"              \
+		-e "YEAR=$YEAR"                        \
 		$PORTFORWARD                           \
 		eventhorizontelescope/eat-notebook     \
 		"$@"
@@ -114,6 +119,7 @@ else
         echo "  Band, BAND:        $BAND"
         echo "  Observing frequency, OBSFREQ:        $OBSFREQ"
         echo "  Telescope, TELESCOPE:        $TELESCOPE"
+        echo "  Campaign year, YEAR:        $YEAR"
         echo "  Command:     $@"
 
 	# Add more HOPS setup scripts here if needed
@@ -123,15 +129,13 @@ fi
 # copy stage-specific control files from METADIR
 N=$(basename $PWD | sed 's/^\([0-9]*\)\..*/\1/')
 NDIR=$(echo ../$N.*)
-# redefine year to include all 4 digits
-year=$(echo $SRCDIR | sed 's|.*/archive/\(....\).*$|\1|')
 
-CFSET1=$METADIR/$TELESCOPE$year/$OBSFREQ"GHz/cf/cf"$N"_"$BAND"_*"
-CFSET2=$METADIR/$TELESCOPE$year/$OBSFREQ"GHz/cf/cf"$N"_bx_*"
+CFSET1=$METADIR/$TELESCOPE$YEAR/$OBSFREQ"GHz/cf/cf"$N"_"$BAND"_*"
+CFSET2=$METADIR/$TELESCOPE$YEAR/$OBSFREQ"GHz/cf/cf"$N"_bx_*"
 
 echo $CFSET1 $CFSET2 "-> $NDIR"
 cp -n $CFSET1 $CFSET2 "$NDIR"
 
 # unset variables set using command line arguments and set them again in future steps if necessary to avoid behavioural ambiguity between './' and 'source' for running shell scripts.
-# 'source' will keep these variable definitions while './' will not.
-unset year
+# 'source' will keep these variable definitions while './' will not. So, ALWAYS "source" the scripts.
+#unset YEAR

@@ -39,7 +39,7 @@ mkdir -p "$DATADIR" tests temp log
 IFS=$' \t\n:,'
 
 # set dirname pattern to match while linking
-year=$(echo $SRCDIR | sed 's|.*/archive/20\(..\).*$|\1|')
+year=$(echo "$YEAR" | tail -c 3)
 
 # Create and populate $DATADIR
 for d in $CORRDAT
@@ -91,4 +91,3 @@ find "$DATADIR" -name '*_3*' |
 # unset variables set using command line arguments and set them again in future steps if necessary to avoid behavioural ambiguity between './' and 'source' for running shell scripts.
 # 'source' will keep these variable definitions while './' will not.
 unset mixedpol
-unset year
