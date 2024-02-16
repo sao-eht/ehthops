@@ -73,7 +73,9 @@ if [[ $mixedpol == true ]]; then
         	    modpath=$(echo $path | awk -v replace="hops" '{gsub("haxp", replace)}1')
                     # Symlink the source data files
                     scan=$(awk -F 'hops/' '{print $(NF)}' <<< $modpath)
-                    cp -s $path/* "$DATADIR/$scan"
+		    if [ -d "$DATADIR/$scan" ]; then
+			cp -s $path/* "$DATADIR/$scan"
+		    fi
                 done
         done
 fi
