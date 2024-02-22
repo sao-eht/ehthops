@@ -5,8 +5,9 @@ import sys
 import glob
 import ehtim as eh
 
-for day in range(3762, 3770):
-    for uvf in glob.glob('%s/*.uvfits' % day):
+daylist = sorted([int(i) for i in glob.glob('[0-9]*')])
+for day in daylist:
+    for uvf in glob.glob(f'{day}/*.uvfits'):
         try:
             (base, ext) = os.path.splitext(uvf)
             obs = eh.obsdata.load_uvfits(uvf, polrep='circ')
@@ -15,7 +16,7 @@ for day in range(3762, 3770):
             obs = obs.flag_anomalous('llsnr', robust_nsigma_cut=3.0)
             obs = obs.flag_anomalous('rrsnr', robust_nsigma_cut=3.0)
             obs = obs.avg_coherent(10.)
-            obs.save_uvfits('%s+avg%s' % (base, ext))
+            obs.save_uvfits(f'{base}+avg{ext}')
         except:
-            sys.stderr.write('failed to average: %s\n' % uvf)
+            sys.stderr.write(f'failed to average: {uvf}\n')
 

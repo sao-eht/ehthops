@@ -2,13 +2,16 @@
 
 mkdir tests temp log
 
-for d in {3762..3769}; do
-	mkdir -p $d
+# find all directories in $SRCDIR that are named with expt numbers
+directories=$(find $SRCDIR -maxdepth 1 -type d -name "[0-9]*" | sort)
+
+for d in $directories; do
+	mkdir -p $(basename $d)
 	/usr/bin/time -v hops2uvfits.py     \
 	        --recomputeblfits --clean --recomputeuv --fixsrcname \
-	        $SRCDIR/$d $d      \
-		>  log/uvfits-$d.log        \
-		2> log/uvfits-$d.err        &
+	        $d $(basename $d)      \
+		>  log/uvfits-$(basename $d).log        \
+		2> log/uvfits-$(basename $d).err        &
 done
 
 wait $(jobs -p)
