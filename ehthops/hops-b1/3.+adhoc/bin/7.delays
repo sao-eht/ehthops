@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
 # Run script as
-# source 7.delays true  (for mixed pol data)
-# source 7.delays false (for polconverted data)
 
 OPTIND=1 # so that getopts can pick up the arguments when the script is 'source'd
 
