@@ -17,7 +17,7 @@ do
 	rm pc*.pdf
     elif [ $stage == "6.uvfits" ]
     then
-	rm -rf 376*
+	rm -rf 3*
 	rm vis*
     elif [ $stage != "0.bootstrap" ]
     then
