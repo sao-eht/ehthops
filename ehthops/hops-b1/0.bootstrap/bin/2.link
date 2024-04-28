@@ -7,15 +7,19 @@ mixedpol=false
 
 OPTIND=1 # so that getopts can pick up the arguments when the script is 'source'd
 
-while getopts "m" opt; do
+while getopts "mp:d:" opt; do
         case $opt in
                 m)
                         mixedpol=true
                         ;;
+		d)
+			DEPTH=$OPTARG
+			;;
+                p)
+                        PATTERN=$OPTARG
+                        ;;
         esac
 done
-
-echo "mixedpol is $mixedpol"
 
 if [[ "$mixedpol" = true ]]; then
 	echo "Replacing polconverted ALMA data with non-polconverted data..."
@@ -31,6 +35,9 @@ echo "  Container Corr release(s), CORRDAT \"$CORRDAT\""
 echo "  Container HOPS data output, DATADIR:    \"$DATADIR\""
 echo "  Band, BAND:        $BAND"
 echo "  Observing frequency, OBSFREQ:        $OBSFREQ"
+echo "  Mixed pol flag, mixedpol:        $mixedpol"
+echo "  Dir search depth, DEPTH:        $DEPTH"
+echo "  Dir pattern to match, PATTERN:        $PATTERN"
 
 cd "$WRKDIR"
 mkdir -p "$DATADIR" tests temp log
@@ -44,11 +51,11 @@ year=$(echo "$YEAR" | tail -c 3)
 # Create and populate $DATADIR
 for d in $CORRDAT
 do
-    find -L $SRCDIR/$d -mindepth 4 -maxdepth 4 -type d | grep "\/e$year.*-$BAND-.*-hops\/" |
+    find -L $SRCDIR/$d -mindepth $DEPTH -maxdepth $DEPTH -type d | grep $PATTERN |
         while read path; do
             # /data/2018-april/corr/Rev1-Sci/e18e22-sgra-sci/e18e22-1-b3-sgra-SGRA-hops/3645/112-0850
             # Symlink the source data files
-            scan=$(awk -F 'hops/' '{print $(NF)}' <<< $path)
+            scan=$(awk -F $PATTERN '{print $(NF)}' <<< $path)
             if [ ! -d "$DATADIR/$scan" ]; then
                 mkdir -p "$DATADIR/$scan"
                 cp -s $path/* "$DATADIR/$scan"
