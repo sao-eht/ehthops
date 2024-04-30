@@ -15,7 +15,7 @@ do
     then
         SET_SRCDIR=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/archive/2021March/extracted && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && source bin/0.launch -f 230 -t eht -y 2021
         source bin/1.version
-        source bin/2.link #-m # for mixedpol
+        source bin/2.link -p "e21.*-b3-.*-hops/" -d 4 #-m # for mixedpol
         source bin/3.fourfit
         source bin/4.alists
         source bin/5.check
@@ -34,7 +34,7 @@ do
 
     if [ $stage == "3.+adhoc" ]
     then
-        source bin/7.delays # -m # for mixedpol
+        source bin/7.delays #-m # for mixedpol
     fi
 
     if [ $stage == "4.+delays" ]
