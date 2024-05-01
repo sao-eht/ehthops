@@ -1,27 +1,6 @@
 #!/usr/bin/env bash
 
-# USAGE: source 2.link (for polconverted data) or
-#        source 2.link -m (for mixedpol data)
-
-mixedpol=false
-
-OPTIND=1 # so that getopts can pick up the arguments when the script is 'source'd
-
-while getopts "mp:d:" opt; do
-        case $opt in
-                m)
-                        mixedpol=true
-                        ;;
-		d)
-			DEPTH=$OPTARG
-			;;
-                p)
-                        PATTERN=$OPTARG
-                        ;;
-        esac
-done
-
-if [[ "$mixedpol" = true ]]; then
+if [[ "$MIXEDPOL" = true ]]; then
 	echo "Replacing polconverted ALMA data with non-polconverted data..."
 else
 	echo "NOT replacing polconverted ALMA data with non-polconverted data..."
@@ -35,9 +14,9 @@ echo "  Container Corr release(s), CORRDAT \"$CORRDAT\""
 echo "  Container HOPS data output, DATADIR:    \"$DATADIR\""
 echo "  Band, BAND:        $BAND"
 echo "  Observing frequency, OBSFREQ:        $OBSFREQ"
-echo "  Mixed pol flag, mixedpol:        $mixedpol"
-echo "  Dir search depth, DEPTH:        $DEPTH"
+echo "  Mixed pol flag, MIXEDPOL:        $MIXEDPOL"
 echo "  Dir pattern to match, PATTERN:        $PATTERN"
+echo "  Dir search depth, DEPTH:        $DEPTH"
 
 cd "$WRKDIR"
 mkdir -p "$DATADIR" tests temp log
@@ -46,21 +25,23 @@ mkdir -p "$DATADIR" tests temp log
 IFS=$' \t\n:,'
 
 # set dirname pattern to match while linking
-year=$(echo "$YEAR" | tail -c 3)
+year=$(echo "$OBSYEAR" | tail -c 3)
 
 # Create and populate $DATADIR
 for d in $CORRDAT
 do
-    find -L $SRCDIR/$d -mindepth $DEPTH -maxdepth $DEPTH -type d | grep $PATTERN |
+    find -L $SRCDIR/$d -mindepth $DEPTH -maxdepth $DEPTH -type d | grep -E $PATTERN |
         while read path; do
             # /data/2018-april/corr/Rev1-Sci/e18e22-sgra-sci/e18e22-1-b3-sgra-SGRA-hops/3645/112-0850
             # Symlink the source data files
             scan=$(awk -F $PATTERN '{print $(NF)}' <<< $path)
+            echo $path
+            echo $scan
             if [ ! -d "$DATADIR/$scan" ]; then
                 mkdir -p "$DATADIR/$scan"
                 cp -s $path/* "$DATADIR/$scan"
 		# for mixed pol data reduction, remove polconverted ALMA data
-		if [[ $mixedpol == true ]]; then
+		if [[ $MIXEDPOL == true ]]; then
 			rm -f $DATADIR/$scan/A?.*
 		fi
             fi
@@ -71,7 +52,7 @@ do
 done
 
 # for mixed pol data reduction, copy ALMA data from haxp directories
-if [[ $mixedpol == true ]]; then
+if [[ $MIXEDPOL == true ]]; then
         for d in $CORRDAT
         do
             find -L $SRCDIR/$d -mindepth 4 -maxdepth 4 -type d | grep "\/e$year.*-$BAND-.*-haxp\/" |

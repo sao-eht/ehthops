@@ -1,34 +1,18 @@
 #!/usr/bin/env bash
 
-# Run script as
-
-OPTIND=1 # so that getopts can pick up the arguments when the script is 'source'd
-
-while getopts "m" opt; do
-        case $opt in
-                m)
-                        mixedpol=true
-                        ;;
-        esac
-done
-
 echo "7. Compute delay offsets"
 
-if [[ $mixedpol == true ]]; then
+if [[ $MIXEDPOL == true ]]; then
 	echo "Using mixed polarization data to compute delay offsets ..."
 fi
 
 cd $WRKDIR
 
-if [[ $mixedpol == true ]]; then
+if [[ $MIXEDPOL == true ]]; then
     alma_delayoffs -c -m $DATADIR/alist.v6 > $DATADIR/cf4_delays 2> log/delays.err
 else
     alma_delayoffs -c $DATADIR/alist.v6 > $DATADIR/cf4_delays 2> log/delays.err
 fi
-
-# unset variables set using command line arguments and set them again in future steps if necessary to avoid behavioural ambiguity between './' and 'source' for running shell scripts.
-# 'source' will keep these variable definitions while './' will not.
-unset mixedpol
 
 echo >> $DATADIR/cf4_delays
 echo "DONE"

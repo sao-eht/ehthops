@@ -5,7 +5,7 @@
 
 OPTIND=1 # so that getopts can pick up the arguments when the script is 'source'd
 
-while getopts "f:t:y:" opt; do
+while getopts "f:t:y:mp:d:" opt; do
         case $opt in
                 f)
                         OBSFREQ=$OPTARG
@@ -14,7 +14,16 @@ while getopts "f:t:y:" opt; do
                         TELESCOPE=$OPTARG
                         ;;
                 y)
-                        YEAR=$OPTARG
+                        OBSYEAR=$OPTARG
+                        ;;
+                m)
+                        MIXEDPOL=$OPTARG
+                        ;;
+                p)
+                        PATTERN=$OPTARG
+                        ;;
+                d)
+                        DEPTH=$OPTARG
                         ;;
         esac
 done
@@ -40,13 +49,16 @@ SRCDIR=${SET_SRCDIR:-"/data/2018-april/corr"} # single input data location for c
 SHRDIR=${SET_SHRDIR:-"$TOPDIR/../share"}      # location of shared resources (summary notebooks, etc)
 METADIR=${SET_METADIR:-"$TOPDIR/../meta"}     # location of META tables, ZBL flux estimates for netcal, etc
 
-OBSFREQ=${SET_OBSFREQ:-"$OBSFREQ"}            # observing frequency: 230 or 345 (GHz)
-TELESCOPE=${SET_TELESCOPE:-"$TELESCOPE"}            # Telescope/facility name
-YEAR=${SET_YEAR:-"$YEAR"}                     # Campaign year
+OBSFREQ=${OBSFREQ:-"230"}            # observing frequency: 230 or 345 (GHz)
+TELESCOPE=${TELESCOPE:-"EHT"}      # Telescope/facility name
+OBSYEAR=${OBSYEAR:-"2021"}            # Campaign year
+MIXEDPOL=${MIXEDPOL:-"false"}            # Mixed polarization
+PATTERN=${PATTERN:-"e21.*-b1-.*-hops/"}            # Pattern to grep for while linking archival data
+DEPTH=${DEPTH:-"4"}            # Directory depth (level) to search for in the archival data while linking
 
 # for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
 
-if [[ $YEAR = "2017" ]]; then
+if [[ $OBSYEAR = "2017" ]]; then
 	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
 	if [[ $BAND = "b3" ]]; then
 		BAND="lo"
@@ -79,7 +91,10 @@ if [ x"$USE_DOCKER" == x"true" ]; then
         echo "  Band, BAND:        $BAND"
         echo "  Observing frequency, OBSFREQ:        $OBSFREQ"
         echo "  Telescope, TELESCOPE:        $TELESCOPE"
-        echo "  Campaign year, YEAR:        $YEAR"
+        echo "  Campaign year, OBSYEAR:        $OBSYEAR"
+        echo "  Mixed polarization, MIXEDPOL:        $MIXEDPOL"
+        echo "  Pattern to grep for while linking archival data, PATTERN:        $PATTERN"
+        echo "  Directory depth to search for in the archival data while linking, DEPTH:        $DEPTH"
         echo "  Command:     $@"
 
 	if [ $# == 0 ]; then # no command line argument
@@ -102,7 +117,10 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 		-e "BAND=$BAND"                        \
 		-e "OBSFREQ=$OBSFREQ"                  \
 		-e "TELESCOPE=$TELESCOPE"              \
-		-e "YEAR=$YEAR"                        \
+		-e "OBSYEAR=$OBSYEAR"                  \
+		-e "MIXEDPOL=$MIXEDPOL"                \
+		-e "PATTERN=$PATTERN"                  \
+		-e "DEPTH=$DEPTH"                      \
 		$PORTFORWARD                           \
 		eventhorizontelescope/eat-notebook     \
 		"$@"
@@ -119,7 +137,10 @@ else
         echo "  Band, BAND:        $BAND"
         echo "  Observing frequency, OBSFREQ:        $OBSFREQ"
         echo "  Telescope, TELESCOPE:        $TELESCOPE"
-        echo "  Campaign year, YEAR:        $YEAR"
+        echo "  Campaign year, OBSYEAR:        $OBSYEAR"
+        echo "  Mixed polarization, MIXEDPOL:        $MIXEDPOL"
+        echo "  Pattern to grep for while linking archival data, PATTERN:        $PATTERN"
+        echo "  Directory depth to search for in the archival data while linking, DEPTH:        $DEPTH"
         echo "  Command:     $@"
 
 	# Add more HOPS setup scripts here if needed
@@ -130,12 +151,12 @@ fi
 N=$(basename $PWD | sed 's/^\([0-9]*\)\..*/\1/')
 NDIR=$(echo ../$N.*)
 
-CFSET1=$METADIR/$TELESCOPE$YEAR/$OBSFREQ"GHz/cf/cf"$N"_"$BAND"_*"
-CFSET2=$METADIR/$TELESCOPE$YEAR/$OBSFREQ"GHz/cf/cf"$N"_bx_*"
+CFSET1=$METADIR/$TELESCOPE$OBSYEAR/$OBSFREQ"GHz/cf/cf"$N"_"$BAND"_*"
+CFSET2=$METADIR/$TELESCOPE$OBSYEAR/$OBSFREQ"GHz/cf/cf"$N"_bx_*"
 
 echo $CFSET1 $CFSET2 "-> $NDIR"
 cp -n $CFSET1 $CFSET2 "$NDIR"
 
 # unset variables set using command line arguments and set them again in future steps if necessary to avoid behavioural ambiguity between './' and 'source' for running shell scripts.
 # 'source' will keep these variable definitions while './' will not. So, ALWAYS "source" the scripts.
-#unset YEAR
+#unset OBSYEAR
