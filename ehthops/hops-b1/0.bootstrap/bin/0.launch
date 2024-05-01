@@ -53,7 +53,6 @@ OBSFREQ=${OBSFREQ:-"230"}            # observing frequency: 230 or 345 (GHz)
 TELESCOPE=${TELESCOPE:-"EHT"}      # Telescope/facility name
 OBSYEAR=${OBSYEAR:-"2021"}            # Campaign year
 MIXEDPOL=${MIXEDPOL:-"false"}            # Mixed polarization
-PATTERN=${PATTERN:-"e21.*-b1-.*-hops/"}            # Pattern to grep for while linking archival data
 DEPTH=${DEPTH:-"4"}            # Directory depth (level) to search for in the archival data while linking
 
 # for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
@@ -68,6 +67,8 @@ if [[ $OBSYEAR = "2017" ]]; then
 else
 	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
 fi
+
+PATTERN=${PATTERN:-"e${OBSYEAR: -2}.*-$BAND-.*-hops/"}            # Pattern to grep for while linking archival data
 
 # Parse arguments
 USE_DOCKER=${USE_DOCKER:-false}

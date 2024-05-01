@@ -30,7 +30,7 @@ year=$(echo "$OBSYEAR" | tail -c 3)
 # Create and populate $DATADIR
 for d in $CORRDAT
 do
-    find -L $SRCDIR/$d -mindepth $DEPTH -maxdepth $DEPTH -type d | grep -E $PATTERN |
+    find -L $SRCDIR/$d -mindepth $DEPTH -maxdepth $DEPTH -type d | grep $PATTERN |
         while read path; do
             # /data/2018-april/corr/Rev1-Sci/e18e22-sgra-sci/e18e22-1-b3-sgra-SGRA-hops/3645/112-0850
             # Symlink the source data files
