@@ -17,7 +17,7 @@ while getopts "f:t:y:mp:d:" opt; do
                         OBSYEAR=$OPTARG
                         ;;
                 m)
-                        MIXEDPOL=$OPTARG
+                        MIXEDPOL=true
                         ;;
                 p)
                         PATTERN=$OPTARG
@@ -158,6 +158,3 @@ CFSET2=$METADIR/$TELESCOPE$OBSYEAR/$OBSFREQ"GHz/cf/cf"$N"_bx_*"
 echo $CFSET1 $CFSET2 "-> $NDIR"
 cp -n $CFSET1 $CFSET2 "$NDIR"
 
-# unset variables set using command line arguments and set them again in future steps if necessary to avoid behavioural ambiguity between './' and 'source' for running shell scripts.
-# 'source' will keep these variable definitions while './' will not. So, ALWAYS "source" the scripts.
-#unset OBSYEAR
