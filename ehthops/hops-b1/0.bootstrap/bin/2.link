@@ -35,8 +35,6 @@ do
             # /data/2018-april/corr/Rev1-Sci/e18e22-sgra-sci/e18e22-1-b3-sgra-SGRA-hops/3645/112-0850
             # Symlink the source data files
             scan=$(awk -F $PATTERN '{print $(NF)}' <<< $path)
-            echo $path
-            echo $scan
             if [ ! -d "$DATADIR/$scan" ]; then
                 mkdir -p "$DATADIR/$scan"
                 cp -s $path/* "$DATADIR/$scan"
