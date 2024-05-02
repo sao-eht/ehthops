@@ -5,7 +5,9 @@ source /home/swc/env/ehthops324.sh
 # list stages to be executed
 stages=("0.bootstrap" "1.+flags+wins" "2.+pcal" "3.+adhoc" "4.+delays" "5.+close" "6.uvfits")
 
-# loop through each stage
+# working directory name
+workdir=$(pwd)
+
 for stage in ${stages[@]}
 do
     echo "Starting stage $stage..."
@@ -17,7 +19,7 @@ do
     then
         SET_SRCDIR=/data/2021-april/ce/2023_summer/data/raw/mk4 && SET_CORRDAT="Rev1-Cal" && source bin/0.launch -f 230 -t eht -y 2021
         source bin/1.version
-        source bin/2.link -p "e21.*-b3-.*-hops/" -d 4 #-m # for mixedpol
+        source bin/2.link
         source bin/3.fourfit
         source bin/4.alists
         source bin/5.check
@@ -37,7 +39,7 @@ do
 
     if [ $stage == "3.+adhoc" ]
     then
-        source bin/7.delays #-m # for mixedpol
+        source bin/7.delays
     fi
 
     if [ $stage == "4.+delays" ]
@@ -48,7 +50,7 @@ do
     # run stage 6; the calibration stage finishes with stage 5
     if [ $stage == "6.uvfits" ]
     then
-	SET_EHTIMPATH="/home/swc/github/eht-imaging" && SET_SRCDIR=/home/iniyan/2021-hops-calibration/tutorial-25jun/2021-april/dev-template/hops-b1/5.+close/data && SET_CORRDAT="Rev1-Cal" && source bin/0.launch
+	SET_EHTIMPATH="/home/swc/github/eht-imaging" && SET_SRCDIR=$workdir/5.+close/data && SET_CORRDAT="Rev1-Cal" && source bin/0.launch
         source bin/1.convert
         source bin/2.import
         python bin/3.average

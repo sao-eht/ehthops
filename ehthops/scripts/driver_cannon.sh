@@ -5,6 +5,9 @@ source /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/installed/hops
 
 stages=("0.bootstrap" "1.+flags+wins" "2.+pcal" "3.+adhoc" "4.+delays" "5.+close" "6.uvfits")
 
+# working directory name
+workdir=$(pwd)
+
 for stage in ${stages[@]}
 do
     echo "Starting stage $stage..."
@@ -13,7 +16,7 @@ do
 
     if [ $stage != "6.uvfits" ]
     then
-        SET_SRCDIR=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/archive/2021March/extracted && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && source bin/0.launch -f 230 -t eht -y 2021 -d 4
+        SET_SRCDIR=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/archive/2021March/extracted && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && source bin/0.launch -m
         source bin/1.version
         source bin/2.link
         source bin/3.fourfit
@@ -44,7 +47,7 @@ do
 
     if [ $stage == "6.uvfits" ]
     then
-	SET_EHTIMPATH="/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/src/eht-imaging" && SET_SRCDIR=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/ehthops/ehthops/hops-b1/5.+close/data && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && source bin/0.launch
+	    SET_EHTIMPATH="/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/src/eht-imaging" && SET_SRCDIR=$workdir/5.+close/data && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && source bin/0.launch
         source bin/1.convert
         source bin/2.import
         python bin/3.average
