@@ -13,9 +13,9 @@ do
 
     if [ $stage != "6.uvfits" ]
     then
-        SET_SRCDIR=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/archive/2021March/extracted && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && source bin/0.launch -f 230 -t eht -y 2021
+        SET_SRCDIR=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/archive/2021March/extracted && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && source bin/0.launch -f 230 -t eht -y 2021 -d 4
         source bin/1.version
-        source bin/2.link -p "e21.*-b3-.*-hops/" -d 4 #-m # for mixedpol
+        source bin/2.link
         source bin/3.fourfit
         source bin/4.alists
         source bin/5.check
@@ -34,7 +34,7 @@ do
 
     if [ $stage == "3.+adhoc" ]
     then
-        source bin/7.delays #-m # for mixedpol
+        source bin/7.delays
     fi
 
     if [ $stage == "4.+delays" ]
@@ -44,7 +44,7 @@ do
 
     if [ $stage == "6.uvfits" ]
     then
-	SET_EHTIMPATH="/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/src/eht-imaging" && SET_SRCDIR=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/eht2021mixedpol/calibrate/230GHz/2021-april/dev-template/hops-b1/5.+close/data && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && source bin/0.launch
+	SET_EHTIMPATH="/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/src/eht-imaging" && SET_SRCDIR=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/ehthops/ehthops/hops-b1/5.+close/data && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && source bin/0.launch
         source bin/1.convert
         source bin/2.import
         python bin/3.average
