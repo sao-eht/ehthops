@@ -50,7 +50,7 @@ SHRDIR=${SET_SHRDIR:-"$TOPDIR/../share"}      # location of shared resources (su
 METADIR=${SET_METADIR:-"$TOPDIR/../meta"}     # location of META tables, ZBL flux estimates for netcal, etc
 
 OBSFREQ=${OBSFREQ:-"230"}            # observing frequency: 230 or 345 (GHz)
-TELESCOPE=${TELESCOPE:-"EHT"}      # Telescope/facility name
+TELESCOPE=${TELESCOPE:-"eht"}      # Telescope/facility name
 OBSYEAR=${OBSYEAR:-"2021"}            # Campaign year
 MIXEDPOL=${MIXEDPOL:-"false"}            # Mixed polarization
 DEPTH=${DEPTH:-"4"}            # Directory depth (level) to search for in the archival data while linking
