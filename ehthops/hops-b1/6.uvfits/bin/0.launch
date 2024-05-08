@@ -3,6 +3,25 @@
 # Usage: `[SET_ENVVAR=...] 0.launch --docker [docker command]` or
 #        `[SET_ENVVAR=...] && source 0.launch [docker command]`
 
+OPTIND=1 # so that getopts can pick up the arguments when the script is 'source'd
+
+while getopts "f:t:y:m" opt; do
+        case $opt in
+                f)
+                        OBSFREQ=$OPTARG
+                        ;;
+                t)
+                        TELESCOPE=$OPTARG
+                        ;;
+                y)
+                        OBSYEAR=$OPTARG
+                        ;;
+                m)
+                        MIXEDPOL=true
+                        ;;
+        esac
+done
+
 if [ -f /.dockerenv ]; then
 	echo "This script should:"
 	echo "  1. sets up the host environment for HOPS, or"
@@ -23,12 +42,14 @@ SRCDIR=${SET_SRCDIR:-"$TOPDIR/5.+close/data"} # single input data location for c
 SHRDIR=${SET_SHRDIR:-"$TOPDIR/../share"}      # location of shared resources (summary notebooks, etc)
 METADIR=${SET_METADIR:-"$TOPDIR/../meta"}     # location of META tables, ZBL flux estimates for netcal, etc
 
-#BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
+OBSFREQ=${OBSFREQ:-"230"}            # observing frequency: 230 or 345 (GHz)
+TELESCOPE=${TELESCOPE:-"eht"}      # Telescope/facility name
+OBSYEAR=${OBSYEAR:-"2021"}            # Campaign year
+MIXEDPOL=${MIXEDPOL:-"false"}            # Mixed polarization
 
 # for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
-year=$(echo $SRCDIR | sed 's|.*/archive/20\(..\).*$|\1|')
 
-if [[ $year = "17" ]]; then
+if [[ $OBSYEAR = "2017" ]]; then
 	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
 	if [[ $BAND = "b3" ]]; then
 		BAND="lo"
@@ -53,7 +74,6 @@ fi
 if [ x"$USE_DOCKER" == x"true" ]; then
 	echo "0. Launching a HOPS docker container"
 
-
         echo "  Corr release(s), CORRDAT:   $CORRDAT"
         echo "  Data source dir, SRCDIR: $SRCDIR"
         echo "  Work dir, WRKDIR:   $WRKDIR"
@@ -62,7 +82,11 @@ if [ x"$USE_DOCKER" == x"true" ]; then
         echo "  Dir to share resources b/w stages, SHRDIR:       $SHRDIR"
         echo "  Meta, METADIR:        $METADIR"
         echo "  Band, BAND:        $BAND"
-	echo "  Path to ehtim, EHTIMPATH:    $EHTIMPATH"
+        echo "  Observing frequency, OBSFREQ:        $OBSFREQ"
+        echo "  Telescope, TELESCOPE:        $TELESCOPE"
+        echo "  Campaign year, OBSYEAR:        $OBSYEAR"
+        echo "  Mixed polarization, MIXEDPOL:        $MIXEDPOL"
+        echo "  Path to ehtim, EHTIMPATH:    $EHTIMPATH"
         echo "  Command:     $@"
 
 	if [ $# == 0 ]; then # no command line argument
@@ -83,6 +107,11 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 		-e "SHRDIR=/usr/local/pipeline/share"  \
 		-e "METADIR=/meta"                     \
 		-e "BAND=$BAND"                        \
+		-e "OBSFREQ=$OBSFREQ"                  \
+		-e "TELESCOPE=$TELESCOPE"              \
+		-e "OBSYEAR=$OBSYEAR"                  \
+		-e "MIXEDPOL=$MIXEDPOL"                \
+                -e "EHTIMPATH=$EHTIMPATH"              \	
 		$PORTFORWARD                           \
 		eventhorizontelescope/eat-notebook     \
 		"$@"
@@ -97,6 +126,10 @@ else
         echo "  Dir to share resources b/w stages, SHRDIR:       $SHRDIR"
         echo "  Meta, METADIR:        $METADIR"
         echo "  Band, BAND:        $BAND"
+        echo "  Observing frequency, OBSFREQ:        $OBSFREQ"
+        echo "  Telescope, TELESCOPE:        $TELESCOPE"
+        echo "  Campaign year, OBSYEAR:        $OBSYEAR"
+        echo "  Mixed polarization, MIXEDPOL:        $MIXEDPOL"		
         echo "  Path to ehtim, EHTIMPATH:    $EHTIMPATH"
         echo "  Command:     $@"
 
