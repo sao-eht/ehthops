@@ -13,20 +13,12 @@ echo "SEFD directory, SEFDDIR: $SEFDDIR"
 # find all directories in $SRCDIR that are named with expt numbers
 directories=$(find $SRCDIR -mindepth 1 -maxdepth 1 -type d -name "[0-9]*" | sort)
 
-# separate into two serial runs to account for memory overflow
+# loop through epochs and calibrate
 for directory in $directories; do
         d=$(basename $directory)
 	mkdir -p $d
-        /usr/bin/time -v postproc $SRCDIR/$d $SEFDDIR/$d $d --extrapolate --keepllabsphase > log/postproc-$d.log 2> log/postproc-$d.err &
+        /usr/bin/time -v apriorical $SRCDIR/$d $SEFDDIR/$d $d --extrapolate --keepllabsphase > log/postproc-$d.log 2> log/postproc-$d.err &
 done
 
 wait $(jobs -p)
-
-: 'for d in $directories; do
-        mkdir -p $d
-        /usr/bin/time -v postproc $SRCDIR/$d $SEFDDIR/$d $d --extrapolate --keepllabsphase \
-                > log/postproc-$d.log 2> log/postproc-$d.err &
-done
-
-wait $(jobs -p)'
 
