@@ -1,3 +1,6 @@
+* Ensure these settings are captured regardless of control-file concatenation order by introducing an (effectively) 'if true' statement
+if scan > 001-000000
+
 * from https://eht-wiki.haystack.mit.edu/@api/deki/files/5656/=2018flags-Sband3-ver2019dec23
 * see  https://eht-wiki.haystack.mit.edu/Event_Horizon_Telescope_Home/Observing/2018_April/Correlation
 
