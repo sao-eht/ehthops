@@ -1,3 +1,6 @@
+* Ensure these settings are captured regardless of control-file concatenation order by introducing an (effectively) 'if true' statement
+if scan > 001-000000
+
 * set band-specific reference frequency
 
 * 345 GHz observations. For 2021, only on April 19 (expt_no 3769 or track e21f19)
