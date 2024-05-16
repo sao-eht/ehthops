@@ -37,7 +37,7 @@ do
             scan=$(awk -F $PATTERN '{print $(NF)}' <<< $path)
             if [ ! -d "$DATADIR/$scan" ]; then
                 mkdir -p "$DATADIR/$scan"
-                cp -s $path/* "$DATADIR/$scan"
+                cp -s $path/!(*.[A-Z].*) "$DATADIR/$scan" # exclude pre-existing fringe files, if any
                 # for mixed pol data reduction, remove polconverted ALMA data
                 if [[ $MIXEDPOL == true ]]; then
                     rm -f $DATADIR/$scan/A?.*
@@ -60,7 +60,7 @@ if [[ $MIXEDPOL == true ]]; then
                     # Symlink the source data files
                     scan=$(awk -F 'hops/' '{print $(NF)}' <<< $modpath)
                     if [ -d "$DATADIR/$scan" ]; then
-                        cp -s $path/* "$DATADIR/$scan"
+                        cp -s $path/!(*.[A-Z].*) "$DATADIR/$scan" # exclude pre-existing fringe files, if any
                     fi
                 done
         done
