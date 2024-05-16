@@ -1,3 +1,6 @@
+* Ensure these settings are captured regardless of control-file concatenation order by introducing an (effectively) "if true" statement
+if scan > 001-000000
+
 *
 * These flags are for e17d05-1-hi
 *

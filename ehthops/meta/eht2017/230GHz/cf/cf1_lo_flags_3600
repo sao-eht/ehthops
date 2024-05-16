@@ -1,3 +1,6 @@
+* Ensure these settings are captured regardless of control-file concatenation order by introducing an (effectively) "if true" statement
+if scan > 001-000000
+
 * JSR: JCMT in S from 100-0046 through middle of 100-0108 (around 01:14)
 * SR: 0909 0925 funny jump in middle
 * S: Phasing poor until 100-0340

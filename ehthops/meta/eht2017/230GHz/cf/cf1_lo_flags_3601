@@ -1,3 +1,6 @@
+* Ensure these settings are captured regardless of control-file concatenation order by introducing an (effectively) "if true" statement
+if scan > 001-000000
+
 * J: may be out of focus/mispointed 0410 0419
 * L: may be mispointed 0535 0606
 * X: Bad timeranges on AX baseline are for LCP
