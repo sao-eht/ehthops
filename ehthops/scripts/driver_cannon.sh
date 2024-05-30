@@ -7,6 +7,8 @@ stages=("0.bootstrap" "1.+flags+wins" "2.+pcal" "3.+adhoc" "4.+delays" "5.+close
 
 # working directory name
 workdir=$(pwd)
+# extract band from working directory
+band=$(echo $workdir | sed 's|.*/hops-\(..\)/\?.*$|\1|')
 
 for stage in ${stages[@]}
 do
@@ -16,7 +18,7 @@ do
 
     if [ $stage != "6.uvfits" ]
     then
-        SET_SRCDIR=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/archive/2021March/extracted && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && source bin/0.launch -m
+        SET_SRCDIR=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/eht2022/archive/corr-extracted/Hays_Output6 && SET_CORRDAT="Rev1-Raw" && source bin/0.launch -t eht -f 230 -y 2022 -m -d 5 -p "e22.*-$band-.*.hops/"
         source bin/1.version
         source bin/2.link
         source bin/3.fourfit
@@ -47,7 +49,7 @@ do
 
     if [ $stage == "6.uvfits" ]
     then
-	    SET_EHTIMPATH="/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/src/eht-imaging" && SET_SRCDIR=$workdir/5.+close/data && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && source bin/0.launch
+	    SET_EHTIMPATH="/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/src/eht-imaging" && SET_SRCDIR=$workdir/5.+close/data && SET_CORRDAT="Rev1-Raw" && source bin/0.launch -t eht -f 230 -y 2022 -m -d 5 -p "e22.*-$band-.*.hops/"
         source bin/1.convert
         source bin/2.import
         python bin/3.average
