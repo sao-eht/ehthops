@@ -81,7 +81,9 @@ def main():
     # create control file with notches
     #for tup in freq_to_notch:
     #    print(tup)
-    with open(f'cf1_notches_b{args.band}', 'w') as f:
+    with open(f'cf1_b{args.band}_notches', 'w') as f:
+        f.write(f"* Ensure these settings are captured regardless of control-file concatenation order by introducing an (effectively) 'if true' statement\n")
+        f.write("if scan > 001-000000\n\n")
         f.write(f"* Band {args.band}\n\n")
 
         if args.station == "NOEMA":
@@ -93,10 +95,10 @@ def main():
         cmdflag = True
         for tup in freq_to_notch:
             if cmdflag:
-                f.write(f"  notches {tup[1][0]} {tup[1][1]}\n")
+                f.write(f"  notches {tup[1][0]:.6f} {tup[1][1]:.6f}\n")
                 cmdflag = False
             else:
-                f.write(f"          {tup[1][0]} {tup[1][1]}\n")
+                f.write(f"          {tup[1][0]:.6f} {tup[1][1]:.6f}\n")
 
 if __name__ == '__main__':
     main()
