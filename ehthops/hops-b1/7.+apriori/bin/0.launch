@@ -5,7 +5,7 @@
 
 OPTIND=1 # so that getopts can pick up the arguments when the script is 'source'd
 
-while getopts "f:t:y:m" opt; do
+while getopts "f:t:y:mx" opt; do
         case $opt in
                 f)
                         OBSFREQ=$OPTARG
@@ -19,6 +19,9 @@ while getopts "f:t:y:m" opt; do
                 m)
                         MIXEDPOL=true
                         ;;
+				x)
+						HAXP=true
+						;;
         esac
 done
 
@@ -43,7 +46,8 @@ METADIR=${SET_METADIR:-"$TOPDIR/../meta"}     # location of META tables, ZBL flu
 OBSFREQ=${OBSFREQ:-"230"}            # observing frequency: 230 or 345 (GHz)
 TELESCOPE=${TELESCOPE:-"eht"}      # Telescope/facility name
 OBSYEAR=${OBSYEAR:-"2021"}            # Campaign year
-MIXEDPOL=${MIXEDPOL:-"false"}            # Mixed polarization
+MIXEDPOL=${MIXEDPOL:-"false"}            # Mixed polarization calibration
+HAXP=${HAXP:-"false"}            # Use HAXP data for ALMA that retains linear pol format (if available)
 
 # for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
 
@@ -80,6 +84,7 @@ if [ x"$USE_DOCKER" == x"true" ]; then
     echo "  Telescope, TELESCOPE:        $TELESCOPE"
     echo "  Campaign year, OBSYEAR:        $OBSYEAR"
     echo "  Mixed polarization, MIXEDPOL:        $MIXEDPOL"
+	echo "  HAXP data, HAXP:        $HAXP"
     echo "  Path to ehtim, EHTIMPATH:    $EHTIMPATH"	
     echo "  Observing frequency, OBSFREQ:        $OBSFREQ"
     echo "  Telescope, TELESCOPE:        $TELESCOPE"	
@@ -106,7 +111,8 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 		-e "OBSFREQ=$OBSFREQ"                  \
 		-e "TELESCOPE=$TELESCOPE"              \
 		-e "OBSYEAR=$OBSYEAR"                  \
-		-e "MIXEDPOL=$MIXEDPOL"                \		
+		-e "MIXEDPOL=$MIXEDPOL"                \
+		-e "HAXP=$HAXP"                        \	
 		$PORTFORWARD                           \
 		eventhorizontelescope/eat-notebook     \
 		"$@"
@@ -122,7 +128,8 @@ else
     echo "  Observing frequency, OBSFREQ:        $OBSFREQ"
     echo "  Telescope, TELESCOPE:        $TELESCOPE"
     echo "  Campaign year, OBSYEAR:        $OBSYEAR"
-    echo "  Mixed polarization, MIXEDPOL:        $MIXEDPOL"
+    echo "  Mixed polarization calibration, MIXEDPOL:        $MIXEDPOL"
+	echo "  Use HAXP data for ALMA, HAXP:        $HAXP"
 	echo "  Command:     $@"
 
 	# Add more HOPS setup scripts here if needed

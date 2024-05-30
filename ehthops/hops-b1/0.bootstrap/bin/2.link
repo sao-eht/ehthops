@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [[ "$MIXEDPOL" = true ]]; then
+if [[ "$HAXP" = true ]]; then
 	echo "Replacing polconverted ALMA data with non-polconverted data..."
 else
 	echo "NOT replacing polconverted ALMA data with non-polconverted data..."
@@ -14,7 +14,8 @@ echo "  Container Corr release(s), CORRDAT \"$CORRDAT\""
 echo "  Container HOPS data output, DATADIR:    \"$DATADIR\""
 echo "  Band, BAND:        $BAND"
 echo "  Observing frequency, OBSFREQ:        $OBSFREQ"
-echo "  Mixed pol flag, MIXEDPOL:        $MIXEDPOL"
+echo "  Mixed pol calibration, MIXEDPOL:        $MIXEDPOL"
+echo "  Use HAXP data for ALMA, HAXP:         $HAXP"
 echo "  Dir pattern to match, PATTERN:        $PATTERN"
 echo "  Dir search depth, DEPTH:        $DEPTH"
 
@@ -37,9 +38,11 @@ do
             scan=$(awk -F $PATTERN '{print $(NF)}' <<< $path)
             if [ ! -d "$DATADIR/$scan" ]; then
                 mkdir -p "$DATADIR/$scan"
-                cp -s $path/!(*.[A-Z].*) "$DATADIR/$scan" # exclude pre-existing fringe files, if any
+                #cp -s $path/!(*.[A-Z].*) "$DATADIR/$scan" # exclude pre-existing fringe files, if any
+                # create symbolic links to all data files except pre-existing fringe files (if any)
+                find $path -type f ! -name "*.[A-Z].*" -exec cp -s {} "$DATADIR/$scan" \;
                 # for mixed pol data reduction, remove polconverted ALMA data
-                if [[ $MIXEDPOL == true ]]; then
+                if [[ $HAXP == true ]]; then
                     rm -f $DATADIR/$scan/A?.*
                 fi
             fi
@@ -50,7 +53,7 @@ do
 done
 
 # for mixed pol data reduction, copy ALMA data from haxp directories
-if [[ $MIXEDPOL == true ]]; then
+if [[ $HAXP == true ]]; then
         for d in $CORRDAT
         do
             find -L $SRCDIR/$d -mindepth $DEPTH -maxdepth $DEPTH -type d | grep $(echo $PATTERN | sed 's/-hops/-haxp/g') |
@@ -60,7 +63,9 @@ if [[ $MIXEDPOL == true ]]; then
                     # Symlink the source data files
                     scan=$(awk -F 'hops/' '{print $(NF)}' <<< $modpath)
                     if [ -d "$DATADIR/$scan" ]; then
-                        cp -s $path/!(*.[A-Z].*) "$DATADIR/$scan" # exclude pre-existing fringe files, if any
+                        #cp -s $path/!(*.[A-Z].*) "$DATADIR/$scan" # exclude pre-existing fringe files, if any
+                        # create symbolic links to all data files except pre-existing fringe files (if any)
+                        find $path -type f ! -name "*.[A-Z].*" -exec cp -s {} "$DATADIR/$scan" \; 
                     fi
                 done
         done
