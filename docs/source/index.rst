@@ -13,6 +13,7 @@ Welcome to ehthops's documentation!
    intro
    install
    running
+   components
 
 Indices and tables
 ==================
