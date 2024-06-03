@@ -11,9 +11,9 @@ Stages in the pipeline
 .. figure:: components.png
    :alt: Control flow in the EHT-HOPS pipeline
 
-    Control flow in the EHT-HOPS pipeline. The red boxes denote the scripts that are run in each stage of the pipeline.
-    The blue boxes denote the location of the data to be calibrated; these data are symlinked from the local archive at the beginning of
-    each stage, so that new copies of the same input data files are not created.
+   Control flow in the EHT-HOPS pipeline. The red boxes denote the scripts that are run in each stage of the pipeline.
+   The blue boxes denote the location of the data to be calibrated; these data are symlinked from the local archive at the beginning of
+   each stage, so that new copies of the same input data files are not created.
 
 The primary function of the pipeline is to perform fringe-fitting or generalized phase calibration of the correlated data. Additional
 post-processing steps include conversion of Mark4 data to UVFITS files, performing a priori amplitude calibration, field angle rotation
