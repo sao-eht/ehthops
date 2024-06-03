@@ -1,5 +1,5 @@
 ===================
-Pipeline Components
+Pipeline components
 ===================
 
 The ehthops pipeline consists of multiple stages, each consisting of multiple steps. A detailed description of how the pipeline works can be found in 
@@ -29,17 +29,17 @@ To avoid code duplication, all steps in each stage of band 1 are symlinked to th
 
 The pipeline consists of the following stages::
 
-   **Stage 0 (0.bootstrap):** An empty control file is passed to `fourfit` in this stage so that no assumptions about fringe-fitting are made.
-   **Stage 1 (1.+flags+wins):** Bad data identified at the correlation stage or from prior inspection of the data are flagged and parameters such as delay search windows are incorporated into the control file input to `fourfit` in this stage. Also, phase calibration is performed in this stage.
-   **Stage 2 (2.+phasecal):** The R/L phase solutions derived in the previous stage are included in the control file and adhoc phase calibration is performed.
-   **Stage 3 (3.+adhoc):** The adhoc phase solutions derived in the previous stage are included in the control file input to `fourfit` in this stage and R/L delay calibration is performed.
-   **Stage 4 (4.+delays):** The R/L delay solutions derived in the previous stage are accounted for during fringe-fitting and fringe closure is performed on the results of `fourfit`.
-   **Stage 5 (5.+close):** The closure phase solutions derived in the previous stage are appended to the control file and a final round of `fourfit` is performed. The calibrated output files generated in this stage are used in subsequent post-processing steps.
+   Stage 0 (0.bootstrap): An empty control file is passed to `fourfit` in this stage so that no assumptions about fringe-fitting are made.
+   Stage 1 (1.+flags+wins): Bad data identified at the correlation stage or from prior inspection of the data are flagged and parameters such as delay search windows are incorporated into the control file input to `fourfit` in this stage. Also, phase calibration is performed in this stage.
+   Stage 2 (2.+phasecal): The R/L phase solutions derived in the previous stage are included in the control file and adhoc phase calibration is performed.
+   Stage 3 (3.+adhoc): The adhoc phase solutions derived in the previous stage are included in the control file input to `fourfit` in this stage and R/L delay calibration is performed.
+   Stage 4 (4.+delays): The R/L delay solutions derived in the previous stage are accounted for during fringe-fitting and fringe closure is performed on the results of `fourfit`.
+   Stage 5 (5.+close): The closure phase solutions derived in the previous stage are appended to the control file and a final round of `fourfit` is performed. The calibrated output files generated in this stage are used in subsequent post-processing steps.
 
 Post-processing stages::
 
-   **Stage 6 (6.+uvfits):** The calibrated output files generated in the previous stage are converted to UVFITS format. 10-second time-averaged and frequency-averaged versions of UVFITS files are also created.
-   **Stage 7 (7.+apriori):** A priori amplitude calibration and field angle rotation correction is performed on the (unaveraged) UVFITS files from the previous stage. Time and frequency-averaged versions of the UVFITS files are also created.
+   Stage 6 (6.+uvfits): The calibrated output files generated in the previous stage are converted to UVFITS format. 10-second time-averaged and frequency-averaged versions of UVFITS files are also created.
+   Stage 7 (7.+apriori): A priori amplitude calibration and field angle rotation correction is performed on the (unaveraged) UVFITS files from the previous stage. Time and frequency-averaged versions of the UVFITS files are also created.
 
 Metadata
 --------
@@ -67,7 +67,7 @@ execution as long as the above directory organization and naming conventions are
 Driver scripts
 --------------
 
-The **scripts** directory contains driver scripts required to run the pipeline in two different enivironments.
+The **scripts** directory contains driver scripts required to run the pipeline in two different environments.
 
 **driver_cannon.sh** and **driver_cloud.sh** are sample scripts that can be modified to run on any SLURM cluster (e.g. Harvard FASRC) and on the eht-cloud machines respectively.
 For **driver_cloud.sh** the eht-cloud specific environment setup is done by scripts stored on the cloud.
