@@ -159,9 +159,9 @@ fi
 N=$(basename $PWD | sed 's/^\([0-9]*\)\..*/\1/')
 NDIR=$(echo ../$N.*)
 
-CFSET1=$METADIR/$TELESCOPE$OBSYEAR/$OBSFREQ"GHz/cf/cf"$N"_bx_*"
-CFSET2=$METADIR/$TELESCOPE$OBSYEAR/$OBSFREQ"GHz/cf/cf"$N"_"$BAND"_*"
+CFSET1=${METADIR}/${TELESCOPE}${OBSYEAR}/${OBSFREQ}"GHz/cf/cf"${N}"_bx_*"
+CFSET2=${METADIR}/${TELESCOPE}${OBSYEAR}/${OBSFREQ}"GHz/cf/cf"${N}"_"${BAND}"_*"
 
-echo $CFSET1 $CFSET2 "-> $NDIR"
-cp -n $CFSET1 $CFSET2 "$NDIR"
+echo ${CFSET1} ${CFSET2} "-> $NDIR"
+cp -n ${CFSET1} ${CFSET2} "$NDIR"
 
