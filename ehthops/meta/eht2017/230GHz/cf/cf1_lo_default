@@ -39,3 +39,5 @@ if station A and scan 099-205959 to 100-210001 pc_delay_r 7.2774
 if station A and scan 100-205959 to 101-210001 pc_delay_l 7.3329
 if station A and scan 100-205959 to 101-210001 pc_delay_r 7.3161
 
+* Save type 222 control file records
+gen_cf_record true

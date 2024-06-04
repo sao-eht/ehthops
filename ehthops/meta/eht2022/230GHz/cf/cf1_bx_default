@@ -11,8 +11,5 @@ pc_mode          manual * use manual phase-cal phase
 * Save type 222 control file records
 gen_cf_record true
 
-* Set up reasonable windows
-sb_win -0.2   0.2   * reasonable single band delay search window in us
-mb_win -1.0   1.0   * multi band delay in microsec, auto wrap to ambiguity
-dr_win -6.e-6 6.e-6 * reasonable delay-rate search window in us/s
+
 
