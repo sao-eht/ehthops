@@ -56,16 +56,16 @@ done
 if [[ $HAXP == true ]]; then
         for d in $CORRDAT
         do
-            find -L $SRCDIR/$d -mindepth $DEPTH -maxdepth $DEPTH -type d | grep $(echo $PATTERN | sed 's/-hops/-haxp/g') |
+            find -L $SRCDIR/$d -mindepth $DEPTH -maxdepth $DEPTH -type d | grep $PATTERN |
                 while read path; do
-                    # hack path to replace 'haxp' with 'hops'
-                    modpath=$(echo $path | awk -v replace="hops" '{gsub("haxp", replace)}1')
+                    # hack path to replace 'hops' with 'haxp'
+                    modpath=$(echo $path | awk -v replace="haxp" '{gsub("hops", replace)}1')
                     # Symlink the source data files
-                    scan=$(awk -F 'hops/' '{print $(NF)}' <<< $modpath)
+                    scan=$(awk -F 'haxp/' '{print $(NF)}' <<< $modpath)
                     if [ -d "$DATADIR/$scan" ]; then
                         #cp -s $path/!(*.[A-Z].*) "$DATADIR/$scan" # exclude pre-existing fringe files, if any
                         # create symbolic links to all data files except pre-existing fringe files (if any)
-                        find $path -type f ! -name "*.[A-Z].*" -exec cp -s {} "$DATADIR/$scan" \; 
+                        find $modpath -type f ! -name "*.[A-Z].*" -exec cp -s {} "$DATADIR/$scan" \; 
                     fi
                 done
         done

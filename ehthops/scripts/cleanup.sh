@@ -7,12 +7,11 @@ for stage in ${stages[@]}
 do
     echo "Cleaning up $stage..."
     pushd $stage
-    rm -rf tests temp log data
+    rm -rf tests temp log data cf*
     rm version
 
     if [ $stage == "1.+flags+wins" ]
     then
-        rm cf*
 	rm bin/[0-6]* bin/9*
 	rm pc*.pdf
     elif [ $stage == "6.uvfits" ]
@@ -21,7 +20,6 @@ do
 	rm vis*
     elif [ $stage != "0.bootstrap" ]
     then
-        rm cf*
         if [ $stage != "5.+close" ]
         then
 	    rm bin/[0-6]* bin/9*
