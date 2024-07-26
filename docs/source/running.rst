@@ -25,7 +25,7 @@ In addition, the following variables are set via command-line arguments to the *
    TELESCOPE -- (`-t`) sets the telescope/facility name (must match the telescope/facility name in *ehthops/meta/*); default is `eht`.
    OBSYEAR -- (`-y`) sets the year of observation (must match the year of the experiment that follows the telescope name in*ehthops/meta/*); default is `2021`.
    MIXEDPOL -- (`-m`) set to true if the `-m` option is given to indicate that the data contain mixed polarizations; `false` by default.
-   HAXP -- (`-x`) set to true if the `-h` option is given to indicate that the mixed polarization data for ALMA must be linked from the *-haxp* directories in the archive; `false` by default.
+   HAXP -- (`-x`) set to true if the `-x` option is given to indicate that the mixed polarization data for ALMA must be linked from the *-haxp* directories in the archive; `false` by default.
    PATTERN -- (`-p`) sets the pattern to match for the HOPS input directories/files in the archival data while linking; default is `e${OBSYEAR: -2}.*-$BAND-.*-hops/`.
    DEPTH -- (`-d`) sets the directory depth (level) to look for `HOPS` input files in the archival data while linking; default is `4`.
 
