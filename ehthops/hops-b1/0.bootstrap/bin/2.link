@@ -33,39 +33,64 @@ for d in $CORRDAT
 do
     find -L $SRCDIR/$d -mindepth $DEPTH -maxdepth $DEPTH -type d | grep $PATTERN |
         while read path; do
-            # /data/2018-april/corr/Rev1-Sci/e18e22-sgra-sci/e18e22-1-b3-sgra-SGRA-hops/3645/112-0850
             # Symlink the source data files
             scan=$(awk -F $PATTERN '{print $(NF)}' <<< $path)
-            if [ ! -d "$DATADIR/$scan" ]; then
-                mkdir -p "$DATADIR/$scan"
-                #cp -s $path/!(*.[A-Z].*) "$DATADIR/$scan" # exclude pre-existing fringe files, if any
-                # create symbolic links to all data files except pre-existing fringe files (if any)
-                find $path -type f ! -name "*.[A-Z].*" -exec cp -s {} "$DATADIR/$scan" \;
-                # for mixed pol data reduction, remove polconverted ALMA data
+            SDIR=$DATADIR/$scan
+            if [ ! -d "$SDIR" ]; then
+                mkdir -p "$SDIR"
+                # create symbolic links to all data files except pre-existing fringe files
+                find $path -type f ! -name "*.[A-Z].*" -exec cp -s {} "$SDIR" \;
+
+                ### retain only one root code if more than one is present in a scan
+                # find all extensions (i.e. root codes) present in the scan
+                EXTENSIONS=$(find "$SDIR" \( -type f -o -type l \) | sed -n 's/.*\.\([^.]*\)$/\1/p' | sort | uniq)
+                EXTENSIONS=($EXTENSIONS) # convert variable to array
+                if [[ ${#EXTENSIONS[@]} -gt 1 ]]; then
+                    EXT_TO_KEEP=$(echo "${EXTENSIONS[@]}" | head -n 1)
+                    EXT_TO_DELETE=("${EXTENSIONS[@]:1}")
+                    echo "Keeping files with extension for $scan: $EXT_TO_KEEP"
+                    echo "Deleting files with extension for $scan: ${EXT_TO_DELETE[@]}"
+                    for ext in "${EXT_TO_DELETE[@]}"; do
+                        find "$SDIR" \( -type f -o -type l \) -name "*.$ext" -exec rm {} \;
+                    done
+                fi
+
+                ### for mixed pol data reduction, remove polconverted ALMA data
                 if [[ $HAXP == true ]]; then
-                    rm -f $DATADIR/$scan/A?.*
+                    rm -f $SDIR/A?.*
                 fi
             fi
-            # below is not needed at find depth 4
-            # Remove the log to avoid overwrite errors
-            # rm -f "$DATADIR/$(basename $path)"/difx2mark4-*.log
         done
 done
 
-# for mixed pol data reduction, copy ALMA data from haxp directories
+# for mixedpol data reduction with mixedpol data separately stored in [.-]haxp dirs, replace ALMA data in [.-]hops with those in [.-]haxp
 if [[ $HAXP == true ]]; then
         for d in $CORRDAT
         do
             find -L $SRCDIR/$d -mindepth $DEPTH -maxdepth $DEPTH -type d | grep $PATTERN |
                 while read path; do
-                    # hack path to replace 'hops' with 'haxp'
-                    modpath=$(echo $path | awk -v replace="haxp" '{gsub("hops", replace)}1')
+                    # hack path to modify .hops => .haxp and -hops => -haxp
+                    modpath=$(echo $path | awk -v replace="haxp" '{gsub(/\.hops/, "." replace); gsub(/-hops/, "-" replace)}1')
                     # Symlink the source data files
                     scan=$(awk -F 'haxp/' '{print $(NF)}' <<< $modpath)
-                    if [ -d "$DATADIR/$scan" ]; then
-                        #cp -s $path/!(*.[A-Z].*) "$DATADIR/$scan" # exclude pre-existing fringe files, if any
-                        # create symbolic links to all data files except pre-existing fringe files (if any)
-                        find $modpath -type f ! -name "*.[A-Z].*" -exec cp -s {} "$DATADIR/$scan" \; 
+                    SDIR=$DATADIR/$scan
+                    if [ -d "$SDIR" ]; then
+                        # create symbolic links to all ALMA data files except pre-existing fringe files
+                        find $modpath -type f -name "A*" -and -name "*..*" -exec cp -s {} "$SDIR" \;
+                    fi
+                    
+                    ### retain only one root code for ALMA linearpol files if more than one was present in haxp directories
+                    # find all extensions (i.e. root codes) present in the scan (for ALMA files only)
+                    EXTENSIONS=$(find "$SDIR" \( -type f -o -type l \) -name "A*" | sed -n 's/.*\.\([^.]*\)$/\1/p' | sort | uniq)
+                    EXTENSIONS=($EXTENSIONS) # convert variable to array
+                    if [[ ${#EXTENSIONS[@]} -gt 1 ]]; then
+                        EXT_TO_KEEP=$(echo "${EXTENSIONS[@]}" | head -n 1)
+                        EXT_TO_DELETE=("${EXTENSIONS[@]:1}")
+                        echo "Keeping files with extension for $scan: $EXT_TO_KEEP"
+                        echo "Deleting files with extension for $scan: ${EXT_TO_DELETE[@]}"
+                        for ext in "${EXT_TO_DELETE[@]}"; do
+                            find "$SDIR" \( -type f -o -type l \) -name "A*.$ext" -exec rm {} \;
+                        done
                     fi
                 done
         done
@@ -80,3 +105,4 @@ find "$DATADIR" -name '*_3*' |
         # Symlinking instead of renaming
         # ln -s $(realbad "$bad") "$new"
     done
+

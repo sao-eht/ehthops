@@ -59,6 +59,12 @@ MIXEDPOL=${MIXEDPOL:-"false"}            # Mixed polarization calibration (relab
 HAXP=${HAXP:-"false"}            # Use HAXP data for ALMA that retains linear pol format (if available)
 DEPTH=${DEPTH:-"4"}            # Directory depth (level) to search for in the archival data while linking
 
+# if MIXEDPOL=false and HAXP=true, then set MIXEDPOL=true and throw a warning
+if [[ $MIXEDPOL = "false" && $HAXP = "true" ]]; then
+        MIXEDPOL=true
+        echo "MIXEDPOL set to true because HAXP is set to true."
+fi
+
 # for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
 
 if [[ $OBSYEAR = "2017" ]]; then
