@@ -76,7 +76,7 @@ if [[ $HAXP == true ]]; then
                     SDIR=$DATADIR/$scan
                     if [ -d "$SDIR" ]; then
                         # create symbolic links to all haxp data files (corel and station files) except pre-existing fringe files
-                        find $path -type f ! -name "*.[A-Z].*" -exec sh -c 'test ! -e "$1/$(basename "$0")" && cp -s "$0" "$1"' {} "$SDIR" \;
+                        find $modpath -type f ! -name "*.[A-Z].*" -exec sh -c 'test ! -e "$1/$(basename "$0")" && cp -s "$0" "$1"' {} "$SDIR" \;
                     fi
                     
                     ### retain only one root code for ALMA data files if more than one was present in haxp directories
