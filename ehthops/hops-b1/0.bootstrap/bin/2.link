@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 
-if [[ "$HAXP" = true ]]; then
-	echo "Replacing polconverted ALMA data with non-polconverted data..."
-else
-	echo "NOT replacing polconverted ALMA data with non-polconverted data..."
-fi
-
 echo "1. Linking HOPS directories"
 echo "  Container work directory, WRKDIR: \"$WRKDIR\""
 echo "  Container data source, SRCDIR:    \"$SRCDIR\""
@@ -43,13 +37,13 @@ do
 
                 ### retain only one root code if more than one is present in a scan
                 # find all extensions (i.e. root codes) present in the scan
-                EXTENSIONS=$(find "$SDIR" \( -type f -o -type l \) | sed -n 's/.*\.\([^.]*\)$/\1/p' | sort | uniq)
+                EXTENSIONS=$(find "$SDIR" \( -type f -o -type l \) | sed -n 's/.*\.\([^.]*\)$/\1/p' | sort -r | uniq)
                 EXTENSIONS=($EXTENSIONS) # convert variable to array
                 if [[ ${#EXTENSIONS[@]} -gt 1 ]]; then
-                    EXT_TO_KEEP=$(echo "${EXTENSIONS[@]}" | head -n 1)
+                    EXT_TO_KEEP=${EXTENSIONS[0]}
                     EXT_TO_DELETE=("${EXTENSIONS[@]:1}")
-                    echo "Keeping files with extension for $scan: $EXT_TO_KEEP"
-                    echo "Deleting files with extension for $scan: ${EXT_TO_DELETE[@]}"
+                    echo "$scan: Retaining files with extension: $EXT_TO_KEEP"
+                    echo "$scan: Deleting files with extension(s): ${EXT_TO_DELETE[@]}"
                     for ext in "${EXT_TO_DELETE[@]}"; do
                         find "$SDIR" \( -type f -o -type l \) -name "*.$ext" -exec rm {} \;
                     done
@@ -64,6 +58,7 @@ do
 done
 
 # for mixedpol data reduction with mixedpol data separately stored in [.-]haxp dirs, replace ALMA data in [.-]hops with those in [.-]haxp
+echo "HAXP=$HAXP; replacing polconverted ALMA data with non-polconverted data..."
 if [[ $HAXP == true ]]; then
         for d in $CORRDAT
         do
@@ -81,13 +76,13 @@ if [[ $HAXP == true ]]; then
                     
                     ### retain only one root code for ALMA data files if more than one was present in haxp directories
                     # find all extensions (i.e. root codes) present in the scan (for ALMA files only)
-                    EXTENSIONS=$(find "$SDIR" \( -type f -o -type l \) -name "A*" | sed -n 's/.*\.\([^.]*\)$/\1/p' | sort | uniq)
+                    EXTENSIONS=$(find "$SDIR" \( -type f -o -type l \) -name "A*" | sed -n 's/.*\.\([^.]*\)$/\1/p' | sort -r | uniq)
                     EXTENSIONS=($EXTENSIONS) # convert variable to array
                     if [[ ${#EXTENSIONS[@]} -gt 1 ]]; then
-                        EXT_TO_KEEP=$(echo "${EXTENSIONS[@]}" | head -n 1)
+                        EXT_TO_KEEP=${EXTENSIONS[0]}
                         EXT_TO_DELETE=("${EXTENSIONS[@]:1}")
-                        echo "Keeping files with extension for $scan: $EXT_TO_KEEP"
-                        echo "Deleting files with extension for $scan: ${EXT_TO_DELETE[@]}"
+                        echo "$scan: Retaining files with extension: $EXT_TO_KEEP"
+                        echo "$scan: Deleting files with extension(s): ${EXT_TO_DELETE[@]}"
                         for ext in "${EXT_TO_DELETE[@]}"; do
                             find "$SDIR" \( -type f -o -type l \) -name "A*.$ext" -exec rm {} \;
                         done
