@@ -75,11 +75,11 @@ if [[ $HAXP == true ]]; then
                     scan=$(awk -F 'haxp/' '{print $(NF)}' <<< $modpath)
                     SDIR=$DATADIR/$scan
                     if [ -d "$SDIR" ]; then
-                        # create symbolic links to all ALMA data files except pre-existing fringe files
-                        find $modpath -type f -name "A*" -and -name "*..*" -exec cp -s {} "$SDIR" \;
+                        # create symbolic links to all haxp data files (corel and station files) except pre-existing fringe files
+                        find $path -type f ! -name "*.[A-Z].*" -exec sh -c 'test ! -e "$1/$(basename "$0")" && cp -s "$0" "$1"' {} "$SDIR" \;
                     fi
                     
-                    ### retain only one root code for ALMA linearpol files if more than one was present in haxp directories
+                    ### retain only one root code for ALMA data files if more than one was present in haxp directories
                     # find all extensions (i.e. root codes) present in the scan (for ALMA files only)
                     EXTENSIONS=$(find "$SDIR" \( -type f -o -type l \) -name "A*" | sed -n 's/.*\.\([^.]*\)$/\1/p' | sort | uniq)
                     EXTENSIONS=($EXTENSIONS) # convert variable to array
