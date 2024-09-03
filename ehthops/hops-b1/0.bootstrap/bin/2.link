@@ -58,7 +58,6 @@ do
 done
 
 # for mixedpol data reduction with mixedpol data separately stored in [.-]haxp dirs, replace ALMA data in [.-]hops with those in [.-]haxp
-echo "HAXP=$HAXP; replacing polconverted ALMA data with non-polconverted data..."
 if [[ $HAXP == true ]]; then
         for d in $CORRDAT
         do
@@ -89,6 +88,8 @@ if [[ $HAXP == true ]]; then
                     fi
                 done
         done
+else
+    echo "HAXP=$HAXP. Not replacing circpol ALMA data with linpol data."
 fi
 
 # Rename silly root files to standard names
