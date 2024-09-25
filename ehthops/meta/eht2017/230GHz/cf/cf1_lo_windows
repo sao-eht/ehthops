@@ -1,7 +1,0 @@
-* Ensure these settings are captured regardless of control-file concatenation order by introducing an (effectively) "if true" statement
-if scan > 001-000000
-
-* Set up reasonable windows
-sb_win -0.04  0.04  * updated for non-SPT non-SMA
-mb_win -0.009 0.009 * reasonable multiband delay search window in us
-dr_win -1.2e-6 1.2e-6 * expanded window same as low band

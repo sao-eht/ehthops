@@ -1,6 +1,0 @@
-* Ensure these settings are captured regardless of control-file concatenation order by introducing an (effectively) "if true" statement
-if scan > 001-000000
-
-* apparent bad adhoc phase timing in APEX due to VEX start_offset parameter
-if station X and scan 097-051800 to 097-051850
-    skip true

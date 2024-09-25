@@ -1,5 +1,0 @@
-* Ensure these settings are captured regardless of control-file concatenation order by introducing an (effectively) 'if true' statement
-if scan > 001-000000
-
-* Set up reasonable windows
-* narrow or widen windows as necessary

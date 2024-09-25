@@ -1,9 +1,0 @@
-* Ensure these settings are captured regardless of control-file concatenation order by introducing an (effectively) 'if true' statement
-if scan > 001-000000
-
-* Set up reasonable windows
-* narrow or widen windows as necessary
-sb_win -0.2   0.2   * reasonable single band delay search window in us
-mb_win -1.0   1.0   * multi band delay in microsec, auto wrap to ambiguity
-dr_win -6.e-6 6.e-6 * reasonable delay-rate search window in us/s
-
