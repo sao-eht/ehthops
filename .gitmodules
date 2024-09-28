@@ -1,3 +1,6 @@
 [submodule "ehthops/meta"]
 	path = ehthops/meta
 	url = https://github.com/sao-eht/ehthops-meta.git
+[submodule "ehthops/plots"]
+	path = ehthops/plots
+	url = https://github.com/sao-eht/ehthops-plots.git
