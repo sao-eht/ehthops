@@ -1,0 +1,3 @@
+[submodule "ehthops/meta"]
+	path = ehthops/meta
+	url = https://github.com/sao-eht/ehthops-meta.git
