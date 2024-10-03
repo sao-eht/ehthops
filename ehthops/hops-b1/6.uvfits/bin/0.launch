@@ -49,7 +49,7 @@ TOPDIR=${SET_TOPDIR:-"$WRKDIR/.."}            # top level dir for all stages
 DATADIR=${SET_DATADIR:-"$WRKDIR/data"}        # input/output data location for HOPS
 
 SRCDIR=${SET_SRCDIR:-"$TOPDIR/5.+close/data"} # single input data location for correlator source data
-SHRDIR=${SET_SHRDIR:-"$TOPDIR/../share"}      # location of shared resources (summary notebooks, etc)
+SHRDIR=${SET_SHRDIR:-"$TOPDIR/../plots/notebooks"}      # location of shared resources (summary notebooks, etc)
 
 OBSYEAR=${OBSYEAR:-"2021"}            # Campaign year
 MIXEDPOL=${MIXEDPOL:-"false"}            # Mixed polarization calibration
