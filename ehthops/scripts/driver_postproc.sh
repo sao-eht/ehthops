@@ -14,12 +14,12 @@ do
     cd $stage
     echo "cd into $(pwd)"
 
-    source bin/0.launch -f 230 -t eht -y 2021
+    source bin/0.launch -t /path/to/metadata -y 2021 -m -d 4 -p "e21f.*-$band-.*.hops/"
 
     if [ $stage == "7.+apriori" ]
     then
         source bin/1.apriori
-	source bin/2.import
+	    source bin/2.import
         python bin/3.average
     fi
 

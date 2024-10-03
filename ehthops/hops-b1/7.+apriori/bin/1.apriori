@@ -3,7 +3,7 @@
 mkdir tests temp log
 
 # Post-process (fluxcal & field angle rotation correction) uvfits files
-SEFDDIR=$METADIR/$TELESCOPE$OBSYEAR/$OBSFREQ"GHz/SEFD/"$BAND
+SEFDDIR="$METADIR/SEFD/$BAND"
 
 echo "1. Performing apriori flux calibration and field angle rotation correction"
 echo "HOPS data to post-process, SRCDIR: $SRCDIR"
