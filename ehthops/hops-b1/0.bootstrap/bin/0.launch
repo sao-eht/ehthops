@@ -5,15 +5,37 @@
 
 OPTIND=1 # so that getopts can pick up the arguments when the script is 'source'd
 
-# Initialize a flag to track if -t option was provided
-METADIR_SET_BY_DRIVER=false
+# Function to display help message
+show_help() {
+    echo "Usage: [SET_ENVVAR1=...] && [SET_ENVVAR2=...] && source $(basename "${BASH_SOURCE[0]}") [options]"
+    echo
+    echo "Useful environment variables:"
+    echo "============================="
+    echo "  SET_CORRDAT     Correlation releases to use for SRC data, higher precedence comes first"
+    echo "  SET_WRKDIR      Working directory for pipeline process"
+    echo "  SET_TOPDIR      Top level dir for all stages"
+    echo "  SET_DATADIR     Input/output data location for HOPS"
+    echo "  SET_METADIR     Location of preset control files, META tables, ZBL flux estimates for netcal, etc"
+    echo "  SET_SRCDIR      Single input data location for correlator source data"
+    echo "  SET_SHRDIR      Location of shared resources (summary notebooks, etc)"
+    echo "If these are not set, reasonable defaults are used (not always guaranteed to work)."
+    echo
+    echo "Command-line options:"
+    echo "====================="
+    echo "  -y <yyyy>       Campaign year"
+    echo "  -m              Enable mixed polarization calibration"
+    echo "  -x              Use HAXP data for ALMA"
+    echo "  -p <pattern>    Set the pattern for searching (regex)"
+    echo "  -d <depth>      Set the directory depth for searching (integer)"
+    echo "  -h, --help      Display this help message and exit"
+    echo
+    echo "Example:"
+    echo "  SET_SRCDIR=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/archive/prod-extracted/2021March/ && SET_CORRDAT=\"Rev1-Cal:Rev1-Sci\" && source bin/0.launch -t \"/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/eht2021/ehthops-345-polconverted-r3/ehthops/meta/eht2021/345GHz\" -y 2021 -d 4 -p \"e21f.*-$band-.*.hops/\""
+}
 
-while getopts "t:y:mxp:d:" opt; do
+# Parse command-line arguments
+while getopts "y:mxp:d:h" opt; do
         case $opt in
-                t)
-                        METADIR=$OPTARG
-                        METADIR_SET_BY_DRIVER=true
-                        ;;
                 y)
                         OBSYEAR=$OPTARG
                         ;;
@@ -29,14 +51,22 @@ while getopts "t:y:mxp:d:" opt; do
                 d)
                         DEPTH=$OPTARG
                         ;;
+                h|help)
+                        show_help
+                        return 0
+                        ;;
+                \?)
+                        echo "Invalid option: -$OPTARG" >&2
+                        show_help
+                        return 1
+                        ;;
+                :)
+                        echo "Option -$OPTARG requires an argument." >&2
+                        show_help
+                        return 1
+            ;;
         esac
 done
-
-# Check if METADIR was set by the driver script
-if [ $METADIR_SET_BY_DRIVER = false ]; then
-        echo "From $(basename "${BASH_SOURCE[0]}"):: The mandatory METADIR option is not set! Set METADIR using the '-t' option. Exiting..."
-        exit 1
-fi
 
 if [ -f /.dockerenv ]; then
 	echo "This script should:"
@@ -54,7 +84,7 @@ CORRDAT=${SET_CORRDAT:-"Rev4-Cal:Rev4-Sci"}   # Rev4 should be the same as Rev3/
 WRKDIR=${SET_WRKDIR:-"$PWD"}                  # working directory for pipeline process
 TOPDIR=${SET_TOPDIR:-"$WRKDIR/.."}            # top level dir for all stages
 DATADIR=${SET_DATADIR:-"$WRKDIR/data"}        # input/output data location for HOPS
-
+METADIR=${SET_METADIR:-"$TOPDIR/../meta/eht2017"}        # location of preset control files, META tables, ZBL flux estimates for netcal, etc
 SRCDIR=${SET_SRCDIR:-"/data/2018-april/corr"} # single input data location for correlator source data
 SHRDIR=${SET_SHRDIR:-"$TOPDIR/../plots/notebooks"}      # location of shared resources (summary notebooks, etc)
 
@@ -62,6 +92,19 @@ OBSYEAR=${OBSYEAR:-"2021"}            # Campaign year
 MIXEDPOL=${MIXEDPOL:-"false"}            # Mixed polarization calibration (relabel linear feeds to circular feeds)
 HAXP=${HAXP:-"false"}            # Use HAXP data for ALMA that retains linear pol format (if available)
 DEPTH=${DEPTH:-"4"}            # Directory depth (level) to search for in the archival data while linking
+
+# Perform some basic checks
+if [ ! -d "$METADIR" ]; then
+        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: METADIR=$(METADIR) does not exist! Exiting..."
+        exit 1
+fi
+if [ ! -d "$SRCDIR" ]; then
+        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: SRCDIR=$(SRCDIR) does not exist! Exiting..."
+        exit 1
+fi
+if [ ! -d "$SHRDIR" ]; then
+        echo "From $(basename "${BASH_SOURCE[0]}") WARNING:: SHRDIR=$(SHRDIR) does not exist! Continuing without generating summary notebooks..."
+fi
 
 # if MIXEDPOL=false and HAXP=true, then set MIXEDPOL=true and throw a warning
 if [[ $MIXEDPOL = "false" && $HAXP = "true" ]]; then
