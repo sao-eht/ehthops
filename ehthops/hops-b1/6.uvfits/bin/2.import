@@ -10,9 +10,9 @@
 # IN 31/Oct/2023
 
 # common parameters
-observation='EHT2021' # observation code recognizable by eat -- 'EHT2017', 'EHT2018', 'EHT2021'
+campaign="$CAMPAIGN" # campaign/observation code recognizable by eat -- 'EHT2017', 'EHT2018', 'EHT2021'
 outdir="$WRKDIR/" #where to dump output
-vexdir="$METADIR/eht2021/VEX/" #vex for meaningful scan-averaging
+vexdir="$METADIR/VEX/" #vex for meaningful scan-averaging
 ehtimpath="$EHTIMPATH" # ehtim in dev branch
 infileext='uvfits' #input filename extension
 polrep='circ'
@@ -29,7 +29,7 @@ idtag='vis_sc'
 tavg=-1.0 # -1.0 => scan-average
 
 /usr/bin/time -v import_uvfits.py $datadir $vexdir $outdir --band $band --infileext $infileext --tavg $tavg --polrep $polrep --ehtimpath $ehtimpath \
---idtag $idtag --observation $observation --outfiletype $outfiletype > log/import-sc.log 2> log/import-sc.err &
+--idtag $idtag --observation $campaign --outfiletype $outfiletype > log/import-sc.log 2> log/import-sc.err &
 
 # SECOND: COHERENT 10s AVERAGE AND SAVE CLOSURE QUANTITIES
 idtag='vis_10s'
@@ -38,7 +38,7 @@ tavgclosure=10. # or -1.0 => scan average
 closure='both' # both 'cphase' and 'lcamp'
 
 /usr/bin/time -v import_uvfits.py $datadir $vexdir $outdir --band $band --infileext $infileext --tavg $tavg --polrep $polrep --ehtimpath $ehtimpath \
---tavgclosure $tavgclosure --idtag $idtag --observation $observation --outfiletype $outfiletype --closure $closure > log/import-10s.log 2> log/import-10s.err &
+--tavgclosure $tavgclosure --idtag $idtag --observation $campaign --outfiletype $outfiletype --closure $closure > log/import-10s.log 2> log/import-10s.err &
 
 # THIRD: SCAN LONG INCOHERENT
 idtag='vis_sc_inc'
@@ -46,6 +46,6 @@ tavg=-1.0 # -1.0 => scan-average
 tavgprecoh=2.0
 
 /usr/bin/time -v import_uvfits.py $datadir $vexdir $outdir --band $band --infileext $infileext --tavg $tavg --polrep $polrep --ehtimpath $ehtimpath \
---tavgprecoh $tavgprecoh --idtag $idtag --observation $observation --outfiletype $outfiletype --incoh_avg > log/import-sc_incoh.log 2> log/import-sc_incoh.err &
+--tavgprecoh $tavgprecoh --idtag $idtag --observation $campaign --outfiletype $outfiletype --incoh_avg > log/import-sc_incoh.log 2> log/import-sc_incoh.err &
 
 wait $(jobs -p)

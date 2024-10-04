@@ -5,32 +5,51 @@
 
 OPTIND=1 # so that getopts can pick up the arguments when the script is 'source'd
 
-# Initialize a flag to track if -t option was provided
-METADIR_SET_BY_DRIVER=false
+# Function to display help message
+show_help() {
+    echo "Usage: [SET_ENVVAR1=...] && [SET_ENVVAR2=...] && source $(basename "${BASH_SOURCE[0]}") [options]"
+    echo
+    echo "Useful environment variables:"
+    echo "============================="
+    echo "  SET_WRKDIR      Working directory for pipeline process"
+    echo "  SET_TOPDIR      Top level dir for all stages"
+    echo "  SET_DATADIR     Input/output data location for HOPS"
+    echo "  SET_METADIR     Location of preset control files, META tables, ZBL flux estimates for netcal, etc"
+    echo "  SET_SRCDIR      Single input data location for correlator source data"
+    echo "  SET_EHTIMPATH   Path to eht-imaging"
+    echo "If these are not set, reasonable defaults are used (not always guaranteed to work)."
+    echo
+    echo "Command-line options:"
+    echo "====================="
+    echo "  -c <campaign-name>       Campaign name recognizable by EAT (\"EHT2017\", \"EHT2018\", \"EHT2021\")"
+    echo "  -h, --help      Display this help message and exit"
+    echo
+    echo "Example:"
+    echo "  SET_SRCDIR=/path/to/data/archive && SET_METADIR=/path/to/metadata && source bin/0.launch -c \"EHT2021\""
+}
 
-while getopts "t:y:mx" opt; do
+# Parse command-line arguments
+while getopts "c:h" opt; do
         case $opt in
-                t)
-                        METADIR=$OPTARG
-                        METADIR_SET_BY_DRIVER=true
+                c)
+                        CAMPAIGN=$OPTARG
                         ;;
-                y)
-                        OBSYEAR=$OPTARG
+                h|help)
+                        show_help
+                        return 0
                         ;;
-                m)
-                        MIXEDPOL=true
+                \?)
+                        echo "Invalid option: -$OPTARG" >&2
+                        show_help
+                        return 1
                         ;;
-                x)
-                        HAXP=true
-                        ;;
+                :)
+                        echo "Option -$OPTARG requires an argument." >&2
+                        show_help
+                        return 1
+            ;;
         esac
 done
-
-# Check if METADIR was set by the driver script
-if [ $METADIR_SET_BY_DRIVER = false ]; then
-        echo "Error: -t option (METADIR) is mandatory."
-        exit 1
-fi
 
 if [ -f /.dockerenv ]; then
 	echo "This script should:"
@@ -42,22 +61,28 @@ fi
 
 # Define variables to their default values
 # These can be adjusted by defining SET env variables prior to running launch
-CORRDAT=${SET_CORRDAT:-"Rev4-Cal:Rev4-Sci"}   # correlation releases to use for SRC data
-
 WRKDIR=${SET_WRKDIR:-"$PWD"}                  # working directory for pipeline process
 TOPDIR=${SET_TOPDIR:-"$WRKDIR/.."}            # top level dir for all stages
 DATADIR=${SET_DATADIR:-"$WRKDIR/data"}        # input/output data location for HOPS
+METADIR=${SET_METADIR:-"$TOPDIR/../meta/eht2017/230GHz"}        # location of preset control files, META tables, ZBL flux estimates for netcal, etc
+SRCDIR=${SET_SRCDIR:-"/data/2018-april/corr"} # single input data location for correlator source data
+EHTIMPATH=${SET_EHTIMPATH:-"/usr/local/src/ehtim/"} # path to ehtim source (usually in dev branch)
 
-SRCDIR=${SET_SRCDIR:-"$TOPDIR/5.+close/data"} # single input data location for correlator source data
-SHRDIR=${SET_SHRDIR:-"$TOPDIR/../plots/notebooks"}      # location of shared resources (summary notebooks, etc)
+CAMPAIGN=${CAMPAIGN:-"EHT2017"}            # EAT-recognizable campaign name
 
-OBSYEAR=${OBSYEAR:-"2021"}            # Campaign year
-MIXEDPOL=${MIXEDPOL:-"false"}            # Mixed polarization calibration
-HAXP=${HAXP:-"false"}            # Use HAXP data for ALMA that retains linear pol format (if available)
+# Perform some basic checks
+if [ ! -d "$METADIR" ]; then
+        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: METADIR=$(METADIR) does not exist! Exiting..."
+        exit 1
+fi
+if [ ! -d "$SRCDIR" ]; then
+        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: SRCDIR=$(SRCDIR) does not exist! Exiting..."
+        exit 1
+fi
 
 # for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
 
-if [[ $OBSYEAR = "2017" ]]; then
+if [[ $CAMPAIGN = "EHT2017" ]]; then
 	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
 	if [[ $BAND = "b3" ]]; then
 		BAND="lo"
@@ -67,8 +92,6 @@ if [[ $OBSYEAR = "2017" ]]; then
 else
 	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
 fi
-
-EHTIMPATH=${SET_EHTIMPATH:-"/usr/local/src/ehtim/"} # path to ehtim source (usually in dev branch)
 
 # Parse arguments
 USE_DOCKER=${USE_DOCKER:-false}
@@ -82,18 +105,14 @@ fi
 if [ x"$USE_DOCKER" == x"true" ]; then
 	echo "0. Launching a HOPS docker container"
 
-        echo "  Corr release(s), CORRDAT:   $CORRDAT"
         echo "  Data source dir, SRCDIR: $SRCDIR"
         echo "  Work dir, WRKDIR:   $WRKDIR"
         echo "  Top level work dir, TOPDIR:   $TOPDIR"
         echo "  HOPS data output, DATADIR:   $DATADIR"
-        echo "  Dir to share resources b/w stages, SHRDIR:       $SHRDIR"
         echo "  Meta, METADIR:        $METADIR"
+        echo "  Path to eht-imaging, EHTIMPATH:        $EHTIMPATH"
         echo "  Band, BAND:        $BAND"
-        echo "  Campaign year, OBSYEAR:        $OBSYEAR"
-        echo "  Mixed polarization calibration, MIXEDPOL:        $MIXEDPOL"
-        echo "  Use HAXP data for ALMA, HAXP:        $HAXP"
-        echo "  Path to ehtim, EHTIMPATH:    $EHTIMPATH"
+        echo "  EAT-recognizable campaign name, CAMPAIGN:        $CAMPAIGN"
         echo "  Command:     $@"
 
 	if [ $# == 0 ]; then # no command line argument
@@ -104,38 +123,29 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 		-v "$WRKDIR:/root"                     \
 		-v "$TOPDIR:/top"                      \
 		-v "$SRCDIR:/data"                     \
-		-v "$SHRDIR:/usr/local/pipeline/share" \
 		-v "$METADIR:/meta"                    \
-		-e "CORRDAT=$CORRDAT"                  \
-		-e "WRKDIR=/root"                      \
+                -e "WRKDIR=/root"                      \
 		-e "TOPDIR=/top"                       \
-		-e "DATADIR=/root${DATADIR##$WRKDIR}"  \
+                -e "DATADIR=/root${DATADIR##$WRKDIR}"  \
 		-e "SRCDIR=/data"                      \
-		-e "SHRDIR=/usr/local/pipeline/share"  \
 		-e "METADIR=/meta"                     \
+                -e "EHTIMPATH=$EHTIMPATH"    \
 		-e "BAND=$BAND"                        \
-		-e "OBSYEAR=$OBSYEAR"                  \
-		-e "MIXEDPOL=$MIXEDPOL"                \
-                -e "HAXP=$HAXP"                        \
-                -e "EHTIMPATH=$EHTIMPATH"              \	
+		-e "CAMPAIGN=$CAMPAIGN"                  \
 		$PORTFORWARD                           \
 		eventhorizontelescope/eat-notebook     \
 		"$@"
 else
 	echo "0. Setting up an interactive HOPS environment"
 
-        echo "  Corr release(s), CORRDAT:   $CORRDAT"
         echo "  Data source dir, SRCDIR: $SRCDIR"
         echo "  Work dir, WRKDIR:   $WRKDIR"
         echo "  Top level work dir, TOPDIR:   $TOPDIR"
         echo "  HOPS data output, DATADIR:   $DATADIR"
-        echo "  Dir to share resources b/w stages, SHRDIR:       $SHRDIR"
         echo "  Meta, METADIR:        $METADIR"
+        echo "  Path to eht-imaging, EHTIMPATH:        $EHTIMPATH"
         echo "  Band, BAND:        $BAND"
-        echo "  Campaign year, OBSYEAR:        $OBSYEAR"
-        echo "  Mixed polarization, MIXEDPOL:        $MIXEDPOL"
-        echo "  Use HAXP data for ALMA, HAXP:        $HAXP"	
-        echo "  Path to ehtim, EHTIMPATH:    $EHTIMPATH"
+        echo "  EAT-recognizable campaign name, CAMPAIGN:        $CAMPAIGN"
         echo "  Command:     $@"
 
 	# Add more HOPS setup scripts here if needed
