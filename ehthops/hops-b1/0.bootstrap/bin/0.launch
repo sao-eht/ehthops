@@ -84,7 +84,7 @@ CORRDAT=${SET_CORRDAT:-"Rev4-Cal:Rev4-Sci"}   # Rev4 should be the same as Rev3/
 WRKDIR=${SET_WRKDIR:-"$PWD"}                  # working directory for pipeline process
 TOPDIR=${SET_TOPDIR:-"$WRKDIR/.."}            # top level dir for all stages
 DATADIR=${SET_DATADIR:-"$WRKDIR/data"}        # input/output data location for HOPS
-METADIR=${SET_METADIR:-"$TOPDIR/../meta/eht2017"}        # location of preset control files, META tables, ZBL flux estimates for netcal, etc
+METADIR=${SET_METADIR:-"$TOPDIR/../meta/eht2017/230GHz"}        # location of preset control files, META tables, ZBL flux estimates for netcal, etc
 SRCDIR=${SET_SRCDIR:-"/data/2018-april/corr"} # single input data location for correlator source data
 SHRDIR=${SET_SHRDIR:-"$TOPDIR/../plots/notebooks"}      # location of shared resources (summary notebooks, etc)
 
