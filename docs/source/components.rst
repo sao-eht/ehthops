@@ -46,30 +46,18 @@ Metadata
 
 The **meta** directory hosts the metadata and is structured as follows:
 
-- meta
-  - <telescope><year>
-    - <frequency-in-GHz>GHz
-      - cf
-        - cf<stage>_b<bandno>_*
-      - SEFD
-        - b<bandno>
-          - <HOPS-expt-no>
-            - <source>_<two-letter-station-code>.txt
-    - VEX
-      - <track>.vex
+- <campaign>
+ - cf
+  - cf[0-9]_b[1234]_*
+ - SEFD
+  - b[1234]
+   - [dddd] # HOPS expt no
+    - <source>_<two-letter-station-code>.txt
+ - VEX
+  - <track>.vex
 
 Currently, the metadata include HOPS control files (**cf**), VEX files (**VEX**), station and source relevant SEFDs (**SEFD**)
 for each observing campaign.
 
 The pipeline scripts pick the appropriate control files (from the **cf** subdirectory) and other relevant metadata during
 execution as long as the above directory organization and naming conventions are followed.
-
-Driver scripts
---------------
-
-The **scripts** directory contains driver scripts required to run the pipeline in two different environments.
-
-**driver_cannon.sh** and **driver_cloud.sh** are sample scripts that can be modified to run on any SLURM cluster (e.g. Harvard FASRC) and on the eht-cloud machines respectively.
-For **driver_cloud.sh** the eht-cloud specific environment setup is done by scripts stored on the cloud.
-
-For more details, refer to the "Running ehthops" section in the documentation.

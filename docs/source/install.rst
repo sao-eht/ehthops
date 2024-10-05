@@ -2,14 +2,60 @@
 Installation
 ============
 
-The following instructions pertain to installing HOPS version 3.24 and the EHT-HOPS pipeline with python 3.10. While this procedure has been tested on the Harvard FASRC cluster, it is expected to work on any modern Linux system. If the software packages required to compile HOPS are installed in standard locations such as /usr/local, some of the following environment variables may not need to be defined.
-
-Installing HOPS v3.24
----------------------
+The following instructions pertain to HOPS version 3.24 with python 3.10. This procedure has been tested on the Harvard FASRC cluster, and is expected to work on any modern Linux/Unix system. If the software packages required to compile HOPS are installed in standard locations such as /usr/local, some of the following environment variables may not need to be explicitly defined.
 
 .. note::
    Build HOPS with the same Python version to be used by the EHT-HOPS pipeline (e.g. the mamba/conda environment used to run the pipeline).
    One way to ensure this is to set up the mamba/conda environment first (with at least future, numpy, scipy, matplotlib pre-installed), activate it, and then build HOPS.
+
+Setting up a new python environment
+-----------------------------------
+
+Download `Miniconda installer <https://docs.conda.io/en/latest/miniconda.html>`_ for python 3.10 or `Mamba <https://mamba.readthedocs.io/en/latest/index.html>`_. Create a new mamba environment for the pipeline::
+
+   mamba create -n ehthops310 python=3.10
+
+.. note::
+   Note that python 3.8 can run the pipeline but cannot generate the summary notebooks using either nbconvert or papermill. Python 3.10 is recommended.
+
+Activate the newly created conda environment and install the EHT Analysis Toolkit (EAT) in developer mode (the repository should be cloned to a location with write permissions)::
+
+   git clone https://github.com/sao-eht/eat.git
+   pip install -e eat
+
+Install astropy; this should pull in numpy, among other modules::
+
+   mamba install astropy seaborn numpy pandas matplotlib scipy
+
+Verify that the astropy version is 5.3 or below (downgrade if not). This is necessary for the current codebase to work properly::
+
+   mamba install astropy=5.3
+
+Install modules required for generating summary plots non-interactively and viewing them from within the same mamba environment::
+
+   mamba install ipykernel papermill nbconvert jupyter
+
+The post-processing steps (including the uvfits generation step) need *eht-imaging*. Note that, at the moment, the path to *eht-imaging* source code is passed directly to the post-processing scripts in the *ehthops* pipeline. Alwyas ensure that *eht-imaging* is on the *dev* branch to ensure that you are pulling in the latest updates::
+
+   git clone https://github.com/achael/eht-imaging.git
+   cd eht-imaging
+   git checkout dev
+   pip install .
+
+**Optional:** The pipeline generates summary notebooks with diagnostic plots in both ipynb and html formats. To prevent the (possible) failure of html file creation from notebooks, ensure that the following is installed::
+
+   mamba install jupyter_contrib_nbextensions
+
+**Optional:** Some modules such as scikit-learn, statsmodels, and pytables are required only for post-processing with eat::
+
+   mamba install scikit-learn future pytables statsmodels
+
+**In case of glibcxx error:** It is possible that at stage 1 of the EHT-HOPS pipeline, the eat program alma_pcal might throw a 'glibcxx not found' error via scipy. If this occurs, update libstdcxx version to at least 12. Modern installations should already satisfy this requirement::
+
+   mamba install libstdcxx-ng=12
+
+Installing HOPS v3.24
+---------------------
 
 Before installing HOPS, PGPLOT and FFTW must be installed. On a new Debian-based system (including Ubuntu), some or all of the following packages may be 
 necessary to be able to compile HOPS successfully. Note that the exact names might differ on different systems::
@@ -17,11 +63,9 @@ necessary to be able to compile HOPS successfully. Note that the exact names mig
    sudo apt install gcc make gfortran libx11-dev ghostscript libfftw3-dev parallel
    sudo apt install gdb flex bison pkg-config autoconf automake gettext libtool
 
-If FFTW3 is installed properly via apt, the following manual installation of FFTW3 may be safely skipped.
-Download `PGPLOT <https://sites.astro.caltech.edu/~tjp/pgplot/>`_
-and follow the `instructions <https://www.gnu.org/software/gnuastro/manual/html_node/PGPLOT.html>`_ to install it.
-Note that the switch from g77 to gfortran is necessary for any modern GNU/Linux system.
-Download `FFTW <https://fftw.org/>`_ and run the following commands::
+Download `PGPLOT <https://sites.astro.caltech.edu/~tjp/pgplot/>`_ and follow these `instructions <https://www.gnu.org/software/gnuastro/manual/html_node/PGPLOT.html>`_ to install it. Note that the switch from g77 to gfortran is necessary on any modern Linux system.
+
+If FFTW3 is installed properly via apt, skip the following manual installation step. Download `FFTW <https://fftw.org/>`_ and run the following commands::
 
    ./configure --prefix=</path/to/install/fftw> --enable-shared --enable-threads --enable-openmp
    make
@@ -45,8 +89,7 @@ Download `HOPS <https://www.haystack.mit.edu/haystack-observatory-postprocessing
 
    wget -r ftp://gemini.haystack.mit.edu/pub/hops
 
-The above command checks out all past versions of HOPS under *gemini.haystack.mit.edu/pub/hops*.
-Untar the latest version of HOPS (as on June 2023, version 3.24). At the same location where hops-3.24 is untarred, create a build directory in which to compile HOPS::
+The above command checks out all past versions of HOPS under the directory *gemini.haystack.mit.edu/pub/hops*. Untar HOPS version 3.24 somewhere and at the same location create a build directory in which to compile HOPS::
 
    mkdir bld-3.24
    cd bld-3.24
@@ -55,63 +98,29 @@ Untar the latest version of HOPS (as on June 2023, version 3.24). At the same lo
    make install
 
 .. note::
-   Without the **--enable-devel** flag, many necessary HOPS postprocessing executables will not be built.
+   Do not forget the **\-\-enable-devel** flag! Without it, many necessary HOPS postprocessing executables will not be built.
 
-To set up the HOPS environment, run the following command::
+To set up the HOPS environment, run::
 
    source </path/to/hops-3.24/bin/hops.bash>
 
+Installing the EHT-HOPS pipeline
+--------------------------------
 
-Setting up a new python environment
------------------------------------
+Some systems may not have GNU parallel installed by default which is used to fringe-fit in parallel. Install it from `source <https://www.gnu.org/software/parallel>`_ and add it to the system path::
 
-Download `Miniconda installer <https://docs.conda.io/en/latest/miniconda.html>`_ for python 3.10 or `Mamba <https://mamba.readthedocs.io/en/latest/index.html>`_::
+   export PATH=$PATH:"/path/to/parallel/bin"
 
-   conda create -n eht310 python=3.10
+Ensure that the new mamba environment is activated, and activate the HOPS shell environment::
 
-.. note::
-   Note that python 3.8 can run the pipeline but cannot generate the summary notebooks using either nbconvert or papermill. Python 3.10 is recommended.
+   source /path/to/hops-3.24/bin/hops.bash
 
-Activate the newly created conda environment and install the EHT Analysis Toolkit (EAT) in developer mode (the repository should be cloned to a location with write permissions)::
 
-   git clone https://github.com/sao-eht/eat.git
-   pip install -e eat
+Check out the EHT-HOPS pipeline from GitHub. The latest version of the EHT-HOPS repository can be found `here <https://github.com/sao-eht/ehthops>`_.
+The calibration metadata and summary plot jupyter notebooks are independent repositories mapped to submodules within *ehthops*. The metadata repository is `here <https://github.com/sao-eht/ehthops-meta>`_ and the summary notebooks are `here <https://github.com/sao-eht/ehthops-plots>`_. The submodules must be initialized and updated manually as follows::
+   
+   git clone https://github.com/sao-eht/ehthops.git
+   cd ehthops
+   git submodule update --init --remote
 
-Install astropy; this should pull in numpy, among other modules::
-
-   conda install -c conda-forge astropy
-
-Install other required modules as follows (if seaborn doesn't pull in statsmodels, then statsmodels should also be added to the following command)::
-
-   conda install -c conda-forge scipy matplotlib pandas seaborn scikit-learn future pytables
-
-Verify that the numpy version is <=1.23 (downgrade if not). This is necessary for eht-imaging to work properly::
-
-   conda install -c conda-forge numpy=1.23
-
-Install modules required for generating summary plots non-interactively::
-
-   conda install -c conda-forge ipykernel papermill nbconvert
-
-It is possible that at stage 1 of the EHT-HOPS pipeline, the eat program alma_pcal might throw a 'glibcxx not found' error via scipy. If this occurs, update libstdcxx version to 12::
-
-   conda install -c conda-forge libstdcxx-ng=12
-
-The post-processing steps also need eht-imaging installed. Note that, at the moment, a hard-link to the source code is passed to the post-processing script 6.uvfits/bin/2.import.
-To do this, check out the dev branch fromeht-imaging and install locally with pip::
-
-   git clone https://github.com/achael/eht-imaging.git
-   cd eht-imaging
-   git checkout dev
-   pip install .
-
-Optionally, to view and re-run the summary notebooks interactively, jupyter must be installed::
-
-   conda install -c conda-forge jupyter
-
-The pipeline generates summary notebooks with diagnostic plots in both ipynb and html formats. To prevent the (possible) failure of html file creation from notebooks,
-ensure that the following is installed::
-
-   conda install -c conda-forge jupyter_contrib_nbextensions
-
-Check out the `EHT-HOPS <https://github.com/eventhorizontelescope/ehthops>`_ pipeline.
+The environment is now set up for running the calibration pipeline.

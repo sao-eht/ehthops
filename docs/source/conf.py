@@ -7,9 +7,9 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'ehthops'
-copyright = '2023, Lindy Blackburn, Chi-Kwan Chan, Iniyan Natarajan and others'
-author = 'Lindy Blackburn, Chi-Kwan Chan, Iniyan Natarajan and others'
-release = '0.1'
+copyright = '2024, Iniyan Natarajan, Lindy Blackburn & Chi-Kwan Chan'
+author = 'Iniyan Natarajan, Lindy Blackburn & Chi-Kwan Chan'
+release = '0.1.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

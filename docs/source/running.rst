@@ -1,49 +1,104 @@
 ===============
 Running ehthops
 ===============
-This repository describes the scripts that drive the EHT-HOPS pipeline execution. Running these scripts in sequence will execute
-all stages of the pipeline.
+
+Brief explanation of the pipeline
+---------------------------------
+
+The pipeline performs 5 stages of fringe-fitting (with an additional bootstrap stage in the beginning) with increasingly complex phase models. Stage 6 marks the beginning of the post-processing stages, and creates uvfits files from the fringe-fitted data. Subsequent post-processing steps perform apriori amplitude calibration, field angle rotation correction, R-L polarization calibration, and network calibration. In each of these stages, both the inputs and outputs are uvfits files, with those created in previous stages being used as inputs for the current stage. 
 
 .. note::
-   Instructions to run as a Docker image to be added.
+   Instructions to run as Docker image to be added.
 
+Easy-to-use sample driver scripts that run all the steps in all the stages are provided under the directory *ehthops/scripts*. The driver scripts are run from within the **hops-b[1234]** directories. Each stage is composed of multiple steps, each of which is a shell script.
 
-The driver scripts are run from within the **hops-b<bandno>** directories.
-They set the following environment variables that **must be** verified before each execution::
+The fringe-fitting stages are as follows:
 
-   WRKDIR=${SET_WRKDIR:-"$PWD"}                  # working directory for pipeline process
-   TOPDIR=${SET_TOPDIR:-"$WRKDIR/.."}            # top level dir for all stages
-   DATADIR=${SET_DATADIR:-"$WRKDIR/data"}        # input/output data location for HOPS
+- **0.bootstrap** (bonus stage; not used in the following stages)
+- **1.+flags+wins**
+- **2.+pcal**
+- **3.+adhoc**
+- **4.+delays**
+- **5.+close**
 
-   SRCDIR=${SET_SRCDIR:-"/data/2018-april/corr"} # single input data location for correlator source data
-   SHRDIR=${SET_SHRDIR:-"$TOPDIR/../share"}      # location of shared resources (summary notebooks, etc)
-   METADIR=${SET_METADIR:-"$TOPDIR/../meta"}     # location of META tables, ZBL flux estimates for netcal, etc
+Stages 1 to 5 consist of the following common steps:
 
-In addition, the following variables are set via command-line arguments to the **0.launch** script::
+- **0.launch** -- sets up the environment variables and launches the pipeline
+- **1.version** -- logs the versions of all external dependencies
+- **2.link** -- links the archival data to the working directory
+- **3.fourfit** -- fringe-fits the data
+- **4.alists** -- creates the summary alist files
+- **5.check** -- generates summary jupyter notebooks with diagnostic plots for the data
+- **6.summary** -- collects all the errors and warnings from the previous steps in a single logfile
+- **9.next** -- copies some files to the next stage
 
-   OBSFREQ -- (`-f`) sets the observing frequency in GHz (must match the numerical value of the directory with the observing frequency in its name in *ehthops/meta/*); default is `230`.
-   TELESCOPE -- (`-t`) sets the telescope/facility name (must match the telescope/facility name in *ehthops/meta/*); default is `eht`.
-   OBSYEAR -- (`-y`) sets the year of observation (must match the year of the experiment that follows the telescope name in*ehthops/meta/*); default is `2021`.
-   MIXEDPOL -- (`-m`) set to true if the `-m` option is given to indicate that the data contain mixed polarizations; `false` by default.
-   HAXP -- (`-x`) set to true if the `-x` option is given to indicate that the mixed polarization data for ALMA must be linked from the *-haxp* directories in the archive; `false` by default.
-   PATTERN -- (`-p`) sets the pattern to match for the HOPS input directories/files in the archival data while linking; default is `e${OBSYEAR: -2}.*-$BAND-.*-hops/`.
-   DEPTH -- (`-d`) sets the directory depth (level) to look for `HOPS` input files in the archival data while linking; default is `4`.
+Each of these stages also contain an additional step specific to that stage. The HOPS parameters derived from this step are applied to the data in the next stage.
 
-A valid call to the **0.launch** script would look like::
+- **1.+flags+wins** -- applies correlator flags and search windows and perform bandpass phase calibration using **7.pcal**.
+- **2.+pcal** -- applies phase calibration solutions from **1.+flags+wins** and performs adhoc phase calibration using **7.adhoc**.
+- **3.+adhoc** -- applies phase calibration solutions from **2.+pcal** and performs delay calibration using **7.delays**.
+- **4.+delays** -- applies delay calibration solutions from **3.+adhoc** and globalizes fringe solutions using **7.close**.
+- **5.+close** -- applies global fringe solutions from **4.+delays**.
 
-   SET_SRCDIR=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/archive/prod-extracted/2018April && SET_CORRDAT="Rev7-Cal:Rev7-Sci" && source bin/0.launch -t eht -f 230 -y 2018 -d 4 -p "e18.*-$band-.*.hops/"
+Command-line options
+--------------------
+Arguments are passed only to the launch script **0.launch**. The rest of the scripts are run without any arguments.
+Some of the arguments define environment variables and are set using **SET_ENVVAR=VALUE** syntax.
+The rest of the arguments are passed to the pipeline as command-line arguments.
 
-.. note::
-   At all stages from 0 to 5, SRCDIR points to the directory that hosts the archival data.
-   At stage 6, SRCDIR must point to the directory *5.+close/data* in the current band.
+The launch script can be run with the **-h** option to display the help message::
 
-**cleanup.sh** deletes all data generated as a result of a previous run and leaves the repo at the default state.
+   source 0.bootstrap/bin/0.launch -h
 
-The pipeline can be executed by typing the following in a linux terminal or a screen session (or in the case of a SLURM cluster,
-placing this line in the script submitted to SLURM)::
+   Usage: [SET_ENVVAR1=...] && [SET_ENVVAR2=...] && source 0.launch [options]
 
-   source <script-name>
+   Useful environment variables:
+   =============================
+   SET_CORRDAT     Correlation releases to use for SRC data, higher precedence comes first
+   SET_WRKDIR      Working directory for pipeline process
+   SET_TOPDIR      Top level dir for all stages
+   SET_DATADIR     Input/output data location for HOPS
+   SET_METADIR     Location of preset control files, META tables, ZBL flux estimates for netcal, etc
+   SET_SRCDIR      Single input data location for correlator source data
+   SET_SHRDIR      Location of shared resources (summary notebooks, etc)
+   If these are not set, reasonable defaults are used (not always guaranteed to work).
 
-On a SLURM cluster, the above line is placed inside **ehthops.slurmconf** and the SLURM job can be submitted by running::
+   Command-line options:
+   =====================
+   -y <yyyy>       Campaign year
+   -m              Enable mixed polarization calibration
+   -x              Use HAXP data for ALMA
+   -p <pattern>    Set the pattern for searching (regex)
+   -d <depth>      Set the directory depth for searching (integer)
+   -h, --help      Display this help message and exit
 
-   sbatch ehthops.slurmconf
+   Example:
+   SET_SRCDIR=/path/to/data/archive && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && SET_METADIR=/path/to/metadata && source bin/0.launch -y 2021 -d 4 -p "e21f.*--.*.hops/"
+
+Some notes on the environment variables:
+
+- The pipeline attempts to set reasonable default values to these environment variables if they are not set. We recommend setting/verifying at least SRCDIR, CORRDAT, METADIR, and SHRDIR to ensure that the pipeline runs correctly.
+- At all stages from 0 to 5, SRCDIR points to the directory that hosts the archival data. At stage 6, SRCDIR must point to the directory *5.+close/data* in the current band.
+- The user can set SHRDIR to any directory containing runnable Jupyter notebooks (.ipynb files) to replace the default notebooks provided with the plots submodule.
+- The METADIR is expected to contain the following subdirectories:
+
+  - *cf/* -- contains the control files for the pipeline named according to the pattern **cf[0-9]_b[1234x]_\***, where the first number denotes the stage and the second number/character denotes the band.
+  - *SEFD/* -- contains the station SEFD values for the campaign
+  - *VEX/* -- contains the correlated VEX files for the campaign  
+
+Some notes on the command-line options:
+
+- The **-y** option sets the year of the campaign and consists of 4 numbers in the format <yyyy>.
+- The **-x** option is used to indicate that the linear polarization ALMA data in the archive must be found in the *-haxp/* directories in the archive. When this option is set, **-m** is automatically set by the pipeline.
+- The **-m** option enables mixed polarization calibration. This option is used when the data are understood to be in hybrid polarization bases i.e. not all stations use the same polarization basis. It is possible for **-m** to be true and **-x** to be false, indicating that the mixed polarization data are all to be found under the *-hops/* directories in the archive.
+- The **-p** option sets the pattern to match for the HOPS input directories in the archival data while linking. The default pattern is `e${OBSYEAR: -2}.*-$BAND-.*-hops/`.
+- The **-d** option sets the directory depth (level) to look for the HOPS input files in the archival data while linking. The default depth is `4`.
+
+Helper scripts
+--------------
+
+The **ehthops/scripts** directory contains some scripts intended to help with the pipeline execution.
+
+- **driver_cannon.sh** is a script that runs all the stages of the pipeline for all the bands. It is a good starting point for running the pipeline.
+- **ehthops.slurmconf** is a SLURM configuration file that can be used to submit the pipeline to a SLURM cluster (**sbatch ehthops.slurmconf**).
+- **cleanup.sh** deletes all data generated as a result of a previous run and leaves the repo in a clean state.
