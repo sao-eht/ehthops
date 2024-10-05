@@ -1,6 +1,6 @@
 # ehthops
-EHT-HOPS calibration pipeline
+EHT-HOPS calibration pipeline for mm-VLBI observations
 
-The documentation can be found at *docs/ehthops.pdf* or built using sphinx by entering the docs directory and typing
+## Documentation
 
-    make html
+[![Documentation Status](https://readthedocs.org/projects/ehthops/badge/?version=latest)](https://ehthops.readthedocs.io/en/latest/?badge=latest)
