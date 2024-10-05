@@ -30,7 +30,7 @@ show_help() {
     echo "  -h, --help      Display this help message and exit"
     echo
     echo "Example:"
-    echo "  SET_SRCDIR=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/archive/prod-extracted/2021March/ && SET_CORRDAT=\"Rev1-Cal:Rev1-Sci\" && source bin/0.launch -t \"/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/eht2021/ehthops-345-polconverted-r3/ehthops/meta/eht2021/345GHz\" -y 2021 -d 4 -p \"e21f.*-$band-.*.hops/\""
+    echo "  SET_SRCDIR=/path/to/data/archive && SET_CORRDAT=\"Rev1-Cal:Rev1-Sci\" && SET_METADIR=/path/to/metadata && source bin/0.launch -y 2021 -d 4 -p \"e21f.*-$band-.*.hops/\""
 }
 
 # Parse command-line arguments
