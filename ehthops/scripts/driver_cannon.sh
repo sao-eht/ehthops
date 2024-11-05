@@ -2,7 +2,7 @@
 # set up envs
 source $HOME/.bashrc
 mamba activate ehthops310 # activate the mamba environment with the necessary packages installed
-source /path/to/hops.bash
+HOPS_SETUP=false source /path/to/installed/hops/bin/hops.bash
 
 # list of stages to run
 stages=("0.bootstrap" "1.+flags+wins" "2.+pcal" "3.+adhoc" "4.+delays" "5.+close" "6.uvfits")

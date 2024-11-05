@@ -1,7 +1,7 @@
 # set up envs
 source $HOME/.bashrc
 mamba activate ehthops310
-source /path/to/installed/hops/bin/hops.bash
+HOPS_SETUP=false source /path/to/installed/hops/bin/hops.bash
 
 stages=("7.+apriori") # , "8.+polcal", "9.+netcal")
 

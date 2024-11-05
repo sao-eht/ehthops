@@ -1,6 +1,6 @@
 # To be run from within 'hops-bx' directories
 # set up envs
-source /home/swc/env/ehthops324.sh
+HOPS_SETUP=false source /home/swc/env/ehthops324.sh
 
 # list of stages to run
 stages=("0.bootstrap" "1.+flags+wins" "2.+pcal" "3.+adhoc" "4.+delays" "5.+close" "6.uvfits")
