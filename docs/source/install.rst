@@ -85,11 +85,16 @@ On some systems the following flags may also have to be set manually to be able 
    export FFTW3_LIBS="</path/to/fftw/lib>"
    export FFTW3_CFLAGS="</path/to/fftw/include>"
 
-Download `HOPS <https://www.haystack.mit.edu/haystack-observatory-postprocessing-system-hops/>`_ via anonymous ftp::
+.. note::
+   The public version of HOPS does not contain some astronomy-specific utilities. Some parts of the pipeline (such as the _average_ command) may not exist or work as expected.
+   Please contact the EHT-HOPS pipeline developers for the customised version of HOPS. These utilities will be made available outside HOPS in a future release.
 
-   wget -r ftp://gemini.haystack.mit.edu/pub/hops
+Download `HOPS <https://www.haystack.mit.edu/haystack-observatory-postprocessing-system-hops/>`_::
 
-The above command checks out all past versions of HOPS under the directory *gemini.haystack.mit.edu/pub/hops*. Untar HOPS version 3.24 somewhere and at the same location create a build directory in which to compile HOPS::
+   wget -nH https://web.mit.edu/haystack-www/hops/hops-3.24-3753.tar.gz
+
+The -nH argument prevents the entire directory structure on the host from being recreated locally.
+Untar HOPS version 3.24 and in the same location create a build directory in which to compile HOPS::
 
    mkdir bld-3.24
    cd bld-3.24
