@@ -55,8 +55,8 @@ echo "DONE 2s" &
 
 wait $(jobs -p)
 
-echo y | aedit -b "polarization LL; read $DATADIR/alist.v6.8s; close; twrite $DATADIR/alist.v6.8s.LL.close"
-echo y | aedit -b "polarization RR; read $DATADIR/alist.v6.8s; close; twrite $DATADIR/alist.v6.8s.RR.close"
+echo y | aedit -b "polarization LL; read $DATADIR/alist.v6.8s; close; twrite $DATADIR/alist.v6.8s.LL.close" > log/aedit.ll.out 2> log/aedit.ll.err
+echo y | aedit -b "polarization RR; read $DATADIR/alist.v6.8s; close; twrite $DATADIR/alist.v6.8s.RR.close" > log/aedit.rr.out 2> log/aedit.rr.err
 
 pushd $DATADIR
 average alist.v6.8s.LL.close -o alist.v6.8s.LL.close.avg
