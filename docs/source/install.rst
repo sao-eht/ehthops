@@ -86,7 +86,7 @@ On some systems the following flags may also have to be set manually to be able 
    export FFTW3_CFLAGS="</path/to/fftw/include>"
 
 .. note::
-   The public version of HOPS does not contain some astronomy-specific utilities. Some parts of the pipeline (such as the _average_ command) may not exist or work as expected.
+   The public version of HOPS does not contain some astronomy-specific utilities. Some parts of the pipeline (such as the *average* command) may not exist or work as expected.
    Please contact the EHT-HOPS pipeline developers for the customised version of HOPS. These utilities will be made available outside HOPS in a future release.
 
 Download `HOPS <https://www.haystack.mit.edu/haystack-observatory-postprocessing-system-hops/>`_::
