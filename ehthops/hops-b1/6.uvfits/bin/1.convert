@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-mkdir tests temp log
+echo "1. Converting HOPS fringe files to UVFITS..."
+echo "	Source directory with HOPS fringe files, SRCDIR: \"$SRCDIR\""
+
+mkdir log
 
 # find all directories in $SRCDIR that are named with expt numbers
 directories=$(find $SRCDIR -maxdepth 1 -type d -name "[0-9]*" | sort)
