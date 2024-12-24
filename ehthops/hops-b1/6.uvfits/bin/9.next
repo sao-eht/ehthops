@@ -11,7 +11,7 @@ NEXT=$(echo ../$(expr $N + 1).*)
 
 #------------------------------------------------------------------------------
 echo "9. Copying standard scripts and metadata to the next stage \"$NEXT\""
-for n in {0..3}; do
+for n in 0 2 3; do
         curr=$(echo bin/$n.*)
         next=$(echo $NEXT/bin/$n.*)
         if [   -f "$curr" ] &&
