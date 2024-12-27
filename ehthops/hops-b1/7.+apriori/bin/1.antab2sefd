@@ -8,7 +8,7 @@ echo "Container metadata location for calibration, METADIR: \"$METADIR\""
 echo "Container working directory, WRKDIR: \"$WRKDIR\""
 
 # call the antab2sefd executable from eat
-/usr/bin/time -v antab2sefd $SRCDIR $METADIR $WRKDIR > log/antab2sefd.log 2> log/antab2sefd.err &
+/usr/bin/time -v antab2sefd $SRCDIR $METADIR $WRKDIR -v 2021 -av ER6 > log/antab2sefd.log 2> log/antab2sefd.err &
 
 wait $(jobs -p)
 
