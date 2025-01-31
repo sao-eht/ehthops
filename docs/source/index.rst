@@ -12,8 +12,8 @@ Welcome to ehthops's documentation!
 
    intro
    install
-   running
    components
+   running
    units
 
 Indices and tables

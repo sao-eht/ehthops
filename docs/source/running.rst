@@ -52,11 +52,11 @@ The command-line arguments to the pipeline described below are designed around s
 All input mark4 files are expected to be organized according to the following directory structure:
 
 - SRCDIR
-  - [List of CORRDATs]
-    - Variable number of subdirectories (this number determines the value passed to the -d option).
-      - Directories named after the pattern passed to the -p option.
-        - Directories with names corresponding to the HOPS expt no.
-          - Directories with names corresponding to the scan no. containing the input mk4 files.
+  - CORRDAT, a list of data directories
+    - Variable levels of subdirectories, which determines the value passed to the -d option
+      - Directories named after the pattern passed to the -p option
+        - Directories with names corresponding to the HOPS expt no
+          - Directories with names corresponding to the scan no. containing the input mk4 files
 
 Command-line options
 --------------------
@@ -122,5 +122,5 @@ Easy-to-use sample driver scripts that run the entire pipeline are provided unde
 These scripts are to be run from within the **ehthops/hops-b[1234]** directories:
 
 - **driver_cannon.sh** is a script that runs all the stages of the pipeline, applicable to any band. It is a good starting point for learning to run the pipeline.
-- **ehthops.slurmconf** is a SLURM configuration file that can be used to submit the pipeline to a SLURM cluster (**sbatch ehthops.slurmconf**).
+- **ehthops.slurmconf** is a SLURM configuration file that can be used to submit the pipeline to a SLURM cluster (e.g. **$** sbatch ehthops.slurmconf).
 - **cleanup.sh** deletes all data generated as a result of a previous run and leaves the repo in a clean state.
