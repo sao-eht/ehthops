@@ -2,24 +2,22 @@
 Running ehthops
 ===============
 
-Brief explanation of the pipeline
----------------------------------
+Introduction
+------------
 
-The pipeline performs 5 stages of fringe-fitting (with an additional bootstrap stage in the beginning) with increasingly complex phase models. Stage 6 marks the beginning of the post-processing stages, and creates uvfits files from the fringe-fitted data. Subsequent post-processing steps perform apriori amplitude calibration, field angle rotation correction, R-L polarization calibration, and network calibration. In each of these stages, both the inputs and outputs are uvfits files, with those created in previous stages being used as inputs for the current stage. 
+The pipeline performs five stages of fringe-fitting (with an additional bootstrap stage at the beginning), with increasingly complex phase models.
+Stage 6 marks the beginning of the post-processing stages, and creates uvfits files from the fringe-fitted data.
+Subsequent post-processing steps perform apriori amplitude calibration, field angle rotation correction, R-L polarization calibration, and network calibration.
+In each of these stages, both the inputs and outputs are uvfits files, with those created in previous stages being used as inputs for the current stage. 
 
-.. note::
-   Instructions to run as Docker image to be added.
+Fringe-fitting is performed in stages as follows:
 
-Easy-to-use sample driver scripts that run all the steps in all the stages are provided under the directory *ehthops/scripts*. The driver scripts are run from within the **hops-b[1234]** directories. Each stage is composed of multiple steps, each of which is a shell script.
-
-The fringe-fitting stages are as follows:
-
-- **0.bootstrap** (bonus stage; not used in the following stages)
-- **1.+flags+wins**
-- **2.+pcal**
-- **3.+adhoc**
-- **4.+delays**
-- **5.+close**
+- **0.bootstrap** (bootstrap stage; not used in the following stages)
+- **1.+flags+wins** (add flags, both pre-correlated and those identified in previous runs, and sbd/mbd/delay-rate search windows)
+- **2.+pcal** (apply phase bandpass solutions from previous stage)
+- **3.+adhoc** (apply adhoc phase calibration solutions from previous stage)
+- **4.+delays** (apply delay calibration solutions from previous stage)
+- **5.+close** (apply global fringe solutions from previous stage)
 
 Stages 1 to 5 consist of the following common steps:
 
@@ -32,13 +30,33 @@ Stages 1 to 5 consist of the following common steps:
 - **6.summary** -- collects all the errors and warnings from the previous steps in a single logfile
 - **9.next** -- copies some files to the next stage
 
-Each of these stages also contain an additional step specific to that stage. The HOPS parameters derived from this step are applied to the data in the next stage.
+The pipeline also runs some stage-specific steps. Additional parameters and control file
+instructions derived in these steps are input to fourfit in the following stage.
 
-- **1.+flags+wins** -- applies correlator flags and search windows and perform bandpass phase calibration using **7.pcal**.
-- **2.+pcal** -- applies phase calibration solutions from **1.+flags+wins** and performs adhoc phase calibration using **7.adhoc**.
-- **3.+adhoc** -- applies phase calibration solutions from **2.+pcal** and performs delay calibration using **7.delays**.
-- **4.+delays** -- applies delay calibration solutions from **3.+adhoc** and globalizes fringe solutions using **7.close**.
-- **5.+close** -- applies global fringe solutions from **4.+delays**.
+- Stage **1.+flags+wins** applies correlator flags and search windows and performs bandpass phase calibration using **7.pcal**.
+- Stage **2.+pcal** applies bandpass phase calibration solutions from **1.+flags+wins** and performs adhoc phase calibration using **7.adhoc**.
+- Stage **3.+adhoc** applies adhoc phase solutions from **2.+pcal** and performs delay calibration using **7.delays**.
+- Stage **4.+delays** applies delay calibration solutions from **3.+adhoc** and globalizes fringe solutions using **7.close**.
+- Stage **5.+close** applies global fringe solutions from **4.+delays**.
+
+Starting from stage 6, the pipeline performs post-processing steps:
+
+- **6.uvfits** -- creates uvfits files from the mk4 fringe-fitted data for downstream analysis.
+
+Additional post-processing steps are being added to the main pipeline workflow. Stay tuned for updates.
+
+Some notes on data organization
+--------------------------------
+The inputs and outputs of the HOPS fourfit program confirm to the specifications of the Mark 4 (mk4) data format.
+The command-line arguments to the pipeline described below are designed around some basic assumptions about the data organization.
+All input mark4 files are expected to be organized according to the following directory structure:
+
+- SRCDIR
+  - [List of CORRDATs]
+    - Variable number of subdirectories (this number determines the value passed to the -d option).
+      - Directories named after the pattern passed to the -p option.
+        - Directories with names corresponding to the HOPS expt no.
+          - Directories with names corresponding to the scan no. containing the input mk4 files.
 
 Command-line options
 --------------------
@@ -78,7 +96,7 @@ The launch script can be run with the **-h** option to display the help message:
 Some notes on the environment variables:
 
 - The pipeline attempts to set reasonable default values to these environment variables if they are not set. We recommend setting/verifying at least SRCDIR, CORRDAT, METADIR, and SHRDIR to ensure that the pipeline runs correctly.
-- At all stages from 0 to 5, SRCDIR points to the directory that hosts the archival data. At stage 6, SRCDIR must point to the directory *5.+close/data* in the current band.
+- At all stages from 0 to 5, SRCDIR points to the top level directory that hosts the archival data. At stage 6, SRCDIR must point to the directory *5.+close/data* in the current band.
 - The user can set SHRDIR to any directory containing runnable Jupyter notebooks (.ipynb files) to replace the default notebooks provided with the plots submodule.
 - The METADIR is expected to contain the following subdirectories:
 
@@ -94,11 +112,15 @@ Some notes on the command-line options:
 - The **-p** option sets the pattern to match for the HOPS input directories in the archival data while linking. The default pattern is `e${OBSYEAR: -2}.*-$BAND-.*-hops/`.
 - The **-d** option sets the directory depth (level) to look for the HOPS input files in the archival data while linking. The default depth is `4`.
 
+.. note::
+   Instructions to run as Docker image to be added.
+
 Helper scripts
 --------------
 
-The **ehthops/scripts** directory contains some scripts intended to help with the pipeline execution.
+Easy-to-use sample driver scripts that run the entire pipeline are provided under the directory **ehthops/scripts**.
+These scripts are to be run from within the **ehthops/hops-b[1234]** directories:
 
-- **driver_cannon.sh** is a script that runs all the stages of the pipeline for all the bands. It is a good starting point for running the pipeline.
+- **driver_cannon.sh** is a script that runs all the stages of the pipeline, applicable to any band. It is a good starting point for learning to run the pipeline.
 - **ehthops.slurmconf** is a SLURM configuration file that can be used to submit the pipeline to a SLURM cluster (**sbatch ehthops.slurmconf**).
 - **cleanup.sh** deletes all data generated as a result of a previous run and leaves the repo in a clean state.
