@@ -11,7 +11,7 @@ show_help() {
     echo
     echo "Useful environment variables:"
     echo "============================="
-    echo "  SET_CORRDAT     Correlation releases to use for SRC data, higher precedence comes first"
+    echo "  SET_CORRDAT     Correlation releases to use for SRC data, higher precedence comes first (colon-separated list)"
     echo "  SET_WRKDIR      Working directory for pipeline process"
     echo "  SET_TOPDIR      Top level dir for all stages"
     echo "  SET_DATADIR     Input/output data location for HOPS"

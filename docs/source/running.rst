@@ -52,11 +52,19 @@ The command-line arguments to the pipeline described below are designed around s
 All input mark4 files are expected to be organized according to the following directory structure:
 
 - SRCDIR
+
   - CORRDAT, a list of data directories
+
     - Variable levels of subdirectories, which determines the value passed to the -d option
+
       - Directories named after the pattern passed to the -p option
+
         - Directories with names corresponding to the HOPS expt no
+
           - Directories with names corresponding to the scan no. containing the input mk4 files
+          
+
+.. _command-line-options:
 
 Command-line options
 --------------------
