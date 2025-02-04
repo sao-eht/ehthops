@@ -91,22 +91,15 @@ Updating command-line options and environment variables
 
 Here are a few things that the user should verify/modify in the driver script before running it:
 
-- The first few lines of **driver_cannon.sh** are used to
-set the environment for the calibration run, by activating the relevant python environment
-(for running EAT) and setting the HOPS environment variables. Update these to reflect the settings
-of your system.
+- The first few lines of **driver_cannon.sh** are used to set the environment for the calibration run, by activating the relevant python environment (for running EAT) and setting the HOPS environment variables. Update these to reflect the settings of your system.
 
-- The script runs all the stages requested by the user, from **0.bootstrap** to **6.uvfits**.
-Ensure that only the necessary stages are included in this list.
+- The script runs all the stages requested by the user, from **0.bootstrap** to **6.uvfits**. Ensure that only the necessary stages are included in this list.
 
-- The name of the band is extracted from the current working directory which is expected to be named **hops-bx**.
-Hence, it is important to run the script from within the **hops-bx** directory.
+- The name of the band is extracted from the current working directory which is expected to be named **hops-bx**. Hence, it is important to run the script from within the **hops-bx** directory.
 
-- Each stage performs an additional calibration step that no other stage does. At the end of
-these steps, relevant files from the current stage (scripts, cfs, adhoc directory) are copied to the next stage.
+- Each stage performs an additional calibration step that no other stage does. At the end of these steps, relevant files from the current stage (scripts, cfs, adhoc directory) are copied to the next stage.
 
-- Each stage starts with the same command, **source 0.launch**, which sets the environment variables
-and passes the command-line options to the current stage.
+- Each stage starts with the same command, **source 0.launch**, which sets the environment variables and passes the command-line options to the current stage.
 
 Set the following values to the environment variables passed to **0.launch** in the driver script:
 
@@ -116,7 +109,7 @@ Set the following values to the environment variables passed to **0.launch** in 
     CORRDAT="2016.1.01154.V" # correlation releases to use for SRC data, higher precedence comes first (multiple entries are colon-separated)
     METADIR=/home/user/calibration/ehthops/meta/eht2017/230GHz # location of metadata containing the cf directory; for post-processing, we need the SEFD and VEX directories as well
 
-Using the command-line options, set the year to 2017, file search depth to 3 and the pattern to "*.ec_eht.e17.*-$band-.*-hops/" to match the file naming
+Using the command-line options, set the year to **2017**, file search depth to **3** and the pattern to **"*.ec_eht.e17.*-$band-.*-hops/"** to match the file naming
 convention of the EHT 2017 data that we downloaded. Putting it all together, the call to **0.launch** in the driver script should look like this:
 
 .. code-block:: bash
@@ -124,9 +117,9 @@ convention of the EHT 2017 data that we downloaded. Putting it all together, the
     SET_SRCDIR=/home/user/calibration/data/extracted && SET_CORRDAT="2016.1.01154.V" && SET_METADIR=/home/user/calibration/ehthops/meta/eht2017/230GHz && source bin/0.launch -y 2017 -d 3 -p "*.ec_eht.e17.*-$band-.*-hops/"
 
 These settings are the same from stages **0.launch** to **5.+close**.
-At stage **6.uvfits**, the SRCDIR should point to the directory **5.+close/data** in the current band.
+At stage **6.uvfits**, SRCDIR should point to the directory **5.+close/data** in the current band.
 The environment variable EHTIMPATH should point to the eht-imaging library. Assume this is **/home/user/software/eht-imaging**.
-And there is only one option **-c** to set the campaign year (**EHT2017**) for the uvfits generation (this is an EAT-recognizable code).
+And there is only one option **-c** to set the campaign year (**EHT2017**) for uvfits generation (this is an EAT-recognizable code).
 
 Putting it all together, the call to **0.launch** in **6.uvfits** should look like this:
 
