@@ -55,7 +55,7 @@ All input mark4 files are expected to be organized according to the following di
 
   - CORRDAT, a colon-separated list of data directories (correlation products) to use for SRC data, with higher precedence coming first
 
-    - Variable levels of subdirectories, which determines the value passed to the -d option
+    - Variable levels of subdirectories, the number of which determines the value passed to the -d option
 
       - Directories named after the pattern passed to the -p option
 
