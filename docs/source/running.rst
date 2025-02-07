@@ -6,20 +6,14 @@ Introduction
 ------------
 
 The pipeline performs five stages of fringe-fitting (with an additional bootstrap stage at the beginning), with increasingly complex phase models.
+
 Stage 6 marks the beginning of the post-processing stages, and creates uvfits files from the fringe-fitted data.
-Subsequent post-processing steps perform apriori amplitude calibration, field angle rotation correction, R-L polarization calibration, and network calibration.
-In each of these stages, both the inputs and outputs are uvfits files, with those created in previous stages being used as inputs for the current stage. 
+Subsequent post-processing steps perform apriori amplitude calibration, field angle rotation correction, R-L polarization calibration, and network
+calibration. In each of these stages, both the inputs and outputs are uvfits files, with those created in the current stage being used as inputs for
+the following stage. 
 
-Fringe-fitting is performed in stages as follows:
-
-- **0.bootstrap** (bootstrap stage; not used in the following stages)
-- **1.+flags+wins** (add flags, both pre-correlated and those identified in previous runs, and sbd/mbd/delay-rate search windows)
-- **2.+pcal** (apply phase bandpass solutions from previous stage)
-- **3.+adhoc** (apply adhoc phase calibration solutions from previous stage)
-- **4.+delays** (apply delay calibration solutions from previous stage)
-- **5.+close** (apply global fringe solutions from previous stage)
-
-Stages 1 to 5 consist of the following common steps:
+Fringe-fitting is performed in stages 1 to 5, with each stage building on the solutions derived in the previous stage.
+These stages consist of the following common steps:
 
 - **0.launch** -- sets up the environment variables and launches the pipeline
 - **1.version** -- logs the versions of all external dependencies
@@ -30,14 +24,13 @@ Stages 1 to 5 consist of the following common steps:
 - **6.summary** -- collects all the errors and warnings from the previous steps in a single logfile
 - **9.next** -- copies some files to the next stage
 
-The pipeline also runs some stage-specific steps. Additional parameters and control file
-instructions derived in these steps are input to fourfit in the following stage.
+The stage-specific steps (usually step 7) derive additional solutions which are written out to control files that are input to the following stages.
 
-- Stage **1.+flags+wins** applies correlator flags and search windows and performs bandpass phase calibration using **7.pcal**.
-- Stage **2.+pcal** applies bandpass phase calibration solutions from **1.+flags+wins** and performs adhoc phase calibration using **7.adhoc**.
-- Stage **3.+adhoc** applies adhoc phase solutions from **2.+pcal** and performs delay calibration using **7.delays**.
-- Stage **4.+delays** applies delay calibration solutions from **3.+adhoc** and globalizes fringe solutions using **7.close**.
-- Stage **5.+close** applies global fringe solutions from **4.+delays**.
+- Stage **1.+flags+wins** applies flags and search windows and derives phase bandpass solutions in step **7.pcal**.
+- Stage **2.+pcal** applies bandpass phase calibration solutions and derives adhoc phase solutions using **7.adhoc**.
+- Stage **3.+adhoc** applies adhoc phase solutions and derives R/L delay solutions using **7.delays**.
+- Stage **4.+delays** applies delay calibration solutions and globalizes fringe solutions using **7.close**.
+- Stage **5.+close** applies global fringe closing solutions.
 
 Starting from stage 6, the pipeline performs post-processing steps:
 
@@ -53,15 +46,15 @@ All input mark4 files are expected to be organized according to the following di
 
 - SRCDIR
 
-  - CORRDAT, a colon-separated list of data directories (correlation products) to use for SRC data, with higher precedence coming first
+  - CORRDAT, a colon-separated list of data directories (correlation products) to use for SRC data, with higher precedence coming first.
 
-    - Variable levels of subdirectories, the number of which determines the value passed to the -d option
+    - Variable levels of subdirectories, the number of which determines the value passed to the -d option (explained below).
 
-      - Directories named after the pattern passed to the -p option
+      - Directories named after the pattern passed to the -p option (explained below).
 
-        - Directories with names corresponding to the HOPS expt no
+        - Directories with names corresponding to the HOPS expt no.
 
-          - Directories with names corresponding to the scan no. containing the input mk4 files
+          - Directories with names corresponding to the scan no. containing the input mk4 files.
           
 
 .. _command-line-options:
@@ -110,12 +103,12 @@ Some notes on the environment variables:
 
   - *cf/* -- contains the control files for the pipeline named according to the pattern **cf[0-9]_b[1234x]_\***, where the first number denotes the stage and the second number/character denotes the band.
   - *SEFD/* -- contains the station SEFD values for the campaign
-  - *VEX/* -- contains the correlated VEX files for the campaign  
+  - *VEX/* -- contains the correlated VEX files for the campaign
 
 Some notes on the command-line options:
 
 - The **-y** option sets the year of the campaign and consists of 4 numbers in the format <yyyy>.
-- The **-x** option is used to indicate that the linear polarization ALMA data in the archive must be found in the *-haxp/* directories in the archive. When this option is set, **-m** is automatically set by the pipeline.
+- The **-x** option is used to indicate that the linear polarization ALMA data in the archive must be found in the *-haxp/* directories in the archive. When this option is set, **-m** is automatically set. The pattern to match must be *"-hops"* and not *"-haxp"*.
 - The **-m** option enables mixed polarization calibration. This option is used when the data are understood to be in hybrid polarization bases i.e. not all stations use the same polarization basis. It is possible for **-m** to be true and **-x** to be false, indicating that the mixed polarization data are all to be found under the *-hops/* directories in the archive.
 - The **-p** option sets the pattern to match for the HOPS input directories in the archival data while linking. The default pattern is `e${OBSYEAR: -2}.*-$BAND-.*-hops/`.
 - The **-d** option sets the directory depth (level) to look for the HOPS input files in the archival data while linking. The default depth is `4`.

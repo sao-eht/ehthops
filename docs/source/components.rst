@@ -59,7 +59,7 @@ The **meta** directory hosts the metadata and is structured as follows:
   - <track>.vex
 
 Currently, the metadata include HOPS control files (**cf**), VEX files (**VEX**), station and source relevant SEFDs (**SEFD**)
-for each observing campaign.
+for each observing campaign. The VEX and SEFD data are used only for post-processing.
 
 The pipeline scripts pick the appropriate control files (from the **cf** subdirectory) and other relevant metadata during
 execution as long as the above directory organization and naming conventions are followed.
