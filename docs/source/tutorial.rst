@@ -119,9 +119,10 @@ Here are a few things that the user should verify/modify in the driver script be
       CORRDAT="2016.1.01154.V" # correlation releases to use for SRC data, higher precedence comes first (multiple entries are colon-separated)
       METADIR=/home/user/calibration/ehthops/meta/eht2017/230GHz # location of metadata containing the cf directory; for post-processing, we need the SEFD and VEX directories as well
 
-  As for the command-line options, set the year to **2017**, file search depth to **3** and the pattern
-  to **"*.ec_eht.e17.*-$band-.*-hops/"** to match the file naming convention of the downloaded EHT 2017 data.
-  Putting it all together, the call to **0.launch** in the driver script should look like this:
+  As for the command-line options, set the year (**-y**) to **2017**, file search depth (**-d**) to **2** and the pattern to match (**-p**)
+  to **"2016.1.01154.V"** to correspond to the directory organization of the downloaded EHT2017 data. This instructs the pipeline to create a
+  directory structure under **<stage>/data**, mimicking the one that follows the pattern **2016.1.01154.V** in the archival data.
+  The call to **0.launch** in the driver script then looks like this:
 
   .. code-block:: bash
 
