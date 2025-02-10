@@ -26,8 +26,8 @@ and the calibration parameters to be used. The control files are either generate
 calibration solutions. Scripts in the EAT that perform additional calibration steps are also used to generate control files which are passed
 to `fourfit` in the next stage.
 
-At the time of writing, multi-band data processing is not supported by the pipeline. Each band is processed independently.
-To avoid code duplication, all steps in each stage of band 1 are symlinked to the corresponding steps in the other bands.
+Automatic simultaneous multi-band data processing is not supported by the pipeline yet. Each band is processed independently.
+To avoid code duplication, symbolic links to scripts in band 1 (**hops-b1**) are used to run other bands.
 
 The pipeline consists of the following stages::
 
@@ -42,6 +42,8 @@ Post-processing stages::
 
    Stage 6 (6.+uvfits): The calibrated output files generated in the previous stage are converted to UVFITS format. 10-second time-averaged and frequency-averaged versions of UVFITS files are also created.
    Stage 7 (7.+apriori): A priori amplitude calibration and field angle rotation correction is performed on the (unaveraged) UVFITS files from the previous stage. Time and frequency-averaged versions of the UVFITS files are also created.
+
+More on the stages and the steps comprising them in :doc:`Running ehthops <running>`.
 
 Metadata
 --------

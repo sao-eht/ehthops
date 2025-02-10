@@ -7,13 +7,13 @@ Introduction
 
 The pipeline performs five stages of fringe-fitting (with an additional bootstrap stage at the beginning), with increasingly complex phase models.
 
-Stage 6 marks the beginning of the post-processing stages, and creates uvfits files from the fringe-fitted data.
+Stage 6 (**6.uvfits**) marks the beginning of the post-processing stages, and creates uvfits files from the fringe-fitted data.
 Subsequent post-processing steps perform apriori amplitude calibration, field angle rotation correction, R-L polarization calibration, and network
 calibration. In each of these stages, both the inputs and outputs are uvfits files, with those created in the current stage being used as inputs for
 the following stage. 
 
-Fringe-fitting is performed in stages 1 to 5, with each stage building on the solutions derived in the previous stage.
-These stages consist of the following common steps:
+Fringe-fitting is performed in stages 0 to 5 (**0.bootstrap** with minimal constraints on fringe-fitting, to **5.+close** with an iteratively built
+complex phase model), with each stage building on the solutions derived in the previous stage. These stages consist of the following common steps:
 
 - **0.launch** -- sets up the environment variables and launches the pipeline
 - **1.version** -- logs the versions of all external dependencies
