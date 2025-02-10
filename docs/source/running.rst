@@ -2,16 +2,8 @@
 Running ehthops
 ===============
 
-Introduction
-------------
-
-The pipeline performs five stages of fringe-fitting (with an additional bootstrap stage at the beginning), with increasingly complex phase models.
-
-Stage 6 (**6.uvfits**) marks the beginning of the post-processing stages, and creates uvfits files from the fringe-fitted data.
-Subsequent post-processing steps perform apriori amplitude calibration, field angle rotation correction, R-L polarization calibration, and network
-calibration. In each of these stages, both the inputs and outputs are uvfits files, with those created in the current stage being used as inputs for
-the following stage. 
-
+Stages and steps in the pipeline
+--------------------------------
 Fringe-fitting is performed in stages 0 to 5 (**0.bootstrap** with minimal constraints on fringe-fitting, to **5.+close** with an iteratively built
 complex phase model), with each stage building on the solutions derived in the previous stage. These stages consist of the following common steps:
 
@@ -32,9 +24,10 @@ The stage-specific steps (usually step 7) derive additional solutions which are 
 - Stage **4.+delays** applies delay calibration solutions and globalizes fringe solutions using **7.close**.
 - Stage **5.+close** applies global fringe closing solutions.
 
-Starting from stage 6, the pipeline performs post-processing steps:
-
-- **6.uvfits** -- creates uvfits files from the mk4 fringe-fitted data for downstream analysis.
+Stage 6 (**6.uvfits**) marks the beginning of the post-processing stages, and creates uvfits files from the fringe-fitted data in mk4 format.
+Subsequent post-processing steps perform apriori amplitude calibration, field angle rotation correction, R-L polarization calibration, and network
+calibration. In each of these stages, both the inputs and outputs are uvfits files, with those created in the current stage being used as inputs for
+the following stage.
 
 Additional post-processing steps are being added to the main pipeline workflow. Stay tuned for updates.
 
