@@ -1,54 +1,6 @@
 ===============
 Running ehthops
-===============
-
-Stages and steps in the pipeline
---------------------------------
-Fringe-fitting is performed in stages 0 to 5 (**0.bootstrap** with minimal constraints on fringe-fitting, to **5.+close** with an iteratively built
-complex phase model), with each stage building on the solutions derived in the previous stage. These stages consist of the following common steps:
-
-- **0.launch** -- sets up the environment variables and launches the pipeline
-- **1.version** -- logs the versions of all external dependencies
-- **2.link** -- links the archival data to the working directory
-- **3.fourfit** -- fringe-fits the data
-- **4.alists** -- creates the summary alist files
-- **5.check** -- generates summary jupyter notebooks with diagnostic plots for the data
-- **6.summary** -- collects all the errors and warnings from the previous steps in a single logfile
-- **9.next** -- copies some files to the next stage
-
-The stage-specific steps (usually step 7) derive additional solutions which are written out to control files that are input to the following stages.
-
-- Stage **1.+flags+wins** applies flags and search windows and derives phase bandpass solutions in step **7.pcal**.
-- Stage **2.+pcal** applies bandpass phase calibration solutions and derives adhoc phase solutions using **7.adhoc**.
-- Stage **3.+adhoc** applies adhoc phase solutions and derives R/L delay solutions using **7.delays**.
-- Stage **4.+delays** applies delay calibration solutions and globalizes fringe solutions using **7.close**.
-- Stage **5.+close** applies global fringe closing solutions.
-
-Stage 6 (**6.uvfits**) marks the beginning of the post-processing stages, and creates uvfits files from the fringe-fitted data in mk4 format.
-Subsequent post-processing steps perform apriori amplitude calibration, field angle rotation correction, R-L polarization calibration, and network
-calibration. In each of these stages, both the inputs and outputs are uvfits files, with those created in the current stage being used as inputs for
-the following stage.
-
-Additional post-processing steps are being added to the main pipeline workflow. Stay tuned for updates.
-
-Some notes on data organization
---------------------------------
-The inputs and outputs of the HOPS fourfit program confirm to the specifications of the Mark 4 (mk4) data format.
-The command-line arguments to the pipeline described below are designed around some basic assumptions about the data organization.
-All input mark4 files are expected to be organized according to the following directory structure:
-
-- SRCDIR
-
-  - CORRDAT, a colon-separated list of data directories (correlation products) to use for SRC data, with higher precedence coming first.
-
-    - Variable levels of subdirectories, the number of which determines the value passed to the -d option (explained below).
-
-      - Directories named after the pattern passed to the -p option (explained below).
-
-        - Directories with names corresponding to the HOPS expt no.
-
-          - Directories with names corresponding to the scan no. containing the input mk4 files.
-          
+===============         
 
 .. _command-line-options:
 
@@ -108,6 +60,24 @@ Some notes on the command-line options:
 
 .. note::
    Instructions to run as Docker image to be added.
+
+Some notes on data organization
+--------------------------------
+The inputs and outputs of the HOPS fourfit program confirm to the specifications of the Mark 4 (mk4) data format.
+The command-line arguments to the pipeline described below are designed around some basic assumptions about the data organization.
+All input mark4 files are expected to be organized according to the following directory structure:
+
+- SRCDIR
+
+  - CORRDAT, a colon-separated list of data directories (correlation products) to use for SRC data, with higher precedence coming first.
+
+    - Variable levels of subdirectories, the number of which determines the value passed to the -d option (explained below).
+
+      - Directories named after the pattern passed to the -p option (explained below).
+
+        - Directories with names corresponding to the HOPS expt no.
+
+          - Directories with names corresponding to the scan no. containing the input mk4 files.
 
 Helper scripts
 --------------

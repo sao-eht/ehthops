@@ -26,29 +26,40 @@ and the calibration parameters to be used. The control files are either generate
 calibration solutions. Scripts in the EAT that perform additional calibration steps are also used to generate control files which are passed
 to `fourfit` in the next stage.
 
+Fringe-fitting is performed in stages 0 to 5 (**0.bootstrap** with minimal constraints on fringe-fitting, to **5.+close** with an iteratively built
+complex phase model), with each stage building on the solutions derived in the previous stage. These stages consist of the following common steps:
+
+- **0.launch** -- sets up the environment variables and launches the pipeline
+- **1.version** -- logs the versions of all external dependencies
+- **2.link** -- links the archival data to the working directory
+- **3.fourfit** -- fringe-fits the data
+- **4.alists** -- creates the summary alist files
+- **5.check** -- generates summary jupyter notebooks with diagnostic plots for the data
+- **6.summary** -- collects all the errors and warnings from the previous steps in a single logfile
+- **9.next** -- copies some files to the next stage
+
+The stage-specific steps (usually step 7) derive additional solutions which are written out to control files that are input to the following stages.
+
+- Stage **1.+flags+wins** applies flags and search windows and derives phase bandpass solutions in step **7.pcal**.
+- Stage **2.+pcal** applies bandpass phase calibration solutions and derives adhoc phase solutions using **7.adhoc**.
+- Stage **3.+adhoc** applies adhoc phase solutions and derives R/L delay solutions using **7.delays**.
+- Stage **4.+delays** applies delay calibration solutions and globalizes fringe solutions using **7.close**.
+- Stage **5.+close** applies global fringe closing solutions.
+
+Stage 6 (**6.uvfits**) marks the beginning of the post-processing stages, and creates uvfits files from the fringe-fitted data in mk4 format.
+Subsequent post-processing steps perform apriori amplitude calibration, field angle rotation correction, R-L polarization calibration, and network
+calibration. In each of these stages, both the inputs and outputs are uvfits files, with those created in the current stage being used as inputs for
+the following stage.
+
+Additional post-processing steps are being added to the main pipeline workflow. Stay tuned for updates.
+
 Automatic simultaneous multi-band data processing is not supported by the pipeline yet. Each band is processed independently.
 To avoid code duplication, symbolic links to scripts in band 1 (**hops-b1**) are used to run other bands.
-
-The pipeline consists of the following stages::
-
-   Stage 0 (0.bootstrap): An empty control file is passed to `fourfit` in this stage so that no assumptions about fringe-fitting are made.
-   Stage 1 (1.+flags+wins): Bad data identified at the correlation stage or from prior inspection of the data are flagged and parameters such as delay search windows are incorporated into the control file input to `fourfit` in this stage. Also, phase calibration is performed in this stage.
-   Stage 2 (2.+phasecal): The R/L phase solutions derived in the previous stage are included in the control file and adhoc phase calibration is performed.
-   Stage 3 (3.+adhoc): The adhoc phase solutions derived in the previous stage are included in the control file input to `fourfit` in this stage and R/L delay calibration is performed.
-   Stage 4 (4.+delays): The R/L delay solutions derived in the previous stage are accounted for during fringe-fitting and fringe closure is performed on the results of `fourfit`.
-   Stage 5 (5.+close): The closure phase solutions derived in the previous stage are appended to the control file and a final round of `fourfit` is performed. The calibrated output files generated in this stage are used in subsequent post-processing steps.
-
-Post-processing stages::
-
-   Stage 6 (6.+uvfits): The calibrated output files generated in the previous stage are converted to UVFITS format. 10-second time-averaged and frequency-averaged versions of UVFITS files are also created.
-   Stage 7 (7.+apriori): A priori amplitude calibration and field angle rotation correction is performed on the (unaveraged) UVFITS files from the previous stage. Time and frequency-averaged versions of the UVFITS files are also created.
-
-More on the stages and the steps comprising them in :doc:`Running ehthops <running>`.
 
 Metadata
 --------
 
-The **meta** directory hosts the metadata and is structured as follows:
+The **ehthops/meta** directory hosts the metadata and is structured as follows:
 
 - <campaign>
  - cf
