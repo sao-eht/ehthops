@@ -162,4 +162,7 @@ initialized and updated manually as follows::
    cd ehthops
    git submodule update --init --remote
 
-The HOPS environment is now set up for running the pipeline.
+The HOPS environment is now set up for running the pipeline. If everything above has been done correctly, all the HOPS executables (e.g. hops*, fourfit, aedit,
+CorAsc2, etc.) and the EAT executables in **eat/bin** in the source code should be available in the shell environment.
+
+Additional documentation on HOPS can be found at `MIT Haystack website <https://www.haystack.mit.edu/haystack-observatory-postprocessing-system-hops/>`_.
