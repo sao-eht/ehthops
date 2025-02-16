@@ -126,7 +126,7 @@ Here are a few things that the user should verify/modify in the driver script be
 
   .. code-block:: bash
 
-      SET_SRCDIR=/home/user/calibration/data/extracted && SET_CORRDAT="2016.1.01154.V" && SET_METADIR=/home/user/calibration/ehthops/meta/eht2017/230GHz && source bin/0.launch -y 2017 -d 3 -p "*.ec_eht.e17.*-$band-.*-hops/"
+      SET_SRCDIR=/home/user/calibration/data/extracted && SET_CORRDAT="2016.1.01154.V" && SET_METADIR=/home/user/calibration/ehthops/meta/eht2017/230GHz && source bin/0.launch -y 2017 -d 2 -p "2016.1.01154.V"
 
 - At stage **6.uvfits**, SRCDIR should point to the directory **5.+close/data** in the current band.
   The environment variable EHTIMPATH should point to the eht-imaging library. Assume this is
