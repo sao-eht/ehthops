@@ -56,8 +56,27 @@ Additional post-processing steps are being added to the main pipeline workflow. 
 Automatic simultaneous multi-band data processing is not supported by the pipeline yet. Each band is processed independently.
 To avoid code duplication, symbolic links to scripts in band 1 (**hops-b1**) are used to run other bands.
 
-Metadata
---------
+Data organization
+-----------------
+
+The inputs and outputs of the HOPS fourfit program confirm to the specifications of the Mark 4 (mk4) data format.
+The command-line arguments to the pipeline described below are designed around some basic assumptions about the data organization.
+All input mark4 files are expected to be organized according to the following directory structure:
+
+- SRCDIR
+
+  - CORRDAT, a colon-separated list of data directories (correlation products) to use for SRC data, with higher precedence coming first.
+
+    - Variable levels of subdirectories, the number of which determines the value passed to the -d option (explained below).
+
+      - Directories named after the pattern passed to the -p option (explained below).
+
+        - Directories with names corresponding to the HOPS expt no.
+
+          - Directories with names corresponding to the scan no. containing the input mk4 files.
+
+Metadata organization
+---------------------
 
 The **ehthops/meta** directory hosts the metadata and is structured as follows:
 
