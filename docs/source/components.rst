@@ -69,13 +69,15 @@ All input mark4 files are expected to be organized according to the following di
 
   - CORRDAT, a colon-separated list of data directories (correlation products) to use for SRC data, with higher precedence coming first.
 
-    - Variable levels of subdirectories, the number of which determines the value passed to the -d option (explained below).
+    - Variable levels of subdirectories, the number of which determines the value passed to the -d option passed to the 0.launch script.
 
-      - Directories named after the pattern passed to the -p option (explained below).
+      - Directories named after the pattern passed to the -p option passed to the 0.launch script.
 
         - Directories with names corresponding to the HOPS expt no.
 
           - Directories with names corresponding to the scan no. containing the input mk4 files.
+
+Refer to the :ref:`command-line-options` section for more information on how data organization determines the options passed to the 0.launch script.
 
 Metadata organization
 ---------------------
