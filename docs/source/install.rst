@@ -118,16 +118,19 @@ The -nH argument prevents the entire directory structure on the host from being 
 Regardless of whether you are using the public version of HOPS or the version provided by the
 EHT-HOPS pipeline developers, the following steps are the same.
 
-Untar HOPS version 3.24 and in the same location create a build directory in which to compile HOPS::
+The HOPS developers recommend building HOPS in a separate directory from the source code (this is separate from the install directory for HOPS).
+Untar HOPS version 3.24 to */path/to/parentdir* and in *parentdir* create a build directory in which to compile HOPS.
+The install location for HOPS binaries is specified using the **--prefix** option passed to configure::
 
-   mkdir bld-3.24
+   tar -xvzf hops-3.24-3753.tar.gz
+   mkdir bld-3.24 # same level as hops-3.24
    cd bld-3.24
    ../hops-3.24/configure --prefix=</path/to/install/hops-3.24> --enable-devel
    make all
    make install
 
 .. note::
-   Do not forget the **\-\-enable-devel** flag! Without it, many necessary HOPS postprocessing executables will not be built.
+   Do not forget the **\-\-enable-devel** flag above! Without it, some necessary HOPS utilities will not be built.
 
 To set up the HOPS environment, run::
 
