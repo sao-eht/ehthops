@@ -58,14 +58,13 @@ Some notes on the command-line options:
 - The **-p** option sets the pattern to match for the HOPS input directories in the archival data while linking. The default pattern is `e${OBSYEAR: -2}.*-$BAND-.*-hops/`.
 - The **-d** option sets the directory depth (level) to look for the HOPS input files in the archival data while linking. The default depth is `4`.
 
-The **-**d and **-p** options together determine the directory structure that will be created under **<stage>/data** by the pipeline and deserve
-special care. The basic assumptions made by the pipeline about data organization are described
-in :ref:`the section on data organization <command-line-options>`. As noted there, the data are expected to be organized
-as *SRCDIR/<CORRDAT-elements>/dir1/dir2/.../dirn/expt_no/scan_no/mk4_files*.
+The **-d** and **-p** options together determine the directory structure that will be created under **<stage>/data** by the pipeline and deserve
+special care. The basic assumptions made by the pipeline about data organization are described :ref:`here <data-organization>`.
+As noted there, the data are expected to be organized as *SRCDIR/CORRDAT/dir1/dir2/.../dirn/expt_no/scan_no/mk4_files*.
 
-For instance, if the data organization looks like *SRCDIR/CORRDAT[1]/dir1/dir2/expt_no/scan_no/mk4_files*, then the **-d** option should be set to
-**4** and the **-p** option should be set to a pattern that matches the naming scheme of *dir2*. The pipeline will then create a directory
-structure under **<stage>/data** corresponding to *expt_no/scan_no/mk4_files*.
+For instance, if the data organization looks like *SRCDIR/CORRDAT/dir1/dir2/expt_no/scan_no/mk4_files*, then **-d** should be set to **4** and
+**-p** should be set to a pattern that matches the naming scheme of *dir2* (all directories at this level are expected to match this pattern).
+The pipeline will then create a directory structure under **<stage>/data** corresponding to *expt_no/scan_no/mk4_files*.
 
 These options exist to accommodate different data organization schemes for different data sets.
 
