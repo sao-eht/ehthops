@@ -53,9 +53,14 @@ Some notes on the environment variables:
 Some notes on the command-line options:
 
 - The **-y** option sets the year of the campaign and consists of 4 numbers in the format <yyyy>.
-- The **-x** option is used to indicate that the linear polarization ALMA data in the archive must be found in the *-haxp/* directories in the archive. When this option is set, **-m** is automatically set. The pattern to match must be *"-hops"* and not *"-haxp"*.
-- The **-m** option enables mixed polarization calibration. This option is used when the data are understood to be in hybrid polarization bases i.e. not all stations use the same polarization basis. It is possible for **-m** to be true and **-x** to be false, indicating that the mixed polarization data are all to be found under the *-hops/* directories in the archive.
-- The **-p** option sets the pattern to match for the HOPS input directories in the archival data while linking. The default pattern is `e${OBSYEAR: -2}.*-$BAND-.*-hops/`.
+- The **-x** option is used to indicate that the linear polarization ALMA data in the archive must be linked from the *-haxp/* directories in the
+  archive. When this option is set, **-m** is automatically set to indicate that mixedpol calibration is requested.
+  Note that the pattern to match (**-p**) must be the directory containing ALMA data in circular polarization (usually *"-hops"*) and not *"-haxp"*.
+- The **-m** option enables mixed polarization calibration. This option is used when the data are understood to be in hybrid polarization bases
+  i.e. not all stations use the same polarization basis. It is possible for **-m** to be true and **-x** to be false, indicating that the mixed
+  polarization data are all to be found under the *-hops/* directories in the archive.
+- The **-p** option sets the pattern to match for the HOPS input directories in the archival data while linking.
+  The default pattern is `e${OBSYEAR: -2}.*-$BAND-.*-hops/`.
 - The **-d** option sets the directory depth (level) to look for the HOPS input files in the archival data while linking. The default depth is `4`.
 
 The **-d** and **-p** options together determine the directory structure that will be created under **<stage>/data** by the pipeline and deserve

@@ -99,6 +99,8 @@ Here are a few things that the user should verify/modify in the driver script be
       mamba activate ehthops310 # activate the relevant mamba environment
       HOPS_SETUP=false source /path/to/installed/hops/bin/hops.bash # setting this to false ensures that the HOPS environment is set up anew for each run
 
+  Note that **HOPS_SETUP=false** is necessary only if running via SLURM. If running from the terminal, do not set this environment variable.
+
 - The script runs all the stages requested by the user, from **0.bootstrap** to **6.uvfits**.
   Ensure that only the necessary stages are included in this list. Here we run all the stages.
 
