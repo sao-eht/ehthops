@@ -56,6 +56,8 @@ Additional post-processing steps are being added to the main pipeline workflow. 
 Automatic simultaneous multi-band data processing is not supported by the pipeline yet. Each band is processed independently.
 To avoid code duplication, symbolic links to scripts in band 1 (**hops-b1**) are used to run other bands.
 
+.. _data-organization:
+
 Data organization
 -----------------
 
