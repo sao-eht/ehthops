@@ -24,10 +24,13 @@ year=$(echo "$OBSYEAR" | tail -c 3)
 # Create and populate $DATADIR
 for d in $CORRDAT
 do
-    find -L $SRCDIR/$d -mindepth $DEPTH -maxdepth $DEPTH -type d | grep $PATTERN |
+    find -L $SRCDIR/$d -mindepth $DEPTH -maxdepth $DEPTH -type d | grep -E $PATTERN |
         while read path; do
             # Symlink the source data files
             scan=$(awk -F $PATTERN '{print $(NF)}' <<< $path)
+            if [[ ! $scan =~ ^/[0-9]{4}/.* ]]; then
+                continue
+            fi
             SDIR=$DATADIR/$scan
             if [ ! -d "$SDIR" ]; then
                 mkdir -p "$SDIR"
