@@ -1,0 +1,10 @@
+#!/bin/bash
+#SBATCH -c 80 # Number of cores requested
+#SBATCH -t 1-00:00:00 # Runtime
+#SBATCH -p sapphire # Partition
+#SBATCH --mem=64g # Memory per node in MB (--mem or --mem-per-cpu)
+#SBATCH -e slurm-%j.err
+#SBATCH -o slurm-%j.out
+
+# run script
+source driver_cannon.sh

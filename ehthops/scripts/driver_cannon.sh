@@ -1,7 +1,7 @@
 # To be run from within 'hops-bx' directories
 # set up envs
 source $HOME/.bashrc
-mamba activate ehthops310 # activate the mamba environment with the necessary packages installed
+mamba activate nseht310 # activate the mamba environment with the necessary packages installed
 HOPS_SETUP=false source /path/to/installed/hops/bin/hops.bash
 
 # list of stages to run
@@ -60,11 +60,8 @@ do
         python bin/3.average
     fi
 
-    # for stages 0-5, copy control files to the next stage
-    if [ $stage != "6.uvfits" ]
-    then
-        source bin/9.next
-    fi
+    # set up next stage (copy scripts, control files etc.)
+    source bin/9.next
 
     cd ..
     echo "cd up to $(pwd)"
