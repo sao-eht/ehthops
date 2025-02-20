@@ -28,9 +28,6 @@ do
         while read path; do
             # Symlink the source data files
             scan=$(awk -F $PATTERN '{print $(NF)}' <<< $path)
-            if [[ ! $scan =~ ^/[0-9]{4}/.* ]]; then
-                continue
-            fi
             SDIR=$DATADIR/$scan
             if [ ! -d "$SDIR" ]; then
                 mkdir -p "$SDIR"
