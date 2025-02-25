@@ -1,10 +1,15 @@
 #!/bin/bash
-#SBATCH -c 80 # Number of cores requested
+#SBATCH -c 48 # Number of cores requested
 #SBATCH -t 1-00:00:00 # Runtime
-#SBATCH -p sapphire # Partition
-#SBATCH --mem=64g # Memory per node in MB (--mem or --mem-per-cpu)
+#SBATCH -p blackhole # Partition
+#SBATCH --mem=32G # Memory per node in MB by default (--mem or --mem-per-cpu)
 #SBATCH -e slurm-%j.err
 #SBATCH -o slurm-%j.out
 
+# set up env -- this may be different for different systems except for the HOPS setup
+source $HOME/.bashrc
+mamba activate nseht310 # activate the mamba environment with the necessary packages installed
+HOPS_SETUP=false source /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/src/bld-3.24/hops.bash
+
 # run script
-source driver_cannon.sh
+source ehthops_pipeline.sh -c settings.config
