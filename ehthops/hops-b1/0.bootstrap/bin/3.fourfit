@@ -15,7 +15,7 @@ find . -maxdepth 1 -type f -name 'cf*' -not -name 'cf*_b?_*' -exec cat {} + >> t
 #(time parallel --bar --joblog log/parallel.log \
 (time parallel --joblog log/parallel.log \
 	"fourfit -c temp/cf_all {} > {}.out 2> {}.err" \
-	::: "$DATADIR"/*/*/??[^.]* 2>&1) 2> log/parallel.time
+	::: "$DATADIR"/*/*/??[^.]*.?????? 2>&1) 2> log/parallel.time
 
 cat "$DATADIR"/*/*/*.out > log/fourfit.out
 cat "$DATADIR"/*/*/*.err > log/fourfit.err
