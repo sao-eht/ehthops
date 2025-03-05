@@ -6,10 +6,20 @@
 #SBATCH -e slurm-%j.err
 #SBATCH -o slurm-%j.out
 
-# set up env -- this may be different for different systems except for the HOPS setup
+# Set up env -- this may be different for different systems; the following are reasonable guidelines
+
+# source default bash settings from user's bashrc file.
 source $HOME/.bashrc
-mamba activate nseht310 # activate the mamba environment with the necessary packages installed
-HOPS_SETUP=false source /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/src/bld-3.24/hops.bash
+
+# Activate the mamba environment with the necessary packages installed.
+mamba activate nseht310
+
+# Uncomment the following line if it is not present in your $HOME/.bashrc file or has not been run until now. In this case, the
+# bashrc file above contains this line, so it has been commented out. This is required to set up the HOPS environment properly.
+# source /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/installed/hops-3.24/bin/hops.bash
+
+# Set up HOPS environment once again with HOPS_SETUP=false (necessary to pick up all the HOPS environment variables properly).
+HOPS_SETUP=false source /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/installed/hops-3.24/bin/hops.bash
 
 # run script
 source ehthops_pipeline.sh -c settings.config

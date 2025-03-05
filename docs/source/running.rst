@@ -79,9 +79,7 @@ These options exist to accommodate different data organization schemes for diffe
 Helper scripts
 --------------
 
-Easy-to-use sample driver scripts that run the entire pipeline are provided under the directory **ehthops/scripts**.
-These scripts are to be run from within the **ehthops/hops-b[1234]** directories:
-
-- **driver_cannon.sh** is a script that runs all the stages of the pipeline, applicable to any band. It is a good starting point for learning to run the pipeline.
-- **ehthops.slurmconf** is a SLURM configuration file that can be used to submit the pipeline to a SLURM cluster (e.g. **$** sbatch ehthops.slurmconf).
-- **cleanup.sh** deletes all data generated as a result of a previous run and leaves the repo in a clean state.
+- **ehthops/ehthops_pipeline.sh** is a script that runs all the stages of the pipeline, applicable to any band. It is a good starting point for learning to run the pipeline.
+- **ehthops/settings.config** is a sample configuration file that shows all the keywords that can be passed to **ehthops_pipeline.sh**.
+- **ehthops/scripts/ehthops_slurm.job** is a SLURM configuration file that can be used to submit the pipeline to a SLURM cluster.
+- **ehthops/scripts/cleanup.sh** deletes all data generated as a result of a previous run and leaves the working area in a clean state.
