@@ -2,49 +2,32 @@
 # To process band "bx", run from within one of the hops-bx directories
 # Ensure that the correct python environment and the HOPS environment are activated before running this script
 
-OPTIND=1 # so that getopts can pick up the arguments when the script is 'source'd
-
 # Function to display help message
 show_help() {
-    echo "Usage: source $(basename "${BASH_SOURCE[0]}") [options]"
+    echo "Usage: source $(basename "${BASH_SOURCE[0]}") <config>"
     echo
-    echo "Command-line options:"
+    echo "Positional arguments:"
     echo "====================="
-    echo "  -c <config>     Configuration file"
-    echo "  -h, --help      Display this help message and exit"
+    echo "  <config>         Configuration file"
     echo
     echo "Example:"
-    echo "  source ehthops_pipeline.sh -c settings.config"
+    echo "  source ehthops_pipeline.sh settings.config"
 }
 
-# Parse command-line arguments
-while getopts "c:h" opt; do
-        case $opt in
-                c)
-                        CONFIG=$OPTARG
-                        ;;
-                h|help)
-                        show_help
-                        return 0
-                        ;;
-                \?)
-                        echo "Invalid option: -$OPTARG" >&2
-                        show_help
-                        return 1
-                        ;;
-                :)
-                        echo "Option -$OPTARG requires an argument." >&2
-                        show_help
-                        return 1
-            ;;
-        esac
-done
+# Check for help argument
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    show_help
+    return 0
+fi
 
-if [ -z "$CONFIG" ]; then
-    echo "Error: -c <config> is a mandatory option." >&2
+# Check for the configuration file argument
+if [ -z "$1" ]; then
+    echo "Error: <config> is a mandatory argument." >&2
     show_help
     return 1
 fi
+
+CONFIGFILE=$1
 
 # Unset config variable if it exists and declare it as an associative array
 unset config
@@ -63,7 +46,7 @@ while IFS='=' read -r key value || [ -n "$key" ]; do
 
     # Store the key-value pair in the config array
     config["$key"]="$value"
-done < "$CONFIG"
+done < "$CONFIGFILE"
 
 # Print the config array
 for key in "${!config[@]}"; do
@@ -86,13 +69,13 @@ do
     # Run fourfit for stages 0-5
     if [ $stage != "6.uvfits" ]
     then
-        SET_SRCDIR="${config[ASSIGN_SRCDIR]}" && SET_CORRDAT="${config[ASSIGN_CORRDAT]}" && SET_METADIR="${config[ASSIGN_METADIR]}" && source bin/0.launch -y "${config[LAUNCH_YEAR]}" -d "${config[LAUNCH_DEPTH]}" -p "${config[LAUNCH_PATTERN]}"
-        source bin/1.version
+        SET_SRCDIR="${config[ASSIGN_SRCDIR]}" && SET_CORRDAT="${config[ASSIGN_CORRDAT]}" && SET_METADIR="${config[ASSIGN_METADIR]}" && SET_OBSYEAR="${config[LAUNCH_YEAR]}" && SET_DEPTH="${config[LAUNCH_DEPTH]}" && SET_PATTERN="${config[LAUNCH_PATTERN]}" && SET_MIXEDPOL="${config[LAUNCH_MIXEDPOL]}" && SET_HAXP="${config[LAUNCH_HAXP]}" && source bin/0.launch
+        : 'source bin/1.version
         source bin/2.link
         source bin/3.fourfit
         source bin/4.alists
         source bin/5.check
-        source bin/6.summary
+        source bin/6.summary'
     fi
 
     # Run stage-specific scripts to generate control file information for the next stage
@@ -119,7 +102,7 @@ do
     # Run stage 6 after the 5 fringe-fitting stages; SRCDIR is now 5.+close/data
     if [ $stage == "6.uvfits" ]
     then
-        SET_SRCDIR="$workdir/5.+close/data" && SET_METADIR="${config[ASSIGN_METADIR]}" && source bin/0.launch -c "${config[LAUNCH_CAMPAIGN]}"
+        SET_EHTIMPATH="${config[ASSIGN_EHTIMPATH]}" && SET_SRCDIR="$workdir/5.+close/data" && SET_METADIR="${config[ASSIGN_METADIR]}" && SET_CAMPAIGN="${config[LAUNCH_CAMPAIGN]}" && source bin/0.launch
         source bin/1.convert
         source bin/2.import
         python bin/3.average

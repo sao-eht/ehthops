@@ -7,34 +7,47 @@ OPTIND=1 # so that getopts can pick up the arguments when the script is 'source'
 
 # Function to display help message
 show_help() {
-    echo "Usage: [SET_ENVVAR1=...] && [SET_ENVVAR2=...] && source $(basename "${BASH_SOURCE[0]}") [options]"
+    echo "Usage: [SET_ENVVAR1=...] && [SET_ENVVAR2=...] && source bin/$(basename "${BASH_SOURCE[0]}") [options]"
     echo
     echo "Useful environment variables:"
     echo "============================="
     echo "  SET_CORRDAT     Correlation releases to use for SRC data, higher precedence comes first (colon-separated list)"
-    echo "  SET_WRKDIR      Working directory for pipeline process"
-    echo "  SET_TOPDIR      Top level dir for all stages"
-    echo "  SET_DATADIR     Input/output data location for HOPS"
+    echo "  SET_WRKDIR      Working directory for pipeline process (default: PWD)"
+    echo "  SET_TOPDIR      Top level dir for all stages (default: WRKDIR/..)"
+    echo "  SET_DATADIR     Input/output data location for HOPS (default: WRKDIR/data)"
     echo "  SET_METADIR     Location of preset control files, META tables, ZBL flux estimates for netcal, etc"
     echo "  SET_SRCDIR      Single input data location for correlator source data"
     echo "  SET_SHRDIR      Location of shared resources (summary notebooks, etc)"
-    echo "If these are not set, reasonable defaults are used (not always guaranteed to work)."
+    echo "  SET_OBSYEAR     Campaign year"
+    echo "  SET_MIXEDPOL    Enable mixed polarization calibration"
+    echo "  SET_HAXP        Use HAXP data for ALMA (i.e. assume linearpol ALMA data present in -haxp directories)"
+    echo "  SET_PATTERN     Set the directory pattern for matching (regex); this is the parent directory of the <expt-no>/<scan> directories"
+    echo "  SET_DEPTH       Set the directory depth for searching (integer); this is the distance between <CORRDAT> and <scan> directories"
+    echo
+    echo "If these are not set and no command-line options are given, then reasonable defaults are used (not always guaranteed to work!)."
     echo
     echo "Command-line options:"
     echo "====================="
     echo "  -y <yyyy>       Campaign year"
     echo "  -m              Enable mixed polarization calibration"
-    echo "  -x              Use HAXP data for ALMA"
-    echo "  -p <pattern>    Set the pattern for searching (regex)"
-    echo "  -d <depth>      Set the directory depth for searching (integer)"
+    echo "  -x              Use HAXP data for ALMA (i.e. assume linearpol ALMA data present in -haxp directories)"
+    echo "  -p <pattern>    Set the directory pattern for matching (regex); this is the parent directory of the <expt-no>/<scan> directories"
+    echo "  -d <depth>      Set the directory depth for searching (integer); this is the distance between <CORRDAT> and <scan> directories"
+    echo "  -S <dir>        Set the base data source directory (i.e. single input data location) "
+    echo "  -C <colon-separated-list-of-dirs>    Set the correlation releases/tags to use in order of precedence"
+    echo "  -M <dir>        Set the metadata directory (e.g. preset control files, META tables, ZBL flux estimates for netcal)"
     echo "  -h, --help      Display this help message and exit"
     echo
+    echo "Note:"
+    echo "  - The command-line options take precedence over the environment variables."
+    echo "  - The environment variables take precedence over the default values."
+    echo
     echo "Example:"
-    echo "  SET_SRCDIR=/path/to/data/archive && SET_CORRDAT=\"Rev1-Cal:Rev1-Sci\" && SET_METADIR=/path/to/metadata && source bin/0.launch -y 2021 -d 4 -p \"e21f.*-$band-.*.hops/\""
+    echo "  SET_SRCDIR=/path/to/data/archive && SET_CORRDAT=\"Rev1-Cal:Rev1-Sci\" && SET_METADIR=/path/to/metadata && SET_OBSYEAR=2021 && SET_DEPTH=4 && SET_PATTERN=\"e21f.*-b1-.*.hops/\" source bin/0.launch"
 }
 
 # Parse command-line arguments
-while getopts "y:mxp:d:h" opt; do
+while getopts "y:mxp:d:S:C:M:h" opt; do
         case $opt in
                 y)
                         OBSYEAR=$OPTARG
@@ -50,6 +63,15 @@ while getopts "y:mxp:d:h" opt; do
                         ;;
                 d)
                         DEPTH=$OPTARG
+                        ;;
+                S)
+                        SRCDIR=$OPTARG
+                        ;;
+                C)
+                        CORRDAT=$OPTARG
+                        ;;
+                M)
+                        METADIR=$OPTARG
                         ;;
                 h|help)
                         show_help
@@ -77,21 +99,39 @@ if [ -f /.dockerenv ]; then
 fi
 
 # Define variables to their default values
-# These can be adjusted by defining SET env variables prior to running launch
-# CORRDAT=${SET_CORRDAT:-"Rev3-Cal:Rev3-Sci:Rev1-Cal:Rev1-Sci"}   # correlation releases to use for SRC data, higher precedence comes first
-CORRDAT=${SET_CORRDAT:-"Rev4-Cal:Rev4-Sci"}   # Rev4 should be the same as Rev3/Rev1 hybrid
-
 WRKDIR=${SET_WRKDIR:-"$PWD"}                  # working directory for pipeline process
 TOPDIR=${SET_TOPDIR:-"$WRKDIR/.."}            # top level dir for all stages
-DATADIR=${SET_DATADIR:-"$WRKDIR/data"}        # input/output data location for HOPS
-METADIR=${SET_METADIR:-"$TOPDIR/../meta/eht2017/230GHz"}        # location of preset control files, META tables, ZBL flux estimates for netcal, etc
-SRCDIR=${SET_SRCDIR:-"/data/2018-april/corr"} # single input data location for correlator source data
-SHRDIR=${SET_SHRDIR:-"$TOPDIR/../plots/notebooks"}      # location of shared resources (summary notebooks, etc)
+DATADIR=${SET_DATADIR:-"$WRKDIR/data"}        # location of data directory (nominally within the working directory)
 
-OBSYEAR=${OBSYEAR:-"2021"}            # Campaign year
-MIXEDPOL=${MIXEDPOL:-"false"}            # Mixed polarization calibration (relabel linear feeds to circular feeds)
-HAXP=${HAXP:-"false"}            # Use HAXP data for ALMA that retains linear pol format (if available)
-DEPTH=${DEPTH:-"4"}            # Directory depth (level) to search for in the archival data while linking
+# The following can be adjusted by defining SET env variables prior to running launch
+# CORRDAT=${SET_CORRDAT:-"Rev3-Cal:Rev3-Sci:Rev1-Cal:Rev1-Sci"}   # correlation releases to use for SRC data, higher precedence comes first
+CORRDAT=${CORRDAT:-${SET_CORRDAT:-"Rev4-Cal:Rev4-Sci"}}   # correlation releases/tags to use, higher precedence comes first
+DEFAULT_METADIR="$TOPDIR/../meta/eht2017/230GHz"
+METADIR=${METADIR:-${SET_METADIR:-$DEFAULT_METADIR}}        # location of preset control files, META tables, ZBL flux estimates for netcal, etc
+SRCDIR=${SRCDIR:-${SET_SRCDIR:-"/data/2018-april/corr"}} # single input data location for correlator source data
+DEFAULT_SHRDIR="$TOPDIR/../plots/notebooks"
+SHRDIR=${SHRDIR:-${SET_SHRDIR:-$DEFAULT_SHRDIR}}        # location of shared resources (summary notebooks, etc)
+
+# Set variables to their default values if not set by command-line arguments
+OBSYEAR=${OBSYEAR:-${SET_OBSYEAR:-"2021"}}
+MIXEDPOL=${MIXEDPOL:-${SET_MIXEDPOL:-"false"}}
+HAXP=${HAXP:-${SET_HAXP:-"false"}}
+DEPTH=${DEPTH:-${SET_DEPTH:-"4"}}
+
+# for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
+
+if [[ $OBSYEAR = "2017" ]]; then
+	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
+	if [[ $BAND = "b3" ]]; then
+		BAND="lo"
+	elif [[ $BAND = "b4" ]]; then
+		BAND="hi"
+	fi
+else
+	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
+fi
+
+PATTERN=${PATTERN:-${SET_PATTERN:-"e${OBSYEAR: -2}.*-$BAND-.*-hops/"}}            # Pattern to grep for while linking archival data
 
 # Perform some basic checks
 if [ ! -d "$METADIR" ]; then
@@ -111,21 +151,6 @@ if [[ $MIXEDPOL = "false" && $HAXP = "true" ]]; then
         MIXEDPOL=true
         echo "MIXEDPOL set to true because HAXP is set to true."
 fi
-
-# for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
-
-if [[ $OBSYEAR = "2017" ]]; then
-	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
-	if [[ $BAND = "b3" ]]; then
-		BAND="lo"
-	elif [[ $BAND = "b4" ]]; then
-		BAND="hi"
-	fi
-else
-	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
-fi
-
-PATTERN=${PATTERN:-"e${OBSYEAR: -2}.*-$BAND-.*-hops/"}            # Pattern to grep for while linking archival data
 
 # Parse arguments
 USE_DOCKER=${USE_DOCKER:-false}
