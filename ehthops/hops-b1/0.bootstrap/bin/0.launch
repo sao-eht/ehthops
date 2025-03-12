@@ -21,8 +21,6 @@ show_help() {
     echo "  SET_OBSYEAR     Campaign year"
     echo "  SET_MIXEDPOL    Enable mixed polarization calibration"
     echo "  SET_HAXP        Use HAXP data for ALMA (i.e. assume linearpol ALMA data present in -haxp directories)"
-    echo "  SET_PATTERN     Set the directory pattern for matching (regex); this is the parent directory of the <expt-no>/<scan> directories"
-    echo "  SET_DEPTH       Set the directory depth for searching (integer); this is the distance between <CORRDAT> and <scan> directories"
     echo
     echo "If these are not set and no command-line options are given, then reasonable defaults are used (not always guaranteed to work!)."
     echo
@@ -43,8 +41,12 @@ show_help() {
     echo "  - The environment variables take precedence over the default values."
     echo
     echo "Example:"
-    echo "  SET_SRCDIR=/path/to/data/archive && SET_CORRDAT=\"Rev1-Cal:Rev1-Sci\" && SET_METADIR=/path/to/metadata && SET_OBSYEAR=2021 && SET_DEPTH=4 && SET_PATTERN=\"e21f.*-b1-.*.hops/\" source bin/0.launch"
+    echo "  SET_SRCDIR=/path/to/data/archive && SET_CORRDAT=\"Rev1-Cal:Rev1-Sci\" && SET_METADIR=/path/to/metadata && SET_OBSYEAR=2021 && source bin/0.launch"
 }
+
+# unset variables that will be set below
+# if SET_ENVVAR variables exist their values will be used (for ease of use in manual mode)
+unset OBSYEAR MIXEDPOL HAXP SRCDIR CORRDAT METADIR WRKDIR TOPDIR DATADIR SHRDIR BAND
 
 # Parse command-line arguments
 while getopts "y:mxp:d:S:C:M:h" opt; do
@@ -57,12 +59,6 @@ while getopts "y:mxp:d:S:C:M:h" opt; do
                         ;;
                 x)
                         HAXP=true
-                        ;;
-                p)
-                        PATTERN=$OPTARG
-                        ;;
-                d)
-                        DEPTH=$OPTARG
                         ;;
                 S)
                         SRCDIR=$OPTARG
@@ -116,7 +112,6 @@ SHRDIR=${SHRDIR:-${SET_SHRDIR:-$DEFAULT_SHRDIR}}        # location of shared res
 OBSYEAR=${OBSYEAR:-${SET_OBSYEAR:-"2021"}}
 MIXEDPOL=${MIXEDPOL:-${SET_MIXEDPOL:-"false"}}
 HAXP=${HAXP:-${SET_HAXP:-"false"}}
-DEPTH=${DEPTH:-${SET_DEPTH:-"4"}}
 
 # for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
 
@@ -130,8 +125,6 @@ if [[ $OBSYEAR = "2017" ]]; then
 else
 	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
 fi
-
-PATTERN=${PATTERN:-${SET_PATTERN:-"e${OBSYEAR: -2}.*-$BAND-.*-hops/"}}            # Pattern to grep for while linking archival data
 
 # Perform some basic checks
 if [ ! -d "$METADIR" ]; then
@@ -175,8 +168,6 @@ if [ x"$USE_DOCKER" == x"true" ]; then
         echo "  Campaign year, OBSYEAR:        $OBSYEAR"
         echo "  Mixed polarization calibration, MIXEDPOL:        $MIXEDPOL"
         echo "  Use HAXP data for ALMA, HAXP:        $HAXP"
-        echo "  Pattern to grep for while linking archival data, PATTERN:        $PATTERN"
-        echo "  Directory depth to search for in the archival data while linking, DEPTH:        $DEPTH"
         echo "  Command:     $@"
 
 	if [ $# == 0 ]; then # no command line argument
@@ -200,8 +191,6 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 		-e "OBSYEAR=$OBSYEAR"                  \
 		-e "MIXEDPOL=$MIXEDPOL"                \
                 -e "HAXP=$HAXP"                        \
-		-e "PATTERN=$PATTERN"                  \
-		-e "DEPTH=$DEPTH"                      \
 		$PORTFORWARD                           \
 		eventhorizontelescope/eat-notebook     \
 		"$@"
@@ -219,8 +208,6 @@ else
         echo "  Campaign year, OBSYEAR:        $OBSYEAR"
         echo "  Mixed polarization calibration, MIXEDPOL:        $MIXEDPOL"
         echo "  Use HAXP data for ALMA, HAXP:        $HAXP"
-        echo "  Pattern to grep for while linking archival data, PATTERN:        $PATTERN"
-        echo "  Directory depth to search for in the archival data while linking, DEPTH:        $DEPTH"
         echo "  Command:     $@"
 
 	# Add more HOPS setup scripts here if needed
