@@ -9,8 +9,6 @@ echo "  Container HOPS data output, DATADIR:    \"$DATADIR\""
 echo "  Band, BAND:        $BAND"
 echo "  Mixed pol calibration, MIXEDPOL:        $MIXEDPOL"
 echo "  Use HAXP data for ALMA, HAXP:         $HAXP"
-echo "  Dir pattern to match, PATTERN:        $PATTERN"
-echo "  Dir search depth, DEPTH:        $DEPTH"
 
 cd "$WRKDIR"
 mkdir -p "$DATADIR" tests temp log
@@ -18,77 +16,99 @@ mkdir -p "$DATADIR" tests temp log
 # add some more token delimiters
 IFS=$' \t\n:,'
 
-# set dirname pattern to match while linking
-year=$(echo "$OBSYEAR" | tail -c 3)
+# root file pattern to match
+ROOTFILENAME="^[a-zA-Z0-9+-]+\.[a-zA-Z0-9]{6}$"
 
-# Create and populate $DATADIR
-for d in $CORRDAT
-do
-    find -L $SRCDIR/$d -mindepth $DEPTH -maxdepth $DEPTH -type d | grep -E $PATTERN |
-        while read path; do
-            # Symlink the source data files
-            scan=$(awk -F $PATTERN '{print $(NF)}' <<< $path)
-            SDIR=$DATADIR/$scan
-            if [ ! -d "$SDIR" ]; then
-                mkdir -p "$SDIR"
-                # create symbolic links to all data files except pre-existing fringe files
-                find $path -type f ! -name "*.[A-Z].*" -exec cp -s {} "$SDIR" \;
+# Populate $DATADIR
+for d in $CORRDAT; do
+    # Find all files matching the pattern and process them
+    find -L "$SRCDIR/$d" -type f | while read -r root_file; do
+        if [[ $(basename "$root_file") =~ $ROOTFILENAME ]]; then
+            # Skip files if HAXP=false and the path contains the pattern "-haxp" or *.haxp*
+            if [[ "$root_file" == *haxp/* ]]; then
+                continue
+            fi
+            # Skip files if the path does not contain the requested band
+            if [[ "$root_file" != *"-$BAND-"* ]]; then
+                continue
+            fi
+            echo $root_file
 
-                ### retain only one root code if more than one is present in a scan
-                # find all extensions (i.e. root codes) present in the scan
-                EXTENSIONS=$(find "$SDIR" \( -type f -o -type l \) | sed -n 's/.*\.\([^.]*\)$/\1/p' | sort -r | uniq)
-                EXTENSIONS=($EXTENSIONS) # convert variable to array
-                if [[ ${#EXTENSIONS[@]} -gt 1 ]]; then
-                    EXT_TO_KEEP=${EXTENSIONS[0]}
-                    EXT_TO_DELETE=("${EXTENSIONS[@]:1}")
-                    echo "$scan: Retaining files with extension: $EXT_TO_KEEP"
-                    echo "$scan: Deleting files with extension(s): ${EXT_TO_DELETE[@]}"
-                    for ext in "${EXT_TO_DELETE[@]}"; do
-                        find "$SDIR" \( -type f -o -type l \) -name "*.$ext" -exec rm {} \;
-                    done
-                fi
+            # Get the directory two levels above the root_file
+            src_scan_dir=$(dirname "$root_file")
+            src_expt_dir=$(dirname "$(dirname "$root_file")")
+            
+            # Create the corresponding directory structure in the output directory
+            dest_expt_dir="$DATADIR/$(basename "$src_expt_dir")"
+            dest_scan_dir="$dest_expt_dir/$(basename "$src_scan_dir")"
+            
+            # Extract the extension from the current root_file
+            extension=$(echo "$root_file" | grep -oE '[a-zA-Z0-9]{6}$')
+            #echo "extension: $extension"
 
-                ### for mixed pol data reduction, remove polconverted ALMA data
-                if [[ $HAXP == true ]]; then
-                    rm -f $SDIR/A?.*
+            # Count the number of files with the current extension in the source scan directory
+            num_src_files=$(find -L "$src_scan_dir" -type f | grep -E "\.$extension$" | wc -l)
+            #echo "num_src_files in $src_scan_dir: $num_src_files"
+            
+            # Count the number of existing files in the dest scan dir if it exists and delete it if necessary
+            if [[ -d "$dest_scan_dir" ]]; then
+                num_existing_files=$(find -L "$dest_scan_dir" -type f | wc -l)
+                #echo "num_existing_files in $dest_scan_dir: $num_existing_files"
+                # If no. of files with current extension in source scan dir <= no. of files in dest scan dir, skip.
+                # Else, delete the dest scan dir.
+                if [[ $num_src_files -le $num_existing_files ]]; then
+                    continue
+                else
+                    rm -rf "$dest_scan_dir"
                 fi
             fi
-        done
+            
+            # Create the dest scan dir -- either this is the first pass, or the dest scan dir was deleted
+            mkdir -p "$dest_scan_dir"
+
+            # Create symbolic links to all files in the scan directory matching the extension
+            find -L "$src_scan_dir" -type f | grep -E "\.$extension$" | while read -r scan_file; do
+                ln -s "$scan_file" "$dest_scan_dir/$(basename "$scan_file")"
+            done
+        fi
+    done
 done
 
-# for mixedpol data reduction with mixedpol data separately stored in [.-]haxp dirs, replace ALMA data in [.-]hops with those in [.-]haxp
-if [[ $HAXP == true ]]; then
-        for d in $CORRDAT
-        do
-            find -L $SRCDIR/$d -mindepth $DEPTH -maxdepth $DEPTH -type d | grep $PATTERN |
-                while read path; do
-                    # hack path to modify .hops => .haxp and -hops => -haxp
-                    modpath=$(echo $path | awk -v replace="haxp" '{gsub(/\.hops/, "." replace); gsub(/-hops/, "-" replace)}1')
-                    # Symlink the source data files
-                    scan=$(awk -F 'haxp/' '{print $(NF)}' <<< $modpath)
-                    SDIR=$DATADIR/$scan
-                    if [ -d "$SDIR" ]; then
-                        # create symbolic links to all haxp data files (corel and station files) except pre-existing fringe files
-                        find $modpath -type f ! -name "*.[A-Z].*" -exec sh -c 'test ! -e "$1/$(basename "$0")" && cp -s "$0" "$1"' {} "$SDIR" \;
-                    fi
-                    
-                    ### retain only one root code for ALMA data files if more than one was present in haxp directories
-                    # find all extensions (i.e. root codes) present in the scan (for ALMA files only)
-                    EXTENSIONS=$(find "$SDIR" \( -type f -o -type l \) -name "A*" | sed -n 's/.*\.\([^.]*\)$/\1/p' | sort -r | uniq)
-                    EXTENSIONS=($EXTENSIONS) # convert variable to array
-                    if [[ ${#EXTENSIONS[@]} -gt 1 ]]; then
-                        EXT_TO_KEEP=${EXTENSIONS[0]}
-                        EXT_TO_DELETE=("${EXTENSIONS[@]:1}")
-                        echo "$scan: Retaining files with extension: $EXT_TO_KEEP"
-                        echo "$scan: Deleting files with extension(s): ${EXT_TO_DELETE[@]}"
-                        for ext in "${EXT_TO_DELETE[@]}"; do
-                            find "$SDIR" \( -type f -o -type l \) -name "A*.$ext" -exec rm {} \;
-                        done
-                    fi
+# replace ALMA data with the contents of haxp dirs if HAXP=true
+if [[ "$HAXP" == true ]]; then
+    echo "Replacing ALMA data with HAXP data..."
+    for d in $CORRDAT; do
+        # Find all files matching the pattern and process them
+        find -L "$SRCDIR/$d" -type f | while read -r root_file; do
+            if [[ $(basename "$root_file") =~ $ROOTFILENAME ]]; then
+                # Skip files if the path does not contain the pattern "-haxp" or *.haxp*
+                if [[ "$root_file" != *haxp/* ]]; then
+                    continue
+                fi
+                # Skip files if the path does not contain the requested band
+                if [[ "$root_file" != *"-$BAND-"* ]]; then
+                    continue
+                fi
+                echo $root_file
+
+                # Get the directory two levels above the root_file
+                src_scan_dir=$(dirname "$root_file")
+                src_expt_dir=$(dirname "$(dirname "$root_file")")
+                
+                # Obtain the corresponding directory structure in the output directory -- this has been created in the previous loop
+                dest_expt_dir="$DATADIR/$(basename "$src_expt_dir")"
+                dest_scan_dir="$dest_expt_dir/$(basename "$src_scan_dir")"
+
+                # remove all files starting with "A" in the dest scan dir
+                find "$dest_scan_dir" -name "A*" -exec rm {} \;
+
+                # Create symbolic links to all files in the scan directory matching the extension
+                find -L "$src_scan_dir" -type f | while read -r scan_file; do
+                    ln -s "$scan_file" "$dest_scan_dir/$(basename "$scan_file")"
                 done
+            fi
         done
-else
-    echo "HAXP=$HAXP. Not replacing circpol ALMA data with linpol data."
+    done
 fi
 
 # Rename silly root files to standard names
@@ -100,4 +120,3 @@ find "$DATADIR" -name '*_3*' |
         # Symlinking instead of renaming
         # ln -s $(realbad "$bad") "$new"
     done
-
