@@ -69,13 +69,13 @@ do
     # Run fourfit for stages 0-5
     if [ $stage != "6.uvfits" ]
     then
-        SET_SRCDIR="${config[ASSIGN_SRCDIR]}" && SET_CORRDAT="${config[ASSIGN_CORRDAT]}" && SET_METADIR="${config[ASSIGN_METADIR]}" && SET_OBSYEAR="${config[LAUNCH_YEAR]}" && SET_DEPTH="${config[LAUNCH_DEPTH]}" && SET_PATTERN="${config[LAUNCH_PATTERN]}" && SET_MIXEDPOL="${config[LAUNCH_MIXEDPOL]}" && SET_HAXP="${config[LAUNCH_HAXP]}" && source bin/0.launch
-        : 'source bin/1.version
+        SET_SRCDIR="${config[ASSIGN_SRCDIR]}" && SET_CORRDAT="${config[ASSIGN_CORRDAT]}" && SET_METADIR="${config[ASSIGN_METADIR]}" && SET_OBSYEAR="${config[LAUNCH_YEAR]}" && SET_MIXEDPOL="${config[LAUNCH_MIXEDPOL]}" && SET_HAXP="${config[LAUNCH_HAXP]}" && source bin/0.launch
+        source bin/1.version
         source bin/2.link
         source bin/3.fourfit
         source bin/4.alists
         source bin/5.check
-        source bin/6.summary'
+        source bin/6.summary
     fi
 
     # Run stage-specific scripts to generate control file information for the next stage
