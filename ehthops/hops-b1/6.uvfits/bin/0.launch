@@ -36,6 +36,10 @@ show_help() {
     echo "  SET_SRCDIR=/path/to/data/archive && SET_METADIR=/path/to/metadata && SET_CAMPAIGN="EHT2017" && source bin/0.launch
 }
 
+# unset variables that will be set below
+# if SET_ENVVAR variables exist their values will be used (for ease of use in manual mode)
+unset CAMPAIGN SRCDIR METADIR WRKDIR TOPDIR DATADIR EHTIMPATH BAND
+
 # Parse command-line arguments
 while getopts "c:S:M:h" opt; do
         case $opt in
