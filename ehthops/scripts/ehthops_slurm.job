@@ -22,4 +22,4 @@ mamba activate nseht310
 HOPS_SETUP=false source /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/installed/hops-3.24/bin/hops.bash
 
 # run script
-source ehthops_pipeline.sh -c settings.config
+source ehthops_pipeline.sh settings.config
