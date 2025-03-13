@@ -32,11 +32,17 @@ for d in $CORRDAT; do
             if [[ "$root_file" != *"-$BAND-"* ]]; then
                 continue
             fi
-            echo $root_file
 
             # Get the directory two levels above the root_file
             src_scan_dir=$(dirname "$root_file")
             src_expt_dir=$(dirname "$(dirname "$root_file")")
+
+            # Skip files if src_expt_dir is not a valid expt_no
+            if [[ ! $(basename "$src_expt_dir") =~ ^[0-9]{4,5}$ ]]; then
+                echo "Skipping $src_expt_dir with $root_file"
+                continue
+            fi
+            echo $root_file
             
             # Create the corresponding directory structure in the output directory
             dest_expt_dir="$DATADIR/$(basename "$src_expt_dir")"
@@ -89,11 +95,16 @@ if [[ "$HAXP" == true ]]; then
                 if [[ "$root_file" != *"-$BAND-"* ]]; then
                     continue
                 fi
-                echo $root_file
 
                 # Get the directory two levels above the root_file
                 src_scan_dir=$(dirname "$root_file")
                 src_expt_dir=$(dirname "$(dirname "$root_file")")
+
+                # Skip files if src_expt_dir is not a valid expt_no
+                if [[ ! $(basename "$src_expt_dir") =~ ^[0-9]{4,5}$ ]]; then
+                    continue
+                fi
+                echo $root_file
                 
                 # Obtain the corresponding directory structure in the output directory -- this has been created in the previous loop
                 dest_expt_dir="$DATADIR/$(basename "$src_expt_dir")"
