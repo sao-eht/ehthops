@@ -33,7 +33,7 @@ show_help() {
     echo "  - The environment variables take precedence over the default values."
     echo
     echo "Example:"
-    echo "  SET_SRCDIR=/path/to/data/archive && SET_METADIR=/path/to/metadata && SET_CAMPAIGN="EHT2017" && source bin/0.launch
+    echo "  SET_SRCDIR=/path/to/data/archive && SET_METADIR=/path/to/metadata && SET_CAMPAIGN=\"EHT2017\" && source bin/0.launch"
 }
 
 # unset variables that will be set below
