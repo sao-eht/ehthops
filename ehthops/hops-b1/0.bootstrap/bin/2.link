@@ -47,25 +47,22 @@ for d in $CORRDAT; do
             # Create the corresponding directory structure in the output directory
             dest_expt_dir="$DATADIR/$(basename "$src_expt_dir")"
             dest_scan_dir="$dest_expt_dir/$(basename "$src_scan_dir")"
-            
+
             # Extract the extension from the current root_file
             extension=$(echo "$root_file" | grep -oE '[a-zA-Z0-9]{6}$')
             #echo "extension: $extension"
 
-            # Count the number of files with the current extension in the source scan directory
-            num_src_files=$(find -L "$src_scan_dir" -type f | grep -E "\.$extension$" | wc -l)
-            #echo "num_src_files in $src_scan_dir: $num_src_files"
-            
-            # Count the number of existing files in the dest scan dir if it exists and delete it if necessary
+            # Compare the extensions
             if [[ -d "$dest_scan_dir" ]]; then
-                num_existing_files=$(find -L "$dest_scan_dir" -type f | wc -l)
-                #echo "num_existing_files in $dest_scan_dir: $num_existing_files"
-                # If no. of files with current extension in source scan dir <= no. of files in dest scan dir, skip.
-                # Else, delete the dest scan dir.
-                if [[ $num_src_files -le $num_existing_files ]]; then
-                    continue
-                else
-                    rm -rf "$dest_scan_dir"
+                # Extract the 6-character alphanumeric extensions from the destination scan directory
+                dest_extensions=$(find -L "$dest_scan_dir" -type f | grep -oE '[a-zA-Z0-9]{6}$' | sort | uniq)                
+                if [[ -n "$dest_extensions" ]]; then
+                    max_dest_extension=$(echo "$dest_extensions" | sort | tail -n 1)
+                    if [[ "$extension" -le "$max_dest_extension" ]]; then
+                        continue
+                    else
+                        rm -rf "$dest_scan_dir"
+                    fi
                 fi
             fi
             
