@@ -28,10 +28,6 @@ Install astropy; this should pull in numpy, among other modules::
 
    mamba install astropy seaborn numpy pandas matplotlib scipy
 
-Verify that the astropy version is 5.3 or below (downgrade if not). This is necessary for the current codebase to work properly::
-
-   mamba install astropy=5.3
-
 Install modules required for generating summary plots non-interactively and viewing them from within the same mamba environment::
 
    mamba install ipykernel papermill nbconvert jupyter
