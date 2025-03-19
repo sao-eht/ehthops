@@ -18,9 +18,9 @@ All the calibrated output files will be created within this directory:
     cd ehthops
     git submodule update --init --remote
 
-The last line above ensures that the submodules are updated to the latest version.
+The last line above ensures that the submodules containing metadata and summary notebooks are updated to the latest version.
 
-The code repository consists of four directories named **hops-bx** where **x** stands for the EHT "zoom" band.
+The code repository consists of four directories named **hops-bx** where **x** stands for the EHT "zoom" frequency band.
 Conventionally, in order of increasing frequency, the bands are named 1, 2, 3, and 4.
 
 .. note::
@@ -31,8 +31,9 @@ Conventionally, in order of increasing frequency, the bands are named 1, 2, 3, a
 The main pipeline script *ehthops/ehthops_pipeline.sh* takes the filename of a configuration file as argument and proceeds to
 run the calibration. A sample configuration file *ehthops/settings.config* shows all the keywords that can be set to control the
 calibration process. The user can create a copy of this file and modify it as needed. *ehthops_pipeline.sh* must be run from
-within the **hops-bx** directories. For this tutorial, we will use the "lo" band, so we will copy the driver script to
-**hops-b3**:
+within the **hops-bx** directories.
+
+For this tutorial, we will use the "lo" band, so we will copy the driver script to **hops-b3**:
 
 .. code-block:: bash
 
@@ -51,14 +52,14 @@ Updating the configuration file for calibration
 
 The sample configuration file *ehthops/settings.config* contains the following keywords:
 
-- **ASSIGN_SRCDIR**: Base directory containing data to be processed.
-- **ASSIGN_CORRDAT**: List of directory names separated by ':' under $SRCDIR.
-- **ASSIGN_METADIR**: Directory where campaign metadata are to be found.
+- **ASSIGN_SRCDIR**: Base directory containing the Mk4 data to be processed.
+- **ASSIGN_CORRDAT**: List of paths (or simple directory names such as correlator data tags/releases) relative to SRCDIR separated by ':'.
+- **ASSIGN_METADIR**: Directory where campaign metadata are to be found. Normally found under ehthops/ehthops/meta.
 - **ASSIGN_EHTIMPATH**: Path to eht-imaging source code.
-- **stages**: Stages to run (i.e. directory names under hops-bx) as a space-separated string.
+- **stages**: Stages to run (i.e. directory names found under hops-bx) as a space-separated string.
 - **LAUNCH_YEAR**: 4-letter code representing year of observation.
-- **LAUNCH_DEPTH**: Directory depth at which scan directories (xxx-xxxx) are found starting from $SRCDIR/$CORRDAT.
-- **LAUNCH_PATTERN**: This pattern should match all the parent directories of all $expt_no/$scan_no directories.
+- **LAUNCH_MIXEDPOL**: Boolean value. Set this to true to request mixedpol calibration. This will assume that all ALMA data are in linear polarization basis while the rest are in circular polarization basis.
+- **LAUNCH_HAXP**: Boolean value. Set this to true to indicate that ALMA linear polarization data are present in *-haxp* directories and must replace circularly polarized ALMA data originally linked from *-hops* directories. Setting this to true will automatically set MIXEDPOL=true.
 - **LAUNCH_CAMPAIGN**: An EAT-recognizable code; currently EHT2017, EHT2018, EHT2021, EHT2022 are supported.
 
 For this tutorial, we will assign the following values to the keywords:
@@ -71,8 +72,8 @@ For this tutorial, we will assign the following values to the keywords:
       ASSIGN_EHTIMPATH="/home/user/software/eht-imaging"
       stages="0.bootstrap 1.+flags+wins 2.+pcal 3.+adhoc 4.+delays 5.+close 6.uvfits"
       LAUNCH_YEAR="2017"
-      LAUNCH_DEPTH="2"
-      LAUNCH_PATTERN="2016.1.01154.V"
+      LAUNCH_MIXEDPOL=true
+      LAUNCH_HAXP=true
       LAUNCH_CAMPAIGN="EHT2017"
 
 More information on how to determine the values of the command-line options can be found :ref:`here <command-line-options>`.
@@ -112,7 +113,7 @@ A sample configuration file for submitting the job to SLURM follows (also found 
 
 The environment setup lines may be different for different systems. The user should modify these lines as needed.
 The correct python environment and HOPS setup must be activated before running the calibration script.
-This config file can now be submitted with **sbatch**:
+This config file can now be submitted to SLURM with **sbatch**:
 
 .. code-block:: bash
 
