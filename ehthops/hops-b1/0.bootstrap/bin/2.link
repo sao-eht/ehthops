@@ -50,17 +50,18 @@ for d in $CORRDAT; do
 
             # Extract the extension from the current root_file
             extension=$(echo "$root_file" | grep -oE '[a-zA-Z0-9]{6}$')
-            #echo "extension: $extension"
 
             # Compare the extensions
             if [[ -d "$dest_scan_dir" ]]; then
-                # Extract the 6-character alphanumeric extensions from the destination scan directory
+                # Extract the 6-character alphanumeric ext from dest_scan_dir (all files in here should have the same ext anyway)
                 dest_extensions=$(find -L "$dest_scan_dir" -type f | grep -oE '[a-zA-Z0-9]{6}$' | sort | uniq)                
                 if [[ -n "$dest_extensions" ]]; then
                     max_dest_extension=$(echo "$dest_extensions" | sort | tail -n 1)
-                    if [[ "$extension" -le "$max_dest_extension" ]]; then
+                    if [[ "$extension" < "$max_dest_extension" || "$extension" == "$max_dest_extension" ]]; then
+                        echo "Skipping $extension in favour of $max_dest_extension"
                         continue
                     else
+                        echo "Replacing $dest_extensions with extension $extension"
                         rm -rf "$dest_scan_dir"
                     fi
                 fi
