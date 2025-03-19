@@ -40,7 +40,7 @@ The launch script can be run with the **-h** option to display the help message:
    -h, --help      Display this help message and exit"
 
    Example:
-   SET_SRCDIR="${config[ASSIGN_SRCDIR]}" && SET_CORRDAT="${config[ASSIGN_CORRDAT]}" && SET_METADIR="${config[ASSIGN_METADIR]}" && SET_OBSYEAR="${config[LAUNCH_YEAR]}" && SET_MIXEDPOL="${config[LAUNCH_MIXEDPOL]}" && SET_HAXP="${config[LAUNCH_HAXP]}" && source bin/0.launch
+   SET_SRCDIR=/path/to/srcdir && SET_CORRDAT="relativepath1:relativepath2" && SET_METADIR=/path/to/metadata && SET_OBSYEAR="2017" && SET_MIXEDPOL=false && SET_HAXP=false && source bin/0.launch
 
 Some notes on the environment variables:
 
