@@ -29,15 +29,18 @@ The launch script can be run with the **-h** option to display the help message:
 
    Command-line options:
    =====================
-   -y <yyyy>       Campaign year
-   -m              Enable mixed polarization calibration
-   -x              Use HAXP data for ALMA
-   -p <pattern>    Set the pattern for searching (regex)
-   -d <depth>      Set the directory depth for searching (integer)
-   -h, --help      Display this help message and exit
+   -y <yyyy>       Campaign year"
+   -m              Enable mixed polarization calibration"
+   -x              Use HAXP data for ALMA (i.e. assume linearpol ALMA data present in -haxp directories)"
+   -p <pattern>    Set the directory pattern for matching (regex); this is the parent directory of the <expt-no>/<scan> directories"
+   -d <depth>      Set the directory depth for searching (integer); this is the distance between <CORRDAT> and <scan> directories"
+   -S <dir>        Set the base data source directory (i.e. single input data location) "
+   -C <colon-separated-list-of-dirs>    Set the correlation releases/tags to use in order of precedence"
+   -M <dir>        Set the metadata directory (e.g. preset control files, META tables, ZBL flux estimates for netcal)"
+   -h, --help      Display this help message and exit"
 
    Example:
-   SET_SRCDIR=/path/to/data/archive && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && SET_METADIR=/path/to/metadata && source bin/0.launch -y 2021 -d 4 -p "e21f.*--.*.hops/"
+   SET_SRCDIR="${config[ASSIGN_SRCDIR]}" && SET_CORRDAT="${config[ASSIGN_CORRDAT]}" && SET_METADIR="${config[ASSIGN_METADIR]}" && SET_OBSYEAR="${config[LAUNCH_YEAR]}" && SET_MIXEDPOL="${config[LAUNCH_MIXEDPOL]}" && SET_HAXP="${config[LAUNCH_HAXP]}" && source bin/0.launch
 
 Some notes on the environment variables:
 
@@ -49,29 +52,6 @@ Some notes on the environment variables:
   - *cf/* -- contains the control files for the pipeline named according to the pattern **cf[0-9]_b[1234x]_\***, where the first number denotes the stage and the second number/character denotes the band.
   - *SEFD/* -- contains the station SEFD values for the campaign
   - *VEX/* -- contains the correlated VEX files for the campaign
-
-Some notes on the command-line options:
-
-- The **-y** option sets the year of the campaign and consists of 4 numbers in the format <yyyy>.
-- The **-x** option is used to indicate that the linear polarization ALMA data in the archive must be linked from the *-haxp/* directories in the
-  archive. When this option is set, **-m** is automatically set to indicate that mixedpol calibration is requested.
-  Note that the pattern to match (**-p**) must be the directory containing ALMA data in circular polarization (usually *"-hops"*) and not *"-haxp"*.
-- The **-m** option enables mixed polarization calibration. This option is used when the data are understood to be in hybrid polarization bases
-  i.e. not all stations use the same polarization basis. It is possible for **-m** to be true and **-x** to be false, indicating that the mixed
-  polarization data are all to be found under the *-hops/* directories in the archive.
-- The **-p** option sets the pattern to match for the HOPS input directories in the archival data while linking.
-  The default pattern is `e${OBSYEAR: -2}.*-$BAND-.*-hops/`.
-- The **-d** option sets the directory depth (level) to look for the HOPS input files in the archival data while linking. The default depth is `4`.
-
-The **-d** and **-p** options together determine the directory structure that will be created under **<stage>/data** by the pipeline and deserve
-special care. The basic assumptions made by the pipeline about data organization are described :ref:`here <data-organization>`.
-As noted there, the data are expected to be organized as *SRCDIR/CORRDAT/dir1/dir2/.../dirn/expt_no/scan_no/mk4_files*.
-
-For instance, if the data organization looks like *SRCDIR/CORRDAT/dir1/dir2/expt_no/scan_no/mk4_files*, then **-d** should be set to **4** and
-**-p** should be set to a pattern that matches the naming scheme of *dir2* (all directories at this level are expected to match this pattern).
-The pipeline will then create a directory structure under **<stage>/data** corresponding to *expt_no/scan_no/mk4_files*.
-
-These options exist to accommodate different data organization schemes for different data sets.
 
 .. note::
    Instructions to run as Docker image to be added.
