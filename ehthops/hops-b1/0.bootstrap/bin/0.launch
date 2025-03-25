@@ -3,8 +3,6 @@
 # Usage: `[SET_ENVVAR=...] 0.launch --docker [docker command]` or
 #        `[SET_ENVVAR=...] && source 0.launch [docker command]`
 
-OPTIND=1 # so that getopts can pick up the arguments when the script is 'source'd
-
 # Function to display help message
 show_help() {
     echo "Usage: [SET_ENVVAR1=...] && [SET_ENVVAR2=...] && source bin/$(basename "${BASH_SOURCE[0]}") [options]"
@@ -37,22 +35,69 @@ show_help() {
     echo "  -h, --help      Display this help message and exit"
     echo
     echo "Note:"
-    echo "  - The command-line options take precedence over the environment variables."
-    echo "  - The environment variables take precedence over the default values."
+    echo "  - The equivalent command-line options take precedence over the SET_* environment variables."
+    echo "  - The SET_* environment variables take precedence over the default values."
     echo
     echo "Example:"
     echo "  SET_SRCDIR=/path/to/data/archive && SET_CORRDAT=\"Rev1-Cal:Rev1-Sci\" && SET_METADIR=/path/to/metadata && SET_OBSYEAR=2021 && source bin/0.launch"
 }
 
-# unset variables that will be set below
-# if SET_ENVVAR variables exist their values will be used (for ease of use in manual mode)
-unset OBSYEAR MIXEDPOL HAXP SRCDIR CORRDAT METADIR WRKDIR TOPDIR DATADIR SHRDIR BAND
+if [ -f /.dockerenv ]; then
+	echo "This script should:"
+	echo "  1. sets up the host environment for HOPS, or"
+	echo "  2. launches a HOPS docker container."
+	echo "Avoid running it inside a container."
+	exit 1
+fi
 
-# Parse command-line arguments
-while getopts "y:mxp:d:S:C:M:h" opt; do
+# Default values can be adjusted by defining SET_* env variables prior to running launch
+OBSYEAR=${SET_OBSYEAR:-"2021"}
+
+# Overwrite OBSYEAR if passed from command line argument as it affects some default values
+OPTIND=1 # start from the first argument (ignore existing shell state)
+while getopts "y:" opt; do
         case $opt in
                 y)
                         OBSYEAR=$OPTARG
+                        ;;
+        esac
+done
+
+# Default values can be adjusted by defining SET_* env variables prior to running launch
+WRKDIR=${SET_WRKDIR:-"$PWD"}                   # working directory for current pipeline stage
+TOPDIR=${SET_TOPDIR:-"$WRKDIR/.."}             # top level dir for all stages
+DATADIR=${SET_DATADIR:-"$WRKDIR/data"}         # location of data directory (nominally within the working directory)
+SRCDIR=${SET_SRCDIR:-"/data/2018-april/corr"}  # root location for all correlator source data
+CORRDAT=${SET_CORRDAT:-"Rev4-Cal:Rev4-Sci"}    # subdirectories of SRCDIR to search, higher precedence comes first
+
+# Default values can be adjusted by defining SET_* env variables prior to running launch
+DEFAULT_METADIR="$TOPDIR/../meta/eht$OBSYEAR/230GHz"
+METADIR=${SET_METADIR:-$DEFAULT_METADIR}       # location of preset control files, META tables
+DEFAULT_SHRDIR="$TOPDIR/../plots/notebooks"
+SHRDIR=${SET_SHRDIR:-$DEFAULT_SHRDIR}          # location of shared resources (summary notebooks, etc)
+
+# Default values can be adjusted by defining SET_* env variables prior to running launch
+MIXEDPOL=${SET_MIXEDPOL:-"false"}              # passed to pipeline scripts to control behavior
+HAXP=${SET_HAXP:-"false"}                      # flag to mix-in haxp products into source data
+
+# special handling for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
+if [[ $OBSYEAR = "2017" ]]; then
+	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
+	if [[ $BAND = "b3" ]]; then
+		BAND="lo"
+	elif [[ $BAND = "b4" ]]; then
+		BAND="hi"
+	fi
+else
+	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
+fi
+
+# Parse remaining command-line arguments, overwrite any existing settings
+OPTIND=1 # start from the first argument (ignore existing shell state)
+while getopts "y:d:S:C:M:mxh" opt; do
+        case $opt in
+                y)
+                        OBSYEAR=$OPTARG # already handled above
                         ;;
                 m)
                         MIXEDPOL=true
@@ -82,49 +127,9 @@ while getopts "y:mxp:d:S:C:M:h" opt; do
                         echo "Option -$OPTARG requires an argument." >&2
                         show_help
                         return 1
-            ;;
+                        ;;
         esac
 done
-
-if [ -f /.dockerenv ]; then
-	echo "This script should:"
-	echo "  1. sets up the host environment for HOPS, or"
-	echo "  2. launches a HOPS docker container."
-	echo "Avoid running it inside a container."
-	exit 1
-fi
-
-# Define variables to their default values
-WRKDIR=${SET_WRKDIR:-"$PWD"}                  # working directory for pipeline process
-TOPDIR=${SET_TOPDIR:-"$WRKDIR/.."}            # top level dir for all stages
-DATADIR=${SET_DATADIR:-"$WRKDIR/data"}        # location of data directory (nominally within the working directory)
-
-# The following can be adjusted by defining SET env variables prior to running launch
-# CORRDAT=${SET_CORRDAT:-"Rev3-Cal:Rev3-Sci:Rev1-Cal:Rev1-Sci"}   # correlation releases to use for SRC data, higher precedence comes first
-CORRDAT=${CORRDAT:-${SET_CORRDAT:-"Rev4-Cal:Rev4-Sci"}}   # correlation releases/tags to use, higher precedence comes first
-DEFAULT_METADIR="$TOPDIR/../meta/eht2017/230GHz"
-METADIR=${METADIR:-${SET_METADIR:-$DEFAULT_METADIR}}        # location of preset control files, META tables, ZBL flux estimates for netcal, etc
-SRCDIR=${SRCDIR:-${SET_SRCDIR:-"/data/2018-april/corr"}} # single input data location for correlator source data
-DEFAULT_SHRDIR="$TOPDIR/../plots/notebooks"
-SHRDIR=${SHRDIR:-${SET_SHRDIR:-$DEFAULT_SHRDIR}}        # location of shared resources (summary notebooks, etc)
-
-# Set variables to their default values if not set by command-line arguments
-OBSYEAR=${OBSYEAR:-${SET_OBSYEAR:-"2021"}}
-MIXEDPOL=${MIXEDPOL:-${SET_MIXEDPOL:-"false"}}
-HAXP=${HAXP:-${SET_HAXP:-"false"}}
-
-# for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
-
-if [[ $OBSYEAR = "2017" ]]; then
-	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
-	if [[ $BAND = "b3" ]]; then
-		BAND="lo"
-	elif [[ $BAND = "b4" ]]; then
-		BAND="hi"
-	fi
-else
-	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
-fi
 
 # Perform some basic checks
 if [ ! -d "$METADIR" ]; then
