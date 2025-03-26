@@ -35,6 +35,14 @@ Install modules required for generating summary plots non-interactively and view
 **Recommended:** EHT-HOPS performs additional calibration and data format conversion tasks beyond iterative fringe-fitting.
 These *post-processing* steps (including the stage that generates UVFITS files from HOPS fringe files) need the **eht-imaging** library.
 This is currently achieved by cloning the *dev* branch of **eht-imaging** from GitHub and passing its path to the post-processing scripts.
+Before doing this, ensure that **pynfft**, a pre-requisite to **eht-imaging** is installed. Since **nfft** cannot be installed by *pip*,
+**pynfft** installation will fail, causing **eht-imaging** installation to fail when we use *pip*.
+An alternative is to ensure that **pynfft** is installed properly in the python environment using *mamba*::
+
+   mamba install pynfft
+
+Note that this installs both **nfft** and **pynfft** in the mamba environment and will *downgrade* **numpy** to version 1.26.
+
 Always ensure that *eht-imaging* is on the *dev* branch to ensure that you are pulling in the latest updates::
 
    git clone https://github.com/achael/eht-imaging.git
