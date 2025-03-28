@@ -52,29 +52,29 @@ Updating the configuration file for calibration
 
 The sample configuration file *ehthops/settings.config* contains the following keywords:
 
-- **ASSIGN_SRCDIR**: Base directory containing the Mk4 data to be processed.
-- **ASSIGN_CORRDAT**: List of paths (or simple directory names such as correlator data tags/releases) relative to SRCDIR separated by ':'.
-- **ASSIGN_METADIR**: Directory where campaign metadata are to be found. Normally found under ehthops/ehthops/meta.
-- **ASSIGN_EHTIMPATH**: Path to eht-imaging source code.
+- **SET_SRCDIR**: Base directory containing the Mk4 data to be processed.
+- **SET_CORRDAT**: List of paths (or simple directory names such as correlator data tags/releases) relative to SRCDIR separated by ':'.
+- **SET_METADIR**: Directory where campaign metadata are to be found. Normally found under ehthops/ehthops/meta.
+- **SET_EHTIMPATH**: Path to eht-imaging source code.
 - **stages**: Stages to run (i.e. directory names found under hops-bx) as a space-separated string.
-- **LAUNCH_YEAR**: 4-letter code representing year of observation.
-- **LAUNCH_MIXEDPOL**: Boolean value. Set this to true to request mixedpol calibration. This will assume that all ALMA data are in linear polarization basis while the rest are in circular polarization basis.
-- **LAUNCH_HAXP**: Boolean value. Set this to true to indicate that ALMA linear polarization data are present in *-haxp* directories and must replace circularly polarized ALMA data originally linked from *-hops* directories. Setting this to true will automatically set MIXEDPOL=true.
-- **LAUNCH_CAMPAIGN**: An EAT-recognizable code; currently EHT2017, EHT2018, EHT2021, EHT2022 are supported.
+- **SET_YEAR**: 4-letter code representing year of observation.
+- **SET_MIXEDPOL**: Boolean value. Set this to true to request mixedpol calibration. This will assume that all ALMA data are in linear polarization basis while the rest are in circular polarization basis.
+- **SET_HAXP**: Boolean value. Set this to true to indicate that ALMA linear polarization data are present in *-haxp* directories and must replace circularly polarized ALMA data originally linked from *-hops* directories. Setting this to true will automatically set MIXEDPOL=true.
+- **SET_CAMPAIGN**: An EAT-recognizable code; currently EHT2017, EHT2018, EHT2021, EHT2022 are supported.
 
 For this tutorial, we will assign the following values to the keywords:
 
   .. code-block:: bash
 
-      ASSIGN_SRCDIR="/home/user/calibration/data/extracted"
-      ASSIGN_CORRDAT="2016.1.01154.V"
-      ASSIGN_METADIR="/home/user/calibration/ehthops/meta/eht2017/230GHz"
-      ASSIGN_EHTIMPATH="/home/user/software/eht-imaging"
+      SET_SRCDIR="/home/user/calibration/data/extracted"
+      SET_CORRDAT="2016.1.01154.V"
+      SET_METADIR="/home/user/calibration/ehthops/meta/eht2017/230GHz"
+      SET_EHTIMPATH="/home/user/software/eht-imaging"
       stages="0.bootstrap 1.+flags+wins 2.+pcal 3.+adhoc 4.+delays 5.+close 6.uvfits"
-      LAUNCH_YEAR="2017"
-      LAUNCH_MIXEDPOL=true
-      LAUNCH_HAXP=true
-      LAUNCH_CAMPAIGN="EHT2017"
+      SET_YEAR="2017"
+      SET_MIXEDPOL=true
+      SET_HAXP=true
+      SET_CAMPAIGN="EHT2017"
 
 More information on how to determine the values of the command-line options can be found :ref:`here <command-line-options>`.
 

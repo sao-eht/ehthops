@@ -69,7 +69,7 @@ do
     # Run fourfit for stages 0-5
     if [ $stage != "6.uvfits" ]
     then
-        SET_SRCDIR="${config[ASSIGN_SRCDIR]}" && SET_CORRDAT="${config[ASSIGN_CORRDAT]}" && SET_METADIR="${config[ASSIGN_METADIR]}" && SET_OBSYEAR="${config[LAUNCH_YEAR]}" && SET_MIXEDPOL="${config[LAUNCH_MIXEDPOL]}" && SET_HAXP="${config[LAUNCH_HAXP]}" && source bin/0.launch
+        SET_SRCDIR="${config[SET_SRCDIR]}" && SET_CORRDAT="${config[SET_CORRDAT]}" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_YEAR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_HAXP="${config[SET_HAXP]}" && source bin/0.launch
         source bin/1.version
         source bin/2.link
         source bin/3.fourfit
@@ -102,7 +102,7 @@ do
     # Run stage 6 after the 5 fringe-fitting stages; SRCDIR is now 5.+close/data
     if [ $stage == "6.uvfits" ]
     then
-        SET_EHTIMPATH="${config[ASSIGN_EHTIMPATH]}" && SET_SRCDIR="$workdir/5.+close/data" && SET_METADIR="${config[ASSIGN_METADIR]}" && SET_CAMPAIGN="${config[LAUNCH_CAMPAIGN]}" && source bin/0.launch
+        SET_EHTIMPATH="${config[SET_EHTIMPATH]}" && SET_SRCDIR="$workdir/5.+close/data" && SET_METADIR="${config[SET_METADIR]}" && SET_CAMPAIGN="${config[SET_CAMPAIGN]}" && source bin/0.launch
         source bin/1.convert
         source bin/2.import
         python bin/3.average
