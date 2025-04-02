@@ -11,13 +11,10 @@ NEXT=$(echo ../$(expr $N + 1).*)
 
 #------------------------------------------------------------------------------
 echo "9. Copying standard scripts and metadata to the next stage \"$NEXT\""
-for n in 0 2 3; do
+# re-number 2.import and 3.average since these steps must be performed after apriori calibration steps
+for n in 2 3; do
         for curr in bin/$n.*; do
-                if [ "$n" -eq 0 ]; then
-                        new_prefix=0
-                else
-                        new_prefix=$((n + 1))
-                fi
+                new_prefix=$((n + 1))
                 next=$NEXT/bin/$new_prefix.${curr#bin/$n.}
                 if [ -f "$curr" ] && [ ! -f "$next" ]; then
                         echo "$curr -> $next"
