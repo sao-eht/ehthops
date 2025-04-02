@@ -42,7 +42,7 @@ if [ -f /.dockerenv ]; then
 fi
 
 # Default values can be adjusted by defining SET_* env variables prior to running launch
-CAMPAIGN=${SET_CAMPAIGN:-"2021"}
+CAMPAIGN=${SET_CAMPAIGN:-"EHT2021"}
 
 # Overwrite CAMPAIGN if passed from command line argument as it affects some default values
 OPTIND=1 # start from the first argument (ignore existing shell state)
@@ -57,12 +57,12 @@ done
 # Default values can be adjusted by defining SET_* env variables prior to running launch
 WRKDIR=${SET_WRKDIR:-"$PWD"}                  # working directory for pipeline process
 TOPDIR=${SET_TOPDIR:-"$WRKDIR/.."}            # top level dir for all stages
+SRCDIR=${SET_SRCDIR:-"/data/2018-april/corr"} # single input data location for correlator source data
 
 # Default values can be adjusted by defining SET_* env variables prior to running launch
-DEFAULT_METADIR="$TOPDIR/../meta/eht2017/230GHz"
-METADIR=${METADIR:-${SET_METADIR:-$DEFAULT_METADIR}}        # location of preset control files, META tables, ZBL flux estimates for netcal, etc
-SRCDIR=${SRCDIR:-${SET_SRCDIR:-"/data/2018-april/corr"}} # single input data location for correlator source data
-EHTIMPATH=${EHTIMPATH:-${SET_EHTIMPATH:-"/usr/local/src/ehtim/"}} # path to ehtim source (usually in dev branch)
+DEFAULT_METADIR="$TOPDIR/../meta/eht${CAMPAIGN: -4}/230GHz"
+METADIR=${SET_METADIR:-$DEFAULT_METADIR}        # location of preset control files, META tables, ZBL flux estimates for netcal, etc
+EHTIMPATH=${SET_EHTIMPATH:-"/usr/local/src/ehtim/"} # path to ehtim source (usually in dev branch)
 
 # Determine the band to process -- used by hops2uvfits.py in 3.import
 # special handling for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
