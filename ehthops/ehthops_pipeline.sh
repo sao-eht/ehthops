@@ -67,7 +67,7 @@ do
     echo "cd into $(pwd)"
 
     # Run fourfit for stages 0-5
-    if [ $stage != "6.uvfits" ]
+    if [[ $stage =~ ^[0-5] ]]
     then
         SET_SRCDIR="${config[SET_SRCDIR]}" && SET_CORRDAT="${config[SET_CORRDAT]}" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_YEAR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_HAXP="${config[SET_HAXP]}" && source bin/0.launch
         source bin/1.version
@@ -108,12 +108,22 @@ do
         python bin/3.average
     fi
 
-    # For stages 0-5, copy control files to the next stage
-    if [ $stage != "6.uvfits" ]
+    # Run stage 7 after the 6 uvfits stage; SRCDIR is now 6.uvfits
+    if [ $stage == "7.+apriori" ]
+    then
+        SET_SRCDIR="$workdir/6.uvfits" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_YEAR]}" && source bin/0.launch
+        source bin/1.antab2sefd
+        #source bin/2.applycal
+        #source bin/3.import
+        #python bin/4.average
+    fi
+
+    # copy control files and necessary scripts to the next stage
+    if [ $stage != "7.+apriori" ]
     then
         source bin/9.next
     fi
-
+    
     cd ..
     echo "cd up to $(pwd)"
     echo "Finished stage $stage..."
