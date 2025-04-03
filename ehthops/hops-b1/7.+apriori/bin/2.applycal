@@ -17,7 +17,7 @@ directories=$(find $SRCDIR -mindepth 1 -maxdepth 1 -type d -name "[0-9]*" | sort
 for directory in $directories; do
         d=$(basename $directory)
 	mkdir -p $d
-        /usr/bin/time -v apriorical $SRCDIR/$d $SEFDDIR/$d $d --extrapolate --keepllabsphase > log/postproc-$d.log 2> log/postproc-$d.err &
+        /usr/bin/time -v applycal $SRCDIR/$d $SEFDDIR/$d $d --extrapolate --keepllabsphase > log/postproc-$d.log 2> log/postproc-$d.err &
 done
 
 wait $(jobs -p)
