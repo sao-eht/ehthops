@@ -113,9 +113,9 @@ do
     then
         SET_SRCDIR="$workdir/6.uvfits" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_YEAR]}" && source bin/0.launch
         source bin/1.antab2sefd
-        #source bin/2.applycal
-        #source bin/3.import
-        #python bin/4.average
+        source bin/2.applycal
+        source bin/3.import
+        python bin/4.average
     fi
 
     # copy control files and necessary scripts to the next stage
