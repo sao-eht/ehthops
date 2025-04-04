@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-mkdir tests temp log
+mkdir log
 
 # Post-process (fluxcal & field angle rotation correct) uvfits files
 SEFDDIR="$WRKDIR/SEFD/"
