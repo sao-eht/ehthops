@@ -46,12 +46,10 @@ The stage-specific steps (usually step 7) derive additional solutions which are 
 - Stage **4.+delays** applies delay calibration solutions and globalizes fringe solutions using **7.close**.
 - Stage **5.+close** applies global fringe closing solutions.
 
-Stage 6 (**6.uvfits**) marks the beginning of the post-processing stages, and creates uvfits files from the fringe-fitted data in mk4 format.
-Subsequent post-processing steps perform apriori amplitude calibration, field angle rotation correction, R-L polarization calibration, and network
-calibration. In each of these stages, both the inputs and outputs are uvfits files, with those created in the current stage being used as inputs for
-the following stage.
-
-Additional post-processing steps are being added to the main pipeline workflow. Stay tuned for updates.
+The post-processing stages are not part of the main pipeline workflow, but are run as needed. 
+- Stage 6 (**6.uvfits**) creates uvfits files from the fringe-fitted data in mk4 format. Starting from this stage, the uvfits files are used as inputs
+  for the subsequent stages.
+- Stage 7 (**7.apriori**) performs apriori amplitude calibration (after deriving SEFDs using metadata from ANTAB, VEX, and array.txt files) and field angle rotation correction.
 
 Automatic simultaneous multi-band data processing is not supported by the pipeline yet. Each band is processed independently.
 To avoid code duplication, symbolic links to scripts in band 1 (**hops-b1**) are used to run other bands.
@@ -82,20 +80,19 @@ Refer to the :ref:`command-line-options` section for more information on how dat
 Metadata organization
 ---------------------
 
+The metadata directory for each campaign and each observing frequency contains HOPS control files (**cf**) used for fringe-fitting
+and VEX, ANTAB, and array.txt files used only for post-processing.
 The **ehthops/meta** directory hosts the metadata and is structured as follows:
 
 - <campaign>
- - cf
-  - cf[0-9]_b[1234]_* (Stage and band-specific control files)
- - SEFD
-  - b[1234]
-   - [dddd] (HOPS expt no)
-    - <source>_<two-letter-station-code>.txt
- - VEX
-  - <track>.vex
-
-Currently, the metadata include HOPS control files (**cf**), VEX files (**VEX**), station and source relevant SEFDs (**SEFD**)
-for each observing campaign. The VEX and SEFD data are used only for post-processing.
+ - <frequency>
+  - cf
+   - cf[0-9]_b[1234]_* (Stage and band-specific control files)
+  - ANTAB
+   - <track>_<band>_proc.AN
+  - VEX
+   - <track>.vex
+  - array.txt
 
 The pipeline scripts pick the appropriate control files (from the **cf** subdirectory) and other relevant metadata during
 execution as long as the above directory organization and naming conventions are followed.
