@@ -19,12 +19,16 @@ IFS=$' \t\n:,'
 # root file pattern to match
 ROOTFILENAME="^[a-zA-Z0-9+-]+\.[a-zA-Z0-9]{6}$"
 
+# Initialize a variable to keep track of the previous source scan directory
+# This is used to check if the current scan directory is the same as the previous one
+# and check for duplicate root code extensions only if so.
+prev_src_scan_dir=""
 # Populate $DATADIR
 for d in $CORRDAT; do
     # Find all files matching the pattern and process them
     find -L "$SRCDIR/$d" -type f | while read -r root_file; do
         if [[ $(basename "$root_file") =~ $ROOTFILENAME ]]; then
-            # Skip files if HAXP=false and the path contains the pattern "-haxp" or *.haxp*
+            # Skip files if the path contains the pattern "-haxp" or *.haxp*
             if [[ "$root_file" == *haxp/* ]]; then
                 continue
             fi
@@ -33,7 +37,7 @@ for d in $CORRDAT; do
                 continue
             fi
 
-            # Get the directory two levels above the root_file
+            # Get the parent (scan) and the grand-parent (expt_no) directories of the root file
             src_scan_dir=$(dirname "$root_file")
             src_expt_dir=$(dirname "$(dirname "$root_file")")
 
@@ -53,17 +57,28 @@ for d in $CORRDAT; do
 
             # Compare the extensions
             if [[ -d "$dest_scan_dir" ]]; then
-                # Extract the 6-character alphanumeric ext from dest_scan_dir (all files in here should have the same ext anyway)
-                dest_extensions=$(find -L "$dest_scan_dir" -type f | grep -oE '[a-zA-Z0-9]{6}$' | sort | uniq)                
-                if [[ -n "$dest_extensions" ]]; then
-                    max_dest_extension=$(echo "$dest_extensions" | sort | tail -n 1)
-                    if [[ "$extension" < "$max_dest_extension" || "$extension" == "$max_dest_extension" ]]; then
-                        echo "Skipping $extension in favour of $max_dest_extension"
-                        continue
-                    else
-                        echo "Replacing $dest_extensions with extension $extension"
-                        rm -rf "$dest_scan_dir"
+                # Check if the current scan directory is the same as the previous one;
+                # if so, proceed with the rootcode comparison
+                if [[ "$src_scan_dir" == "$prev_src_scan_dir" ]]; then
+                    # Extract the 6-character alphanumeric ext from dest_scan_dir (all files in here should have the same ext anyway)
+                    dest_extensions=$(find -L "$dest_scan_dir" -type f | grep -oE '[a-zA-Z0-9]{6}$' | sort | uniq)                
+                    if [[ -n "$dest_extensions" ]]; then
+                        max_dest_extension=$(echo "$dest_extensions" | sort | tail -n 1)
+                        if [[ "$extension" < "$max_dest_extension" || "$extension" == "$max_dest_extension" ]]; then
+                            echo "Skipping $extension in favour of $max_dest_extension"
+                            # Set the previous source scan directory to the current one for the next iteration
+                            prev_src_scan_dir="$src_scan_dir"
+                            continue
+                        else
+                            echo "Replacing $dest_extensions with extension $extension"
+                            rm -rf "$dest_scan_dir"
+                        fi
                     fi
+                else
+                    # If the current scan directory is different from the previous one,
+                    # update prev_src_scan_dir and continue on to the next iteration
+                    prev_src_scan_dir="$src_scan_dir"
+                    continue
                 fi
             fi
             
@@ -74,6 +89,9 @@ for d in $CORRDAT; do
             find -L "$src_scan_dir" -type f | grep -E "\.$extension$" | while read -r scan_file; do
                 ln -s "$scan_file" "$dest_scan_dir/$(basename "$scan_file")"
             done
+
+            # keep track of previous src_scan_dir
+            prev_src_scan_dir="$src_scan_dir"
         fi
     done
 done
