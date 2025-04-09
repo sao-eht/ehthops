@@ -92,51 +92,24 @@ for d in $CORRDAT; do
 
             # keep track of previous src_scan_dir
             prev_src_scan_dir="$src_scan_dir"
-        fi
-    done
-done
 
-# replace ALMA data with the contents of haxp dirs if HAXP=true
-if [[ "$HAXP" == true ]]; then
-    echo "Replacing ALMA data with HAXP data..."
-    for d in $CORRDAT; do
-        # Find all files matching the pattern and process them
-        find -L "$SRCDIR/$d" -type f | while read -r root_file; do
-            if [[ $(basename "$root_file") =~ $ROOTFILENAME ]]; then
-                # Skip files if the path does not contain the pattern "-haxp" or *.haxp*
-                if [[ "$root_file" != *haxp/* ]]; then
-                    continue
-                fi
-                # Skip files if the path does not contain the requested band
-                if [[ "$root_file" != *"-$BAND-"* ]]; then
-                    continue
-                fi
-
-                # Get the directory two levels above the root_file
-                src_scan_dir=$(dirname "$root_file")
-                src_expt_dir=$(dirname "$(dirname "$root_file")")
-
-                # Skip files if src_expt_dir is not a valid expt_no
-                if [[ ! $(basename "$src_expt_dir") =~ ^[0-9]{4,5}$ ]]; then
-                    continue
-                fi
-                echo $root_file
-                
-                # Obtain the corresponding directory structure in the output directory -- this has been created in the previous loop
-                dest_expt_dir="$DATADIR/$(basename "$src_expt_dir")"
-                dest_scan_dir="$dest_expt_dir/$(basename "$src_scan_dir")"
+            # If HAXP=true then replace ALMA data with the contents of "haxp" directories
+            if [[ "$HAXP" == true ]]; then
+                # Generate haxp parent directory names by replacing "hops" with "haxp"
+                haxp_src_scan_dir="${src_scan_dir/hops\//haxp/}"
+                haxp_src_expt_dir="${src_expt_dir/hops\//haxp/}"
 
                 # remove all files starting with "A" in the dest scan dir
                 find "$dest_scan_dir" -name "A*" -exec rm {} \;
 
                 # Create symbolic links to all files in the scan directory matching the extension
-                find -L "$src_scan_dir" -type f | while read -r scan_file; do
-                    ln -s "$scan_file" "$dest_scan_dir/$(basename "$scan_file")"
+                find -L "$haxp_src_scan_dir" -type f | while read -r haxp_scan_file; do
+                    ln -s "$haxp_scan_file" "$dest_scan_dir/$(basename "$haxp_scan_file")"
                 done
             fi
-        done
+        fi
     done
-fi
+done
 
 # Rename silly root files to standard names
 find "$DATADIR" -name '*_3*' |
