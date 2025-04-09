@@ -97,7 +97,6 @@ for d in $CORRDAT; do
             if [[ "$HAXP" == true ]]; then
                 # Generate haxp parent directory names by replacing "hops" with "haxp"
                 haxp_src_scan_dir="${src_scan_dir/hops\//haxp/}"
-                haxp_src_expt_dir="${src_expt_dir/hops\//haxp/}"
 
                 # remove all files starting with "A" in the dest scan dir
                 find "$dest_scan_dir" -name "A*" -exec rm {} \;
