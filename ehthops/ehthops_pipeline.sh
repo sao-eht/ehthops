@@ -59,9 +59,20 @@ IFS=' ' read -r -a stages <<< "${config[stages]}"
 # Working directory name
 workdir=$(pwd)
 
+# Check if the first stage is "1.+flags+wins" and ensure
+# some steps from 0.bootstrap is run regardless
+if [[ "${stages[0]}" == "1.+flags+wins" ]]; then
+    echo "Stage 0.boostrap not requested. Running only 0.bootstrap setup..."
+    cd 0.bootstrap
+    SET_SRCDIR="${config[SET_SRCDIR]}" && SET_CORRDAT="${config[SET_CORRDAT]}" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_YEAR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_HAXP="${config[SET_HAXP]}" && source bin/0.launch
+    source bin/9.next
+    cd ..
+fi
+
 # Loop through stages
 for stage in ${stages[@]};
 do
+
     echo "Starting stage $stage..."
     cd $stage
     echo "cd into $(pwd)"

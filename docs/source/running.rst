@@ -42,16 +42,17 @@ The launch script can be run with the **-h** option to display the help message:
    Example:
    SET_SRCDIR=/path/to/srcdir && SET_CORRDAT="relativepath1:relativepath2" && SET_METADIR=/path/to/metadata && SET_OBSYEAR="2017" && SET_MIXEDPOL=false && SET_HAXP=false && source bin/0.launch
 
-Some notes on the environment variables:
+Some notes on the environment variables and running the stages manually:
 
-- The pipeline attempts to set reasonable default values to these environment variables if they are not set. We recommend setting/verifying at least SRCDIR, CORRDAT, METADIR, and SHRDIR to ensure that the pipeline runs correctly.
+- The 0.launch scripts attempt to set reasonable default values for the environment variables if they are not specified by the user. We recommend setting/verifying at least SRCDIR, CORRDAT, METADIR, and SHRDIR to ensure that the stages run correctly.
 - At all stages from 0 to 5, SRCDIR points to the top level directory that hosts the archival data. At stage 6, SRCDIR must point to the directory *5.+close/data* in the current band.
+- When running each stage/step manually, if stage 0 (**0.bootstrap**) is not required, the user must ensure that steps **0.launch** and **9.next** are run before running stage 1 (**1.+flags+wins**). This would copy all relevant scripts and control files necessary for running stage 1 (**1.+flags+wins**). This is automatically taken care of by the **ehthops_pipeline.sh** script when running in pipeline mode.
 - The user can set SHRDIR to any directory containing runnable Jupyter notebooks (.ipynb files) to replace the default notebooks provided with the plots submodule.
 - The METADIR is expected to contain the following subdirectories:
 
-  - *cf/* -- contains the control files for the pipeline named according to the pattern **cf[0-9]_b[1234x]_\***, where the first number denotes the stage and the second number/character denotes the band.
-  - *SEFD/* -- contains the station SEFD values for the campaign
-  - *VEX/* -- contains the correlated VEX files for the campaign
+  - *cf/* -- contains the control files for the pipeline named according to the pattern **cf[0-9]_b[1|2|3|4|lo|hi]_\***, where the first number denotes the *stage* and the second number/character(s) denotes the *band*.
+  - *ANTAB/* -- contains the ANTAB files for all tracks and bands for the campaign.
+  - *VEX/* -- contains the observed VEX schedules for the campaign.
 
 .. note::
    Instructions to run as Docker image to be added.

@@ -26,7 +26,7 @@ Activate the newly created mamba/conda environment and install the EHT Analysis 
 
 Install astropy; this should pull in numpy, among other modules::
 
-   mamba install astropy seaborn numpy pandas matplotlib scipy
+   mamba install astropy seaborn numpy pandas matplotlib scipy pytables
 
 Install modules required for generating summary plots non-interactively and viewing them from within the same mamba environment::
 
