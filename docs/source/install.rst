@@ -26,11 +26,11 @@ Activate the newly created mamba/conda environment and install the EHT Analysis 
 
 Install astropy; this should pull in numpy, among other modules::
 
-   mamba install astropy seaborn numpy pandas matplotlib scipy pytables
+   mamba install astropy seaborn numpy pandas matplotlib scipy
 
 Install modules required for generating summary plots non-interactively and viewing them from within the same mamba environment::
 
-   mamba install ipykernel papermill nbconvert jupyter
+   mamba install ipykernel papermill nbconvert jupyter adjusttext
 
 **Recommended:** EHT-HOPS performs additional calibration and data format conversion tasks beyond iterative fringe-fitting.
 These *post-processing* steps (including the stage that generates UVFITS files from HOPS fringe files) need the **eht-imaging** library.
