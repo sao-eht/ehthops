@@ -62,7 +62,7 @@ SRCDIR=${SET_SRCDIR:-"/data/2018-april/corr"} # single input data location for c
 # Default values can be adjusted by defining SET_* env variables prior to running launch
 DEFAULT_METADIR="$TOPDIR/../meta/eht${CAMPAIGN: -4}/230GHz"
 METADIR=${SET_METADIR:-$DEFAULT_METADIR}        # location of preset control files, META tables, ZBL flux estimates for netcal, etc
-EHTIMPATH=${SET_EHTIMPATH:-"/usr/local/src/ehtim/"} # path to ehtim source (usually in dev branch)
+EHTIMPATH=${SET_EHTIMPATH:-""}                  # may use custom path to ehtim source (ehtim module is subdir of this directory)
 
 # Determine the band to process -- used by hops2uvfits.py in 3.import
 # special handling for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
