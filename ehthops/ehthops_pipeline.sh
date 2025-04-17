@@ -64,7 +64,7 @@ workdir=$(pwd)
 if [[ "${stages[0]}" == "1.+flags+wins" ]]; then
     echo "Stage 0.boostrap not requested. Running only 0.bootstrap setup..."
     cd 0.bootstrap
-    SET_SRCDIR="${config[SET_SRCDIR]}" && SET_CORRDAT="${config[SET_CORRDAT]}" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_YEAR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_HAXP="${config[SET_HAXP]}" && source bin/0.launch
+    SET_SRCDIR="${config[SET_SRCDIR]}" && SET_CORRDAT="${config[SET_CORRDAT]}" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_HAXP="${config[SET_HAXP]}" && source bin/0.launch
     source bin/9.next
     cd ..
 fi
@@ -80,7 +80,7 @@ do
     # Run fourfit for stages 0-5
     if [[ $stage =~ ^[0-5] ]]
     then
-        SET_SRCDIR="${config[SET_SRCDIR]}" && SET_CORRDAT="${config[SET_CORRDAT]}" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_YEAR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_HAXP="${config[SET_HAXP]}" && source bin/0.launch
+        SET_SRCDIR="${config[SET_SRCDIR]}" && SET_CORRDAT="${config[SET_CORRDAT]}" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_HAXP="${config[SET_HAXP]}" && source bin/0.launch
         source bin/1.version
         source bin/2.link
         source bin/3.fourfit
@@ -122,7 +122,7 @@ do
     # Run stage 7 after the 6 uvfits stage; SRCDIR is now 6.uvfits
     if [ $stage == "7.+apriori" ]
     then
-        SET_SRCDIR="$workdir/6.uvfits" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_YEAR]}" && source bin/0.launch
+        SET_SRCDIR="$workdir/6.uvfits" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && source bin/0.launch
         source bin/1.antab2sefd
         source bin/2.applycal
         source bin/3.import
