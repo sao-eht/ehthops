@@ -1,5 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env bash
 
+/usr/bin/env python - << EOF
 import os
 import sys
 import glob
@@ -21,4 +22,4 @@ for day in daylist:
             obs.save_uvfits(f'{base}+avg{ext}')
         except:
             sys.stderr.write(f'failed to average: {uvf}\n')
-
+EOF
