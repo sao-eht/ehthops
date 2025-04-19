@@ -57,7 +57,7 @@ done
 # Default values can be adjusted by defining SET_* env variables prior to running launch
 WRKDIR=${SET_WRKDIR:-"$PWD"}                  # working directory for pipeline process
 TOPDIR=${SET_TOPDIR:-"$WRKDIR/.."}            # top level dir for all stages
-SRCDIR=${SET_SRCDIR:-"/data/2018-april/corr"} # single input data location for correlator source data
+SRCDIR=${SET_SRCDIR:-"$TOPDIR/5.+close/data"} # single input data location for correlator source data
 
 # Default values can be adjusted by defining SET_* env variables prior to running launch
 DEFAULT_METADIR="$TOPDIR/../meta/eht${CAMPAIGN: -4}/230GHz"
