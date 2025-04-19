@@ -13,6 +13,6 @@ done |
 	grep -v 'alist: Successfully wrote'   |
 	grep -v 'alist: comprised of'         |
 	grep -v 'fringex: Getting files from' >\
-	log/summary.err
+	log/summary_err.out
 
 echo "DONE"
