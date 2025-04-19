@@ -13,7 +13,7 @@ N=$(basename $PWD | sed 's/^\([0-9]*\)\..*/\1/')
 cat cf*_bx_* cf*_${BAND}_* > temp/cf_all
 find . -maxdepth 1 -type f -name 'cf*' -not -name 'cf*_b?_*' -exec cat {} + >> temp/cf_all
 #(time parallel --bar --joblog log/parallel.log \
-(time parallel --joblog log/parallel.log \
+(time parallel --nice 15 --load 95% --joblog log/parallel.log \
 	"fourfit -c temp/cf_all {} > {}.out 2> {}.err" \
 	::: "$DATADIR"/*/*/??[^.]*.?????? 2>&1) 2> log/parallel.time
 
