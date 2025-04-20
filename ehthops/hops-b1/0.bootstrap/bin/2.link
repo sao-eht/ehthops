@@ -85,8 +85,10 @@ for d in $CORRDAT; do
             # Create the dest scan dir -- either this is the first pass, or the dest scan dir was deleted
             mkdir -p "$dest_scan_dir"
 
-            # Create symbolic links to all files in the scan directory matching the extension
-            find -L "$src_scan_dir" -type f | grep -E "\.$extension$" | while read -r scan_file; do
+            # Create symbolic links to all files in the scan directory matching the extension.
+            # In the second grep expression, we begin the pattern without '^' since the previous grep returns
+            # the full path input to the find command and so the leading characters must be accounted for.
+            find -L "$src_scan_dir" -type f | grep -E "\.$extension$" | grep -vE "[A-Za-z]{2}\.[A-Za-z]\.[0-9]+\.[A-Za-z0-9]{6}$" | while read -r scan_file; do
                 ln -s "$scan_file" "$dest_scan_dir/$(basename "$scan_file")"
             done
 
