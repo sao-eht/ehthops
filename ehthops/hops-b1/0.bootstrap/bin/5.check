@@ -10,9 +10,10 @@ echo "	Notebook output, OUTDIR:          \"$OUTDIR\""
 cd $WRKDIR
 mkdir -p "$OUTDIR"
 
-for f in $(ls "$SHRDIR"); do
-	echo "$f"
-	papermill "$SHRDIR/$f" "$OUTDIR/$f" > "log/$f.log" 2> "log/$f.err" #& # uncomment to run notebooks concurrently
+find "$SHRDIR" -maxdepth 1 -type f -name "*.ipynb" | while read -r f; do
+	fname=$(basename "$f")
+        echo "$fname"
+	papermill "$SHRDIR/$fname" "$OUTDIR/$fname" > "log/$fname.log" 2> "log/$fname.err" #& # uncomment to run notebooks concurrently
 done
 #wait $(jobs -p) # uncomment to run notebooks concurrently
 
