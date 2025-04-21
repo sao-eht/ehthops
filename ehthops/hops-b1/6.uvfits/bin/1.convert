@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 echo "1. Converting HOPS fringe files to UVFITS..."
-echo "	Source directory with HOPS fringe files, SRCDIR: \"$SRCDIR\""
+echo "	Source directory with HOPS fringe files, INPUTDIR: \"$INPUTDIR\""
 
 mkdir log
 
-# find all directories in $SRCDIR that are named with expt numbers
-directories=$(find $SRCDIR -maxdepth 1 -type d -name "[0-9]*" | sort)
+# find all directories in $INPUTDIR that are named with expt numbers
+directories=$(find $INPUTDIR -maxdepth 1 -type d -name "[0-9]*" | sort)
 
 for d in $directories; do
 	mkdir -p $(basename $d)

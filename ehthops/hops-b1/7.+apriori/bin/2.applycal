@@ -6,20 +6,20 @@ mkdir log
 SEFDDIR="$WRKDIR/SEFD/"
 
 echo "1. Performing apriori flux calibration and field angle rotation correction"
-echo "HOPS data to post-process, SRCDIR: $SRCDIR"
+echo "HOPS data to post-process, INPUTDIR: $INPUTDIR"
 echo "Metadata, METADIR: $METADIR"
 echo "Working directory, WRKDIR: $WRKDIR"
 echo "SEFD directory, SEFDDIR: $SEFDDIR"
 echo "Band, BAND: $BAND"
 
-# find all directories in $SRCDIR that are named with expt numbers
-directories=$(find $SRCDIR -mindepth 1 -maxdepth 1 -type d -name "[0-9]*" | sort)
+# find all directories in $INPUTDIR that are named with expt numbers
+directories=$(find $INPUTDIR -mindepth 1 -maxdepth 1 -type d -name "[0-9]*" | sort)
 
 # loop through epochs and calibrate
 for directory in $directories; do
         d=$(basename $directory)
 	mkdir -p $d
-        /usr/bin/time -v applycal $SRCDIR/$d $SEFDDIR/SEFD_$BAND/$d $d --extrapolate --keepllabsphase > log/applycal-$d.log 2> log/applycal-$d.err &
+        /usr/bin/time -v applycal $INPUTDIR/$d $SEFDDIR/SEFD_$BAND/$d $d --extrapolate --keepllabsphase > log/applycal-$d.log 2> log/applycal-$d.err &
 done
 
 wait $(jobs -p)
