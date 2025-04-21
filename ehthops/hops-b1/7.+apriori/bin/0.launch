@@ -12,7 +12,7 @@ show_help() {
     echo "  SET_WRKDIR      Working directory for pipeline process (default: PWD); some input metadata and output SEFDs to be found/generated here"
     echo "  SET_TOPDIR      Top level dir for all stages (default: WRKDIR/..)"
     echo "  SET_METADIR     Location of preset control files, META tables, ZBL flux estimates for netcal, etc"
-    echo "  SET_SRCDIR      Data source directory. Starting from this stage, this is the base directory of the previous stage (containing directories named by HOPS expt_no)"
+    echo "  SET_INPUTDIR    Data source directory. Starting from this stage, this is the base directory of the previous stage (containing directories named by HOPS expt_no)"
     echo "  SET_OBSYEAR     Campaign year"
     echo
     echo "If these are not set and no command-line options are given, then reasonable defaults are used (not always guaranteed to work!)."
@@ -29,7 +29,7 @@ show_help() {
     echo "  - The SET_* environment variables take precedence over the default values."
     echo
     echo "Example:"
-    echo "  SET_SRCDIR=/path/to/stage-6/ && SET_METADIR=/path/to/metadata && SET_OBSYEAR=2017 && source bin/0.launch"
+    echo "  SET_INPUTDIR=/path/to/6.uvfits/ && SET_METADIR=/path/to/metadata && SET_OBSYEAR=2017 && source bin/0.launch"
 }
 
 if [ -f /.dockerenv ]; then
@@ -56,7 +56,7 @@ done
 # Default values can be adjusted by defining SET_* env variables prior to running launch
 WRKDIR=${SET_WRKDIR:-"$PWD"}                  # working directory for pipeline process
 TOPDIR=${SET_TOPDIR:-"$WRKDIR/.."}            # top level dir for all stages
-SRCDIR=${SET_SRCDIR:-"$TOPDIR/6.uvfits"} #  stage 6 directory containing expt_no directories with uvfits files
+INPUTDIR=${SET_INPUTDIR:-"$TOPDIR/6.uvfits"} #  stage 6 directory containing expt_no directories with uvfits files
 
 # Default values can be adjusted by defining SET_* env variables prior to running launch
 DEFAULT_METADIR="$TOPDIR/../meta/eht$OBSYEAR/230GHz"
@@ -83,7 +83,7 @@ while getopts "y:S:M:h" opt; do
                         OBSYEAR=$OPTARG
                         ;;
                 S)
-                        SRCDIR=$OPTARG
+                        INPUTDIR=$OPTARG
                         ;;
                 M)
                         METADIR=$OPTARG
@@ -110,8 +110,8 @@ if [ ! -d "$METADIR" ]; then
         echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: METADIR=$(METADIR) does not exist! Exiting..."
         exit 1
 fi
-if [ ! -d "$SRCDIR" ]; then
-        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: SRCDIR=$(SRCDIR) does not exist! Exiting..."
+if [ ! -d "$INPUTDIR" ]; then
+        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: INPUTDIR=$(INPUTDIR) does not exist! Exiting..."
         exit 1
 fi
 
@@ -127,7 +127,7 @@ fi
 if [ x"$USE_DOCKER" == x"true" ]; then
 	echo "0. Launching a HOPS docker container"
 
-        echo "  Data source dir, SRCDIR: $SRCDIR"
+        echo "  Data source dir, INPUTDIR: $INPUTDIR"
         echo "  Work dir, WRKDIR:   $WRKDIR"
         echo "  Top level work dir, TOPDIR:   $TOPDIR"
         echo "  Meta, METADIR:        $METADIR"
@@ -142,11 +142,11 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 	docker run --rm -it                            \
 		-v "$WRKDIR:/root"                     \
 		-v "$TOPDIR:/top"                      \
-		-v "$SRCDIR:/data"                     \
+		-v "$INPUTDIR:/data"                     \
 		-v "$METADIR:/meta"                    \
                 -e "WRKDIR=/root"                      \
 		-e "TOPDIR=/top"                       \
-		-e "SRCDIR=/data"                      \
+		-e "INPUTDIR=/data"                      \
 		-e "METADIR=/meta"                     \
 		-e "BAND=$BAND"                        \
 		-e "OBSYEAR=$OBSYEAR"                  \
@@ -156,7 +156,7 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 else
 	echo "0. Setting up an interactive HOPS environment"
 
-        echo "  Data source dir, SRCDIR: $SRCDIR"
+        echo "  Data source dir, INPUTDIR: $INPUTDIR"
         echo "  Work dir, WRKDIR:   $WRKDIR"
         echo "  Top level work dir, TOPDIR:   $TOPDIR"
         echo "  Meta, METADIR:        $METADIR"

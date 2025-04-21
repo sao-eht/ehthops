@@ -113,7 +113,7 @@ do
     # Run stage 6 after the 5 fringe-fitting stages; SRCDIR is now 5.+close/data
     if [ $stage == "6.uvfits" ]
     then
-        SET_EHTIMPATH="${config[SET_EHTIMPATH]}" && SET_SRCDIR="$workdir/5.+close/data" && SET_METADIR="${config[SET_METADIR]}" && SET_CAMPAIGN="${config[SET_CAMPAIGN]}" && source bin/0.launch
+        SET_EHTIMPATH="${config[SET_EHTIMPATH]}" && SET_INPUTDIR="$workdir/5.+close/data" && SET_METADIR="${config[SET_METADIR]}" && SET_CAMPAIGN="${config[SET_CAMPAIGN]}" && source bin/0.launch
         source bin/1.convert
         source bin/2.import
         python bin/3.average
@@ -122,7 +122,7 @@ do
     # Run stage 7 after the 6 uvfits stage; SRCDIR is now 6.uvfits
     if [ $stage == "7.+apriori" ]
     then
-        SET_SRCDIR="$workdir/6.uvfits" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && source bin/0.launch
+        SET_INPUTDIR="$workdir/6.uvfits" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && source bin/0.launch
         source bin/1.antab2sefd
         source bin/2.applycal
         source bin/3.import

@@ -12,7 +12,7 @@ show_help() {
     echo "  SET_WRKDIR      Working directory for pipeline process (default: PWD)"
     echo "  SET_TOPDIR      Top level dir for all stages (default: WRKDIR/..)"
     echo "  SET_METADIR     Location of preset control files, META tables, ZBL flux estimates for netcal, etc"
-    echo "  SET_SRCDIR      Data source directory. Starting from this stage, this is the DATADIR from the previous stage"
+    echo "  SET_INPUTDIR    Data source directory. This is the DATADIR from the previous stage in stage 6"
     echo "  SET_EHTIMPATH   Path to eht-imaging source code"
     echo "  SET_CAMPAIGN    EAT-recognizable campaign name"
     echo
@@ -30,7 +30,7 @@ show_help() {
     echo "  - The SET_* environment variables take precedence over the default values."
     echo
     echo "Example:"
-    echo "  SET_EHTIMPATH=/path/to/eht-imaging && SET_SRCDIR=/path/to/data/archive && SET_METADIR=/path/to/metadata && SET_CAMPAIGN=\"EHT2017\" && source bin/0.launch"
+    echo "  SET_EHTIMPATH=/path/to/eht-imaging && SET_INPUTDIR=/path/to/stage5/data-directory && SET_METADIR=/path/to/metadata && SET_CAMPAIGN=\"EHT2017\" && source bin/0.launch"
 }
 
 if [ -f /.dockerenv ]; then
@@ -57,7 +57,7 @@ done
 # Default values can be adjusted by defining SET_* env variables prior to running launch
 WRKDIR=${SET_WRKDIR:-"$PWD"}                  # working directory for pipeline process
 TOPDIR=${SET_TOPDIR:-"$WRKDIR/.."}            # top level dir for all stages
-SRCDIR=${SET_SRCDIR:-"$TOPDIR/5.+close/data"} # single input data location for correlator source data
+INPUTDIR=${SET_INPUTDIR:-"$TOPDIR/5.+close/data"} # single input data location for correlator source data
 
 # Default values can be adjusted by defining SET_* env variables prior to running launch
 DEFAULT_METADIR="$TOPDIR/../meta/eht${CAMPAIGN: -4}/230GHz"
@@ -85,7 +85,7 @@ while getopts "c:S:M:h" opt; do
                         CAMPAIGN=$OPTARG
                         ;;
                 S)
-                        SRCDIR=$OPTARG
+                        INPUTDIR=$OPTARG
                         ;;
                 M)
                         METADIR=$OPTARG
@@ -112,8 +112,8 @@ if [ ! -d "$METADIR" ]; then
         echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: METADIR=$(METADIR) does not exist! Exiting..."
         exit 1
 fi
-if [ ! -d "$SRCDIR" ]; then
-        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: SRCDIR=$(SRCDIR) does not exist! Exiting..."
+if [ ! -d "$INPUTDIR" ]; then
+        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: INPUTDIR=$(INPUTDIR) does not exist! Exiting..."
         exit 1
 fi
 
@@ -129,7 +129,7 @@ fi
 if [ x"$USE_DOCKER" == x"true" ]; then
 	echo "0. Launching a HOPS docker container"
 
-        echo "  Data source dir, SRCDIR: $SRCDIR"
+        echo "  Data source dir, INPUTDIR: $INPUTDIR"
         echo "  Work dir, WRKDIR:   $WRKDIR"
         echo "  Top level work dir, TOPDIR:   $TOPDIR"
         echo "  Meta, METADIR:        $METADIR"
@@ -145,11 +145,11 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 	docker run --rm -it                            \
 		-v "$WRKDIR:/root"                     \
 		-v "$TOPDIR:/top"                      \
-		-v "$SRCDIR:/data"                     \
+		-v "$INPUTDIR:/data"                     \
 		-v "$METADIR:/meta"                    \
                 -e "WRKDIR=/root"                      \
 		-e "TOPDIR=/top"                       \
-		-e "SRCDIR=/data"                      \
+		-e "INPUTDIR=/data"                      \
 		-e "METADIR=/meta"                     \
                 -e "EHTIMPATH=$EHTIMPATH"    \
 		-e "BAND=$BAND"                        \
@@ -160,7 +160,7 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 else
 	echo "0. Setting up an interactive HOPS environment"
 
-        echo "  Data source dir, SRCDIR: $SRCDIR"
+        echo "  Data source dir, INPUTDIR: $INPUTDIR"
         echo "  Work dir, WRKDIR:   $WRKDIR"
         echo "  Top level work dir, TOPDIR:   $TOPDIR"
         echo "  Meta, METADIR:        $METADIR"
