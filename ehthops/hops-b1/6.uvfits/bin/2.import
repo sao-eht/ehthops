@@ -32,14 +32,14 @@ echo "	Campaign/observation code, CAMPAIGN: \"$CAMPAIGN\""
 mkdir -p log
 
 # FIRST: COHERENT SCAN-LONG AVERAGE
-idtag='vis_sc'
+idtag='vis_scan_averaged_coherent'
 tavg=-1.0 # -1.0 => scan-average
 
 /usr/bin/time -v import_uvfits.py $datadir $vexdir $outdir --band $band --infileext $infileext --tavg $tavg --polrep $polrep --ehtimpath $ehtimpath \
 --idtag $idtag --observation $campaign --outfiletype $outfiletype > log/import-sc.log 2> log/import-sc.err &
 
 # SECOND: COHERENT 10s AVERAGE AND SAVE CLOSURE QUANTITIES
-idtag='vis_10s'
+idtag='vis_10s_averaged_coherent'
 tavg=10. # 10 second average
 tavgclosure=10. # or -1.0 => scan average
 closure='both' # both 'cphase' and 'lcamp'
@@ -48,7 +48,7 @@ closure='both' # both 'cphase' and 'lcamp'
 --tavgclosure $tavgclosure --idtag $idtag --observation $campaign --outfiletype $outfiletype --closure $closure > log/import-10s.log 2> log/import-10s.err &
 
 # THIRD: SCAN LONG INCOHERENT
-idtag='vis_sc_inc'
+idtag='vis_scan_averaged_incoherent'
 tavg=-1.0 # -1.0 => scan-average
 tavgprecoh=2.0
 
