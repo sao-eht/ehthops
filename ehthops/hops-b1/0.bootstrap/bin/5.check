@@ -17,13 +17,14 @@ find "$SHRDIR" -maxdepth 1 -type f -name "*.ipynb" | while read -r f; do
 done
 #wait $(jobs -p) # uncomment to run notebooks concurrently
 
-for f in $(ls "$SHRDIR"); do
-        echo "$f"
+find "$OUTDIR" -maxdepth 1 -type f -name "*.ipynb" | while read -r f; do
+        fname=$(basename "$f")
+        echo "$fname"
         jupyter nbconvert                          \
-                --to html "$OUTDIR/$f"             \
-                --output  "$OUTDIR/${f%ipynb}html" \
-                >         "log/${f%ipynb}html.log" \
-                2>        "log/${f%ipynb}html.err" &
+                --to html "$f"             \
+                --output  "$OUTDIR/${fname%ipynb}html" \
+                >         "log/${fname%ipynb}html.log" \
+                2>        "log/${fname%ipynb}html.err" &
 done
 wait $(jobs -p)
 
