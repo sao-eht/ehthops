@@ -54,13 +54,14 @@ The sample configuration file *ehthops/settings.config* contains the following k
 
 - **SET_SRCDIR**: Base directory containing the Mk4 data to be processed.
 - **SET_CORRDAT**: List of paths (or simple directory names such as correlator data tags/releases) relative to SRCDIR separated by ':'.
-- **SET_METADIR**: Directory where campaign metadata are to be found. Normally found under ehthops/ehthops/meta.
+- **SET_METADIR**: Directory where campaign metadata are to be found. Normally found under *ehthops/ehthops/meta*.
 - **SET_EHTIMPATH**: Path to eht-imaging source code.
-- **stages**: Stages to run (i.e. directory names found under hops-bx) as a space-separated string.
-- **SET_YEAR**: 4-letter code representing year of observation.
+- **stages**: Stages to run (i.e. directory names found under *hops-bx*) as a space-separated string.
+- **SET_OBSYEAR**: 4-letter code representing year of observation.
 - **SET_MIXEDPOL**: Boolean value. Set this to true to request mixedpol calibration. This will assume that all ALMA data are in linear polarization basis while the rest are in circular polarization basis.
 - **SET_HAXP**: Boolean value. Set this to true to indicate that ALMA linear polarization data are present in *-haxp* directories and must replace circularly polarized ALMA data originally linked from *-hops* directories. Setting this to true will automatically set MIXEDPOL=true.
 - **SET_CAMPAIGN**: An EAT-recognizable code; currently EHT2017, EHT2018, EHT2021, EHT2022 are supported.
+- **SET_INPUTDIR**: Input directory for post-processing stages. This is different for different stages and must be re-set for each post-processing stage. More details could be found in the sample *settings.config* file in the repository.
 
 For this tutorial, we will assign the following values to the keywords:
 
@@ -75,6 +76,7 @@ For this tutorial, we will assign the following values to the keywords:
       SET_MIXEDPOL=true
       SET_HAXP=true
       SET_CAMPAIGN="EHT2017"
+      SET_INPUTDIR=""
 
 More information on how to determine the values of the command-line options can be found :ref:`here <command-line-options>`.
 
