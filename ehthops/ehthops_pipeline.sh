@@ -116,7 +116,7 @@ do
         SET_EHTIMPATH="${config[SET_EHTIMPATH]}" && SET_INPUTDIR="$workdir/5.+close/data" && SET_METADIR="${config[SET_METADIR]}" && SET_CAMPAIGN="${config[SET_CAMPAIGN]}" && source bin/0.launch
         source bin/1.convert
         source bin/2.import
-        python bin/3.average
+        source bin/3.average
     fi
 
     # Run stage 7 after the 6 uvfits stage; INPUTDIR is now 6.uvfits
@@ -126,7 +126,7 @@ do
         source bin/1.antab2sefd
         source bin/2.applycal
         source bin/3.import
-        python bin/4.average
+        source bin/4.average
     fi
 
     # copy control files and necessary scripts to the next stage
