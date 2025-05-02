@@ -11,26 +11,30 @@ The following instructions pertain to HOPS version 3.24 running with python 3.10
 Setting up a new python environment
 -----------------------------------
 
-Download the python 3.10 version of `Mamba <https://mamba.readthedocs.io/en/latest/index.html>`_ or `Miniconda installer <https://docs.conda.io/en/latest/miniconda.html>`_ if you prefer conda.
-Create a new environment for the pipeline::
+Install `Mamba <https://mamba.readthedocs.io/en/latest/index.html>`_ or `micromamba <https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html>`_.
+In the following we will use micromamba.
 
-   mamba create -n ehthops310 python=3.10
+   micromamba create -n ehthops310 python=3.10
 
 .. note::
    Note that python 3.8 can run the pipeline but cannot generate the summary notebooks using either nbconvert or papermill. Python 3.10 is recommended.
 
-Activate the newly created mamba/conda environment and install the EHT Analysis Toolkit (EAT) library in developer mode (the repository should be cloned to a location with write permissions)::
+Activate the newly created mamba/conda environment::
+
+   micromamba activate ehthops310
+
+Install the EHT Analysis Toolkit (EAT) library in developer mode (the repository should be cloned to a location with write permissions)::
 
    git clone https://github.com/sao-eht/eat.git
    pip install -e eat
 
 Install astropy; this should pull in numpy, among other modules::
 
-   mamba install astropy seaborn numpy pandas matplotlib scipy
+   micromamba install astropy seaborn numpy pandas matplotlib scipy
 
 Install modules required for generating summary plots non-interactively and viewing them from within the same mamba environment::
 
-   mamba install ipykernel papermill nbconvert jupyter adjusttext
+   mircomamba install ipykernel papermill nbconvert jupyter adjusttext
 
 **Recommended:** EHT-HOPS performs additional calibration and data format conversion tasks beyond iterative fringe-fitting.
 These *post-processing* steps (including the stage that generates UVFITS files from HOPS fringe files) need the **eht-imaging** library.
@@ -39,7 +43,7 @@ Before doing this, ensure that **pynfft**, a pre-requisite to **eht-imaging** is
 **pynfft** installation will fail, causing **eht-imaging** installation to fail when we use *pip*.
 An alternative is to ensure that **pynfft** is installed properly in the python environment using *mamba*::
 
-   mamba install pynfft
+   micromamba install pynfft
 
 Note that this installs both **nfft** and **pynfft** in the mamba environment and will *downgrade* **numpy** to version 1.26.
 
@@ -53,7 +57,7 @@ Always ensure that *eht-imaging* is on the *dev* branch to ensure that you are p
 **Recommended:** Some modules such as *scikit-learn*, *statsmodels*, and *pytables* are required only by the post-processing stages following UVFITS conversion.
 Though these stages are not yet part of the main pipeline, they are expected to be integrated in the future. Install these modules now to avoid any issues later::
 
-   mamba install scikit-learn future pytables statsmodels
+   micromamba install scikit-learn future pytables statsmodels
 
 Potential installation issues
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -61,12 +65,12 @@ Potential installation issues
 The pipeline generates summary notebooks with diagnostic plots in both ipynb and html formats.
 If the conversion of jupyter notebooks to HTML fails while running the pipeline, ensure that the following is installed::
 
-   mamba install jupyter_contrib_nbextensions
+   micromamba install jupyter_contrib_nbextensions
 
 In older systems, scipy might throw a **glibcxx not found** error. If this occurs, update libstdcxx
 to at least version 12. Modern installations should already satisfy this requirement::
 
-   mamba install libstdcxx-ng=12
+   micromamba install libstdcxx-ng=12
 
 Installing HOPS v3.24
 ---------------------
