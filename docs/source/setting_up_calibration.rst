@@ -20,6 +20,11 @@ All the calibrated output files will be created within this directory:
 
 The last line above ensures that the submodules containing metadata and summary notebooks are updated to the latest version.
 
+note::
+
+    Only the publicly available metadata are imported by the above. These are expected to serve as a template for how metadata is expected to be
+    organized. It is the responsibility of the user to ensure that their metadata are organized in the same way as the public metadata.
+
 The code repository consists of four directories named **hops-bx** where **x** stands for the EHT "zoom" frequency band.
 Conventionally, in order of increasing frequency, the bands are named 1, 2, 3, and 4.
 

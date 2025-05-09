@@ -12,7 +12,7 @@ Setting up a new python environment
 -----------------------------------
 
 Install `Mamba <https://mamba.readthedocs.io/en/latest/index.html>`_ or `micromamba <https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html>`_.
-In the following we will use micromamba.
+In the following we will use micromamba::
 
    micromamba create -n ehthops310 python=3.10
 
@@ -52,7 +52,10 @@ Always ensure that *eht-imaging* is on the *dev* branch to ensure that you are p
    git clone https://github.com/achael/eht-imaging.git
    cd eht-imaging
    git checkout dev
-   pip install .
+
+After this, set your PYTHONPATH to include the *eht-imaging* directory::
+
+   export PYTHONPATH=$PYTHONPATH:"/path/to/eht-imaging"
 
 **Recommended:** Some modules such as *scikit-learn*, *statsmodels*, and *pytables* are required only by the post-processing stages following UVFITS conversion.
 Though these stages are not yet part of the main pipeline, they are expected to be integrated in the future. Install these modules now to avoid any issues later::
