@@ -107,11 +107,14 @@ discoverable by HOPS during compilation::
    export CFLAGS="-I</path/to/fftw/include>"
    export CPPFLAGS="-I</path/to/fftw/include>"
    export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:"</path/to/fftw/lib/pkgconfig>"
-  
-On some systems the following flags may also have to be set manually to be able to configure HOPS-3.24::
 
-   export FFTW3_LIBS="</path/to/fftw/lib>"
-   export FFTW3_CFLAGS="</path/to/fftw/include>"
+**NOTE:** If FFTW has been installed in a non-standard path, the following environment variables may be necessary. Try this only if HOPS complains
+that FFTW3 is missing::
+
+   export FFTW3_LIBS="-L</path/to/fftw/lib>"
+   export FFTW3_CFLAGS="-I</path/to/fftw/include>"
+
+
 
 Downloading and installing HOPS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
