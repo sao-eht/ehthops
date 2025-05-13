@@ -51,8 +51,8 @@ Some notes on the environment variables and running the stages manually:
 - The METADIR is expected to contain the following subdirectories:
 
   - *cf/* -- contains the control files for the pipeline named according to the pattern **cf[0-9]_b[1|2|3|4|lo|hi]_\***, where the first number denotes the *stage* and the second number/character(s) denotes the *band*.
-  - *ANTAB/* -- contains the ANTAB files for all tracks and bands for the campaign.
-  - *VEX/* -- contains the observed VEX schedules for the campaign.
+  - *antab/* -- contains the ANTAB files for all tracks and bands for the campaign.
+  - *vex/* -- contains the observed VEX schedules for the campaign.
 
 .. note::
    Instructions to run as Docker image to be added.

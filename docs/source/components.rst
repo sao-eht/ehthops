@@ -49,7 +49,7 @@ The stage-specific steps (usually step 7) derive additional solutions which are 
 The post-processing stages are not part of the main pipeline workflow, but are run as needed. 
 - Stage 6 (**6.uvfits**) creates uvfits files from the fringe-fitted data in mk4 format. Starting from this stage, the uvfits files are used as inputs
   for the subsequent stages.
-- Stage 7 (**7.apriori**) performs apriori amplitude calibration (after deriving SEFDs using metadata from ANTAB, VEX, and array.txt files) and field angle rotation correction.
+- Stage 7 (**7.apriori**) performs apriori amplitude calibration (after deriving SEFDs using metadata from *antab*, *vex*, and *array.txt* files) and field angle rotation correction.
 
 Automatic simultaneous multi-band data processing is not supported by the pipeline yet. Each band is processed independently.
 To avoid code duplication, symbolic links to scripts in band 1 (**hops-b1**) are used to run other bands.
@@ -77,22 +77,28 @@ All input mark4 files are expected to be organized according to the following di
 
 Refer to the :ref:`command-line-options` section for more information on how data organization determines the options passed to the 0.launch script.
 
+.. _metadata-organization:
+
 Metadata organization
 ---------------------
 
-The metadata directory for each campaign and each observing frequency contains HOPS control files (**cf**) used for fringe-fitting
-and VEX, ANTAB, and array.txt files used only for post-processing.
-The **ehthops/meta** directory hosts the metadata and is structured as follows:
+The metadata directory for each campaign and observing frequency contains HOPS control files (**cf**) used for fringe-fitting
+and *vex*, *antab*, and *array.txt* files used only for post-processing. The **ehthops/meta** directory that hosts the metadata
+is structured as follows:
 
 - <campaign>
  - <frequency>
   - cf
    - cf[0-9]_b[1234]_* (Stage and band-specific control files)
-  - ANTAB
+  - antab
    - <track>_<band>_proc.AN
-  - VEX
+  - vex
    - <track>.vex
   - array.txt
 
-The pipeline scripts pick the appropriate control files (from the **cf** subdirectory) and other relevant metadata during
-execution as long as the above directory organization and naming conventions are followed.
+While running the pipeline, the user must set the environment variable **METADIR** to point to the metadata directory for the
+campaign and frequency being processed so that a typical value looks as follows::
+
+  SET_METADIR=/path/to/ehthops/meta/<campaign>/<frequency>
+
+The parent directory of *<campaign>/<frequency>* need not be *ehthops/meta* but must be set in the environment variable **METADIR**.

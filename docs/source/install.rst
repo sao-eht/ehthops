@@ -161,25 +161,24 @@ Install it from `source <https://www.gnu.org/software/parallel>`_ and add it to 
 
    export PATH=$PATH:"/path/to/parallel/bin"
 
-Obtaining the EHT-HOPS pipeline
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 Ensure that the new mamba environment is activated, and activate the HOPS shell environment::
 
    source /path/to/hops-3.24/bin/hops.bash
 
-
-Clone the EHT-HOPS pipeline from GitHub. The latest version of the EHT-HOPS repository can be found `here <https://github.com/sao-eht/ehthops>`_.
-The calibration metadata and summary plot jupyter notebooks are independent repositories mapped to
-submodules within *ehthops*. The metadata repository is `here <https://github.com/sao-eht/ehthops-meta>`_
-and the summary notebooks are `here <https://github.com/sao-eht/ehthops-plots>`_. The submodules must be
-initialized and updated manually as follows::
-   
-   git clone https://github.com/sao-eht/ehthops.git
-   cd ehthops
-   git submodule update --init --remote
-
 The HOPS environment is now set up for running the pipeline. If everything above has been done correctly, all the HOPS executables (e.g. hops*, fourfit, aedit,
 CorAsc2, etc.) and the EAT executables in **eat/bin** in the source code should be available in the shell environment.
+
+Obtaining the EHT-HOPS pipeline
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Clone the EHT-HOPS pipeline from GitHub. The latest version of the EHT-HOPS repository can be found `here <https://github.com/sao-eht/ehthops>`_::
+   
+   git clone https://github.com/sao-eht/ehthops.git
+
+.. note::
+   Until version 0.5.0, the EHT-HOPS pipeline used submodules to store and track metadata and summary notebooks. This is no longer the case,
+   with these files now being stored directly in the main repository. Some metadata required for post-processing (such as a
+   directory containing *antab* files) must be manually copied to the metadata directory, $METADIR, since the pipeline does not 
+   automatically download them, but will expect them for performing apriori amplitude calibration. See also :ref:`Metadata organization <metadata-organization>`.
 
 Additional documentation on HOPS can be found at `MIT Haystack website <https://www.haystack.mit.edu/haystack-observatory-postprocessing-system-hops/>`_.
