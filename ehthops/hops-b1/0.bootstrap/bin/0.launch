@@ -73,7 +73,7 @@ CORRDAT=${SET_CORRDAT:-"Rev4-Cal:Rev4-Sci"}    # subdirectories of SRCDIR to sea
 # Default values can be adjusted by defining SET_* env variables prior to running launch
 DEFAULT_METADIR="$TOPDIR/../meta/eht$OBSYEAR/230GHz"
 METADIR=${SET_METADIR:-$DEFAULT_METADIR}       # location of preset control files, META tables
-DEFAULT_SHRDIR="$TOPDIR/../plots/notebooks"
+DEFAULT_SHRDIR="$TOPDIR/../share"
 SHRDIR=${SET_SHRDIR:-$DEFAULT_SHRDIR}          # location of shared resources (summary notebooks, etc)
 
 # Default values can be adjusted by defining SET_* env variables prior to running launch
