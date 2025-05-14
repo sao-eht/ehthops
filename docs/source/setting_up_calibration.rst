@@ -116,7 +116,7 @@ A sample configuration file for submitting the job to SLURM follows (also found 
     HOPS_SETUP=false source /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/installed/hops-3.24/bin/hops.bash
 
     # run script
-    source ehthops_pipeline.sh -c settings.config
+    source ehthops_pipeline.sh settings.config
 
 The environment setup lines may be different for different systems. The user should modify these lines as needed.
 The correct python environment and HOPS setup must be activated before running the calibration script.
