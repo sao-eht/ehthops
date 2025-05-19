@@ -129,8 +129,17 @@ do
         source bin/4.average
     fi
 
+    # Run stage 8 after the 7 apriori stage; INPUTDIR is now 7.+apriori
+    if [ $stage == "8.+polcal" ]
+    then
+        SET_INPUTDIR="$workdir/7.+apriori" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && source bin/0.launch
+        source bin/1.gainratiocal
+        source bin/2.import
+        source bin/3.average
+    fi
+
     # copy control files and necessary scripts to the next stage
-    if [ $stage != "7.+apriori" ]
+    if [[ $stage != "7.+apriori" && $stage != "8.+polcal" ]]
     then
         source bin/9.next
     fi
