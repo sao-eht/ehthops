@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+mkdir log
+
+echo "1. Performing R/L gain ratio calibration"
+echo "HOPS data to post-process, INPUTDIR: $INPUTDIR"
+#echo "Container metadata location for calibration, METADIR: \"$METADIR\""
+echo "Container working directory, WRKDIR: \"$WRKDIR\""
+#echo "Campaign year, OBSYEAR: \"$OBSYEAR\""
+
+# find all directories in $INPUTDIR that are named with expt numbers
+directories=$(find $INPUTDIR -mindepth 1 -maxdepth 1 -type d -regextype posix-extended -regex '.*/[0-9]{4,5}$' | sort)
+
+# loop through epochs and calibrate
+for directory in $directories; do
+    d=$(basename $directory)
+	mkdir -p $d
+    /usr/bin/time -v gainratiocal $INPUTDIR/$d $WRKDIR --solveperscan > log/gainratiocal-$d.log 2> log/gainratiocal-$d.err &
+done
+
+wait $(jobs -p)
