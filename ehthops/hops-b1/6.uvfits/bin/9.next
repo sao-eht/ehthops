@@ -18,7 +18,7 @@ for n in 2 3; do
                 next=$NEXT/bin/$new_prefix.${curr#bin/$n.}
                 if [ -f "$curr" ] && [ ! -f "$next" ]; then
                         echo "$curr -> $next"
-                        cp -n "$curr" "$next"
+                        ln -s "$curr" "$next"
                 fi
         done
 done
