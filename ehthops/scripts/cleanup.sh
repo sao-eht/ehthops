@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # clean up repo of all data products
-stages=("0.bootstrap" "1.+flags+wins" "2.+pcal" "3.+adhoc" "4.+delays" "5.+close" "6.uvfits" "7.+apriori")
+stages=("0.bootstrap" "1.+flags+wins" "2.+pcal" "3.+adhoc" "4.+delays" "5.+close" "6.uvfits" "7.+apriori" "8.+polcal")
 
 for stage in ${stages[@]}
 do
@@ -14,7 +14,7 @@ do
     then
 	rm bin/[0-6]* bin/9*
 	rm pc*.pdf
-    elif [[ $stage == "6.uvfits" || $stage == "7.+apriori" ]]
+    elif [[ $stage == "6.uvfits" || $stage == "7.+apriori" || $stage == "8.+polcal" ]]
     then
 	rm -rf 3*
 	rm vis*

@@ -1,7 +1,0 @@
-#!/bin/bash
-# Submit the first job
-job1_id=$(sbatch --parsable h21b1polc.conf)
-
-# Submit the second job with a job dependency on the first job
-sbatch --dependency=afterok:$job1_id h21b1polc_pp.conf
-
