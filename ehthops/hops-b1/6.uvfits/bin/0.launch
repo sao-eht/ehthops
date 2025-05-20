@@ -66,7 +66,7 @@ EHTIMPATH=${SET_EHTIMPATH:-""}                  # may use custom path to ehtim s
 
 # Determine the band to process -- used by hops2uvfits.py in 3.import
 # special handling for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
-if [[ $CAMPAIGN = "2017" ]]; then
+if [[ $CAMPAIGN = "EHT2017" ]]; then
 	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
 	if [[ $BAND = "b3" ]]; then
 		BAND="lo"
