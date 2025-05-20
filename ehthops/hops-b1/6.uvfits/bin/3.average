@@ -11,6 +11,9 @@ print("3. Coherently averaging UVFITS files with a 10-second integration time...
 daylist = sorted([int(i) for i in glob.glob('[0-9]*')])
 for day in daylist:
     for uvf in glob.glob(f'{day}/*.uvfits'):
+        # Skip the uvfits files that have already been averaged
+        if uvf.endswith('+avg.uvfits'):
+            continue
         try:
             (base, ext) = os.path.splitext(uvf)
             obs = eh.obsdata.load_uvfits(uvf, polrep='circ')
