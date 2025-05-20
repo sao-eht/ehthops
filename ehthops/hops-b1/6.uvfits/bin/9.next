@@ -11,16 +11,27 @@ NEXT=$(echo ../$(expr $N + 1).*)
 
 #------------------------------------------------------------------------------
 echo "9. Copying standard scripts and metadata to the next stage \"$NEXT\""
-# re-number 2.import and 3.average since these steps must be performed after apriori calibration steps
+
+# capture the name of this stage dir (e.g. "6.uvfits")
+prev_stage=$(basename "$PWD")
+
 for n in 2 3; do
-        for curr in bin/$n.*; do
-                new_prefix=$((n + 1))
-                next=$NEXT/bin/$new_prefix.${curr#bin/$n.}
-                if [ -f "$curr" ] && [ ! -f "$next" ]; then
-                        echo "$curr -> $next"
-                        ln -s "$curr" "$next"
-                fi
-        done
+    for curr in bin/${n}.*; do
+        # skip missing files
+        [ ! -f "$curr" ] && continue
+
+        # compute the new step number and dest path
+        new_prefix=$((n + 1))
+        rest=${curr#bin/${n}.}               # e.g. "import" or "average"
+        dest=$NEXT/bin/${new_prefix}.${rest}
+
+        # skip if dest already exists
+        [ -e "$dest" ] && continue
+
+        echo "Linking $curr → $dest"
+        # always point back to ../../<prev_stage>/bin/n.rest
+        ln -s "../../${prev_stage}/bin/${n}.${rest}" "$dest"
+    done
 done
 
 echo cf* "-> $NEXT"
