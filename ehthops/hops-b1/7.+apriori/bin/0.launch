@@ -13,13 +13,16 @@ show_help() {
     echo "  SET_TOPDIR      Top level dir for all stages (default: WRKDIR/..)"
     echo "  SET_METADIR     Location of preset control files, META tables, ZBL flux estimates for netcal, etc"
     echo "  SET_INPUTDIR    Data source directory. Starting from this stage, this is the base directory of the previous stage (containing directories named by HOPS expt_no)"
+    echo "  SET_EHTIMPATH   Path to eht-imaging source code"
     echo "  SET_OBSYEAR     Campaign year"
+    echo "  SET_CAMPAIGN    EAT-recognizable campaign name"
     echo
     echo "If these are not set and no command-line options are given, then reasonable defaults are used (not always guaranteed to work!)."
     echo
     echo "Command-line options:"
     echo "====================="
     echo "  -y <yyyy>       Campaign year"
+    echo "  -c <campaign-name>       Campaign name recognizable by EAT (\"EHT2017\", \"EHT2018\", \"EHT2021\")"
     echo "  -S <dir>        Set the data source directory. Starting from this stage, this is the base directory of the previous stage (containing directories named by HOPS expt_no)"
     echo "  -M <dir>        Set the metadata directory (e.g. preset control files, META tables, ZBL flux estimates for netcal)"
     echo "  -h, --help      Display this help message and exit"
@@ -29,7 +32,7 @@ show_help() {
     echo "  - The SET_* environment variables take precedence over the default values."
     echo
     echo "Example:"
-    echo "  SET_INPUTDIR=/path/to/6.uvfits/ && SET_METADIR=/path/to/metadata && SET_OBSYEAR=2017 && source bin/0.launch"
+    echo "  SET_EHTIMPATH=/path/to/eht-imaging && SET_INPUTDIR=/path/to/6.uvfits/ && SET_METADIR=/path/to/metadata && SET_OBSYEAR=2017 && SET_CAMPAIGN=\"EHT2017\" && source bin/0.launch"
 }
 
 if [ -f /.dockerenv ]; then
@@ -42,13 +45,17 @@ fi
 
 # Default values can be adjusted by defining SET_* env variables prior to running launch
 OBSYEAR=${SET_OBSYEAR:-"2021"}
+CAMPAIGN=${SET_CAMPAIGN:-"EHT2021"}
 
 # Overwrite OBSYEAR if passed from command line argument as it affects some default values
 OPTIND=1 # start from the first argument (ignore existing shell state)
-while getopts "y:" opt; do
+while getopts "y:c:" opt; do
         case $opt in
                 y)
                         OBSYEAR=$OPTARG
+                        ;;
+                c)
+                        CAMPAIGN=$OPTARG
                         ;;
         esac
 done
@@ -61,6 +68,7 @@ INPUTDIR=${SET_INPUTDIR:-"$TOPDIR/6.uvfits"} #  stage 6 directory containing exp
 # Default values can be adjusted by defining SET_* env variables prior to running launch
 DEFAULT_METADIR="$TOPDIR/../meta/eht$OBSYEAR/230GHz"
 METADIR=${SET_METADIR:-$DEFAULT_METADIR}        # location of preset control files, META tables, ZBL flux estimates for netcal, etc
+EHTIMPATH=${SET_EHTIMPATH:-""}                  # may use custom path to ehtim source (ehtim module is subdir of this directory)
 
 # Determine the band to process -- used by hops2uvfits.py in 3.import
 # special handling for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
@@ -77,10 +85,13 @@ fi
 
 # Parse command-line arguments. overwrite any existing settings
 OPTIND=1 # start from the first argument (ignore existing shell state)
-while getopts "y:S:M:h" opt; do
+while getopts "y:c:S:M:h" opt; do
         case $opt in
                 y)
                         OBSYEAR=$OPTARG
+                        ;;
+                c)
+                        CAMPAIGN=$OPTARG
                         ;;
                 S)
                         INPUTDIR=$OPTARG
@@ -131,8 +142,10 @@ if [ x"$USE_DOCKER" == x"true" ]; then
         echo "  Work dir, WRKDIR:   $WRKDIR"
         echo "  Top level work dir, TOPDIR:   $TOPDIR"
         echo "  Meta, METADIR:        $METADIR"
+        echo "  Path to eht-imaging, EHTIMPATH:        $EHTIMPATH"
         echo "  Band, BAND:        $BAND"
         echo "  Campaign year, OBSYEAR:        $OBSYEAR"
+        echo "  EAT-recognizable campaign name, CAMPAIGN:        $CAMPAIGN"
         echo "  Command:     $@"
 
 	if [ $# == 0 ]; then # no command line argument
@@ -148,8 +161,10 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 		-e "TOPDIR=/top"                       \
 		-e "INPUTDIR=/data"                      \
 		-e "METADIR=/meta"                     \
+                -e "EHTIMPATH=$EHTIMPATH"    \
 		-e "BAND=$BAND"                        \
 		-e "OBSYEAR=$OBSYEAR"                  \
+                -e "CAMPAIGN=$CAMPAIGN"                  \
 		$PORTFORWARD                           \
 		eventhorizontelescope/eat-notebook     \
 		"$@"
@@ -160,7 +175,9 @@ else
         echo "  Work dir, WRKDIR:   $WRKDIR"
         echo "  Top level work dir, TOPDIR:   $TOPDIR"
         echo "  Meta, METADIR:        $METADIR"
+        echo "  Path to eht-imaging, EHTIMPATH:        $EHTIMPATH"
         echo "  Band, BAND:        $BAND"
         echo "  Campaign year, OBSYEAR:        $OBSYEAR"
+        echo "  EAT-recognizable campaign name, CAMPAIGN:        $CAMPAIGN"
         echo "  Command:     $@"
 fi
