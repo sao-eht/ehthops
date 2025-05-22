@@ -47,12 +47,12 @@ The stage-specific steps (usually step 7) derive additional solutions which are 
 - Stage **5.+close** applies global fringe closing solutions.
 
 The post-processing stages are not part of the main pipeline workflow, but are run as needed. 
-- Stage 6 (**6.uvfits**) creates uvfits files from the fringe-fitted data in mk4 format. Starting from this stage, the uvfits files are used as inputs
-  for the subsequent stages.
+- Stage 6 (**6.uvfits**) creates uvfits files from the fringe-fitted data in mk4 format. Starting from this stage, the uvfits files are used as inputs for the subsequent stages.
 - Stage 7 (**7.apriori**) performs apriori amplitude calibration (after deriving SEFDs using metadata from *antab*, *vex*, and *array.txt* files) and field angle rotation correction.
+- Stage 8 (**8.+polcal**) performs R/L gain ratio calibration.
 
 Automatic simultaneous multi-band data processing is not supported by the pipeline yet. Each band is processed independently.
-To avoid code duplication, symbolic links to scripts in band 1 (**hops-b1**) are used to run other bands.
+To avoid code duplication, symbolic links to scripts in band 1 (**hops-b1**) are placed in the directories corresponding to the other bands.
 
 .. _data-organization:
 
@@ -96,9 +96,15 @@ is structured as follows:
    - <track>.vex
   - array.txt
 
+  .. note::
+
+    The *antab* directory can become quite large and is therefore not included with the pipeline by default. Users must ensure that the
+    *antab* directory is available in the metadata directory. In contrast, the *vex* and *array.txt* files are relatively small and are
+    included with the pipeline.
+
 While running the pipeline, the user must set the environment variable **METADIR** to point to the metadata directory for the
 campaign and frequency being processed so that a typical value looks as follows::
 
   SET_METADIR=/path/to/ehthops/meta/<campaign>/<frequency>
 
-The parent directory of *<campaign>/<frequency>* need not be *ehthops/meta* but must be set in the environment variable **METADIR**.
+**METADIR**  (i.e., the parent directory of *<campaign>/<frequency>*) can point to any location containing the metadata. It need not be the default location *ehthops/meta*.
