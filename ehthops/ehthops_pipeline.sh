@@ -117,6 +117,7 @@ do
         source bin/1.convert
         source bin/2.import
         source bin/3.average
+        source bin/4.metadata
     fi
 
     # Run stage 7 after the 6 uvfits stage; INPUTDIR is now 6.uvfits
