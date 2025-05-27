@@ -1,18 +1,13 @@
 #!/usr/bin/env bash
 
-echo "1. Converting HOPS fringe files to UVFITS..."
+echo "4. Extracting auxiliary metadata from OVEX (root) files..."
 echo "	Source directory with HOPS fringe files, INPUTDIR: \"$INPUTDIR\""
-
-mkdir log
 
 # find all directories in $INPUTDIR that are named with expt numbers
 directories=$(find $INPUTDIR -maxdepth 1 -type d -name "[0-9]*" | sort)
 
 for d in $directories; do
-	mkdir -p $(basename $d)
 	/usr/bin/time -v extract_metadata.py $d --loglevel DEBUG \
 		>  log/metadata-$(basename $d).log        \
-		2> log/metadata-$(basename $d).err        &
+		2> log/metadata-$(basename $d).err
 done
-
-wait $(jobs -p)
