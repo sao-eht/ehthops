@@ -18,6 +18,11 @@ do
     then
 	rm -rf 3*
 	rm vis*
+    if [[ $stage == "7.+apriori" || $stage == "8.+polcal" ]]
+    then
+        rm bin/*.import
+        rm bin/*.average
+    fi
     elif [ $stage != "0.bootstrap" ]
     then
         if [ $stage != "5.+close" ]
