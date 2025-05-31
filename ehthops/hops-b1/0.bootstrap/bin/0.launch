@@ -133,15 +133,15 @@ done
 
 # Perform some basic checks
 if [ ! -d "$METADIR" ]; then
-        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: METADIR=$(METADIR) does not exist! Exiting..."
-        exit 1
+        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: METADIR=${METADIR} does not exist! Exiting..."
+        return 1
 fi
 if [ ! -d "$SRCDIR" ]; then
-        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: SRCDIR=$(SRCDIR) does not exist! Exiting..."
-        exit 1
+        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: SRCDIR=${SRCDIR} does not exist! Exiting..."
+        return 1
 fi
 if [ ! -d "$SHRDIR" ]; then
-        echo "From $(basename "${BASH_SOURCE[0]}") WARNING:: SHRDIR=$(SHRDIR) does not exist! Continuing without generating summary notebooks..."
+        echo "From $(basename "${BASH_SOURCE[0]}") WARNING:: SHRDIR=${SHRDIR} does not exist! Continuing without generating summary notebooks..."
 fi
 
 # if MIXEDPOL=false and HAXP=true, then set MIXEDPOL=true and throw a warning
