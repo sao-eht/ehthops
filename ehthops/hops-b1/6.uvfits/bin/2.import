@@ -12,7 +12,7 @@
 # common parameters
 campaign="$CAMPAIGN" # campaign/observation code recognizable by eat -- 'EHT2017', 'EHT2018', 'EHT2021'
 outdir="$WRKDIR/" #where to dump output
-vexdir="$METADIR/VEX/" #vex for meaningful scan-averaging
+vexdir="$METADIR/vex/" # get schedule from vex file for meaningful scan-averaging
 ehtimpath="$EHTIMPATH" # ehtim in dev branch
 infileext='uvfits' #input filename extension
 polrep='circ'
