@@ -28,25 +28,21 @@ Install the EHT Analysis Toolkit (EAT) library in developer mode (the repository
    git clone https://github.com/sao-eht/eat.git
    pip install -e eat
 
-Install astropy; this should pull in numpy, among other modules::
+Install necessary modules::
 
-   micromamba install astropy seaborn numpy pandas matplotlib scipy
+   micromamba install astropy seaborn numpy pandas matplotlib scipy h5py
 
 Install modules required for generating summary plots non-interactively and viewing them from within the same mamba environment::
 
    mircomamba install ipykernel papermill nbconvert jupyter adjusttext
 
-**Recommended:** EHT-HOPS performs additional calibration and data format conversion tasks beyond iterative fringe-fitting.
+Install paramsurvey using pip within the mamba environment (necessary for importing eht-imaging)::
+
+   pip install paramsurvey
+
+EHT-HOPS performs additional calibration and data format conversion tasks beyond iterative fringe-fitting.
 These *post-processing* steps (including the stage that generates UVFITS files from HOPS fringe files) need the **eht-imaging** library.
 This is currently achieved by cloning the *dev* branch of **eht-imaging** from GitHub and passing its path to the post-processing scripts.
-Before doing this, ensure that **pynfft**, a pre-requisite to **eht-imaging** is installed. Since **nfft** cannot be installed by *pip*,
-**pynfft** installation will fail, causing **eht-imaging** installation to fail when we use *pip*.
-An alternative is to ensure that **pynfft** is installed properly in the python environment using *mamba*::
-
-   micromamba install pynfft
-
-Note that this installs both **nfft** and **pynfft** in the mamba environment and will *downgrade* **numpy** to version 1.26.
-
 Always ensure that *eht-imaging* is on the *dev* branch to ensure that you are pulling in the latest updates::
 
    git clone https://github.com/achael/eht-imaging.git
@@ -57,20 +53,27 @@ After this, set your PYTHONPATH to include the *eht-imaging* directory::
 
    export PYTHONPATH=$PYTHONPATH:"/path/to/eht-imaging"
 
+**Recommended:** eht-imaging uses **pynfft** for performing some tasks, although these are not necessary for running the calibration pipeline.
+For completion, **pynfft** can be installed using mamba::
+
+   micromamba install pynfft
+
+Note that this installs both **nfft** and **pynfft** in the mamba environment and will *downgrade* **numpy** to version 1.26.
+
 **Recommended:** Some modules such as *scikit-learn*, *statsmodels*, and *pytables* are required only by the post-processing stages following UVFITS conversion.
 Though these stages are not yet part of the main pipeline, they are expected to be integrated in the future. Install these modules now to avoid any issues later::
 
    micromamba install scikit-learn future pytables statsmodels
 
-Potential installation issues
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Potential installation issues:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The pipeline generates summary notebooks with diagnostic plots in both ipynb and html formats.
-If the conversion of jupyter notebooks to HTML fails while running the pipeline, ensure that the following is installed::
+If the conversion of jupyter notebooks to HTML fails while running the pipeline, ensure that the following package is installed::
 
    micromamba install jupyter_contrib_nbextensions
 
-In older systems, scipy might throw a **glibcxx not found** error. If this occurs, update libstdcxx
+In some older Linux systems, scipy might throw a **glibcxx not found** error. If this occurs, update **libstdcxx**
 to at least version 12. Modern installations should already satisfy this requirement::
 
    micromamba install libstdcxx-ng=12
