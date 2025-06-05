@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# clean up repo of all data products
+# Delete all data products leaving the repo in a clean state
 stages=("0.bootstrap" "1.+flags+wins" "2.+pcal" "3.+adhoc" "4.+delays" "5.+close" "6.uvfits" "7.+apriori" "8.+polcal")
 
 for stage in ${stages[@]}
@@ -18,11 +18,15 @@ do
     then
 	rm -rf 3*
 	rm vis*
-    if [[ $stage == "7.+apriori" || $stage == "8.+polcal" ]]
-    then
-        rm bin/*.import
-        rm bin/*.average
-    fi
+    	if [[ $stage == "7.+apriori" || $stage == "8.+polcal" ]]
+	then
+            rm bin/*.import
+	    rm bin/*.average
+	fi
+	if [ stage == "8.+polcal" ]
+	then
+    	    rm bin/0.launch
+	fi
     elif [ $stage != "0.bootstrap" ]
     then
         if [ $stage != "5.+close" ]
