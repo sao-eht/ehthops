@@ -1,0 +1,7 @@
+* Ensure these settings are captured regardless of control-file concatenation order by introducing an (effectively) 'if true' statement
+if scan > 001-000000
+
+* bad polconvert in 1st channel 3644 3647
+* apply after stage 1 so that pcal will still be defined for all channels
+if station A
+    freqs b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F
