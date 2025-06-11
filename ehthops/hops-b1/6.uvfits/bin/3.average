@@ -25,6 +25,6 @@ for day in daylist:
             obs = obs.flag_anomalous('rrsnr', robust_nsigma_cut=3.0)
             obs = obs.avg_coherent(10.)
             obs.save_uvfits(f'{base}+avg{ext}')
-        except:
-            sys.stderr.write(f'failed to average: {uvf}\n')
+        except Exception as e:
+            sys.stderr.write(f'Error averaging {uvf}: {e}\n')
 EOF
