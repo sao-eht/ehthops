@@ -23,11 +23,11 @@ do
         rm bin/*.import
 	    rm bin/*.average
 	fi
-	if [ stage == "7.+apriori" ]
+	if [ $stage == "7.+apriori" ]
 	then
     	    rm -rf SEFD
 	fi
-	if [ stage == "8.+polcal" ]
+	if [ $stage == "8.+polcal" ]
 	then
     	    rm bin/0.launch
 	fi
