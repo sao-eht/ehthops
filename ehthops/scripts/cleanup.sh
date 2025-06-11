@@ -16,12 +16,16 @@ do
 	rm pc*.pdf
     elif [[ $stage == "6.uvfits" || $stage == "7.+apriori" || $stage == "8.+polcal" ]]
     then
-	rm -rf 3*
-	rm vis*
-    	if [[ $stage == "7.+apriori" || $stage == "8.+polcal" ]]
+	    rm -rf 3*
+	    rm vis*
+    if [[ $stage == "7.+apriori" || $stage == "8.+polcal" ]]
 	then
-            rm bin/*.import
+        rm bin/*.import
 	    rm bin/*.average
+	fi
+	if [ stage == "7.+apriori" ]
+	then
+    	    rm -rf SEFD
 	fi
 	if [ stage == "8.+polcal" ]
 	then
