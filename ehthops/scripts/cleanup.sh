@@ -17,7 +17,7 @@ do
     elif [[ $stage == "6.uvfits" || $stage == "7.+apriori" || $stage == "8.+polcal" ]]
     then
 	    rm -rf 3*
-	    rm vis*
+	    rm *.h5 *.pickle
     if [[ $stage == "7.+apriori" || $stage == "8.+polcal" ]]
 	then
         rm bin/*.import
