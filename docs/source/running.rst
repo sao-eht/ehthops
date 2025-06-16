@@ -60,7 +60,9 @@ Some notes on the environment variables and running the stages manually:
 Helper scripts
 --------------
 
-- **ehthops/ehthops_pipeline.sh** is a script that runs all the stages of the pipeline, applicable to any band. It is a good starting point for learning to run the pipeline.
-- **ehthops/settings.config** is a sample configuration file that shows all the keywords that can be passed to **ehthops_pipeline.sh**.
-- **ehthops/scripts/ehthops_slurm.job** is a SLURM configuration file that can be used to submit the pipeline to a SLURM cluster.
-- **ehthops/scripts/cleanup.sh** deletes all data generated as a result of a previous run and leaves the working area in a clean state.
+The **ehthops/scripts** directory contains several helper scripts that can be used to run the pipeline or clean up the working area:
+
+- **ehthops_pipeline.sh** is a script that runs all the stages of the pipeline, applicable to any band. It is a good starting point for learning to run the pipeline.
+- **settings.config** is a sample configuration file that shows all the keywords that can be passed to **ehthops_pipeline.sh**.
+- **ehthops_slurm.job** is a SLURM configuration file that can be used to submit the pipeline to a SLURM cluster.
+- **cleanup.sh** deletes all data generated as a result of a previous run and leaves the working area in a clean state.
