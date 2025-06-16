@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-exec 1>log/average.log 2>log/average.err
-
-/usr/bin/env python - << EOF
+/usr/bin/env python - << EOF >log/average.log 2>log/average.err
 import os
 import sys
 import glob
