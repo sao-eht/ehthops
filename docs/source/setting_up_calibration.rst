@@ -25,6 +25,7 @@ Conventionally, in order of increasing frequency, the bands are named 1, 2, 3, a
     and will make the appropriate substitutions for 2017 data, mapping "lo" -> "b3" and "hi" -> "b4".
 
 Additional the repository contains the following directories:
+
 - **scripts**: Contains the driver scripts for running the calibration pipeline and sample configuration files.
 - **share**: Jupyter noteboks that are run after each calibration stage to summarize the results and provide diagnostic information.
 - **meta**: Contains metadata files for the campaigns, which are used to generate control files.
@@ -32,8 +33,8 @@ Additional the repository contains the following directories:
 .. note::
 
     The **meta** directory is organized by campaign and frequency band, e.g., **meta/eht2017/230GHz** for the 2017 campaign at 230 GHz.
-    This directory must be organized as shown in the :ref:metadata-organization section. Note that the *antab* directory is not 
-    bundled with the repository and must be created and populated manually with the appropriate ANTAB files corresponding to the campaign.
+    Note that the *antab* directory is not bundled with the repository and must be created and populated manually with the appropriate
+    ANTAB files corresponding to the campaign.
 
 The main pipeline script *scripts/ehthops_pipeline.sh* takes the filename of a configuration file as argument and proceeds to
 run the calibration. A sample configuration file *scripts/settings.config* explains all the keywords that can be set to control the
@@ -44,9 +45,9 @@ For this tutorial, we will use the "lo" band, so we will copy the driver script 
 
 .. code-block:: bash
 
-    cd hops-b3/
-    cp ../ehthops_pipeline.sh .
-    cp ../settings.config .
+    cd ehthops/ehthops/hops-b3/
+    cp ../scripts/ehthops_pipeline.sh .
+    cp ../scripts/settings.config .
 
 .. note::
 
@@ -125,8 +126,11 @@ A sample configuration file for submitting the job to SLURM on Cannon cluster is
     Note that the environment setup lines may be different for different systems. The user must modify these lines as needed.
     The correct python environment must be activated before running the HOPS setup and the calibration pipeline.
 
-This config file can now be submitted to SLURM with **sbatch**:
+Copy this SLURM job file from *scripts/* to *hops-b3/* and submit to SLURM with **sbatch**:
 
 .. code-block:: bash
 
+    cp ../scripts/ehthops_slurm.job .
+    # Modify ehthops_slurm.job as needed, e.g., change the partition,
+    # number of cores, memory, etc.
     sbatch ehthops_slurm.job
