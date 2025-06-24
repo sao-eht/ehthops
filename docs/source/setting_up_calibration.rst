@@ -15,15 +15,6 @@ All the calibrated output files will be created within this directory:
 
     cd /home/user/calibration
     git clone https://github.com/sao-eht/ehthops.git
-    cd ehthops
-    git submodule update --init --remote
-
-The last line above ensures that the submodules containing metadata and summary notebooks are updated to the latest version.
-
-note::
-
-    Only the publicly available metadata are imported by the above. These are expected to serve as a template for how metadata is expected to be
-    organized. It is the responsibility of the user to ensure that their metadata are organized in the same way as the public metadata.
 
 The code repository consists of four directories named **hops-bx** where **x** stands for the EHT "zoom" frequency band.
 Conventionally, in order of increasing frequency, the bands are named 1, 2, 3, and 4.
@@ -33,8 +24,19 @@ Conventionally, in order of increasing frequency, the bands are named 1, 2, 3, a
     The 2017 campaign has only two bands named "lo" and "hi". The shell scripts driving the calibration are aware of this
     and will make the appropriate substitutions for 2017 data, mapping "lo" -> "b3" and "hi" -> "b4".
 
-The main pipeline script *ehthops/ehthops_pipeline.sh* takes the filename of a configuration file as argument and proceeds to
-run the calibration. A sample configuration file *ehthops/settings.config* shows all the keywords that can be set to control the
+Additional the repository contains the following directories:
+- **scripts**: Contains the driver scripts for running the calibration pipeline and sample configuration files.
+- **share**: Jupyter noteboks that are run after each calibration stage to summarize the results and provide diagnostic information.
+- **meta**: Contains metadata files for the campaigns, which are used to generate control files.
+
+.. note::
+
+    The **meta** directory is organized by campaign and frequency band, e.g., **meta/eht2017/230GHz** for the 2017 campaign at 230 GHz.
+    This directory must be organized as shown in the :ref:metadata-organization section. Note that the *antab* directory is not 
+    bundled with the repository and must be created and populated manually with the appropriate ANTAB files corresponding to the campaign.
+
+The main pipeline script *scripts/ehthops_pipeline.sh* takes the filename of a configuration file as argument and proceeds to
+run the calibration. A sample configuration file *scripts/settings.config* explains all the keywords that can be set to control the
 calibration process. The user can create a copy of this file and modify it as needed. *ehthops_pipeline.sh* must be run from
 within the **hops-bx** directories.
 
@@ -88,7 +90,7 @@ More information on how to determine the values of the command-line options can 
 Submitting the calibration job to SLURM
 ---------------------------------------
 
-A sample configuration file for submitting the job to SLURM follows (also found in **scripts/ehthops_slurm.job**):
+A sample configuration file for submitting the job to SLURM on Cannon cluster is shown below (also found in **scripts/ehthops_slurm.job**):
 
 .. code-block:: bash
 
@@ -106,20 +108,23 @@ A sample configuration file for submitting the job to SLURM follows (also found 
     source $HOME/.bashrc
 
     # Activate the mamba environment with the necessary packages installed.
-    mamba activate nseht310
+    micromamba activate ehthops310
 
     # Uncomment the following line if it is not present in your $HOME/.bashrc file or has not been run until now. In this case, the
     # bashrc file above contains this line, so it has been commented out. This is required to set up the HOPS environment properly.
-    # source /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/installed/hops-3.24/bin/hops.bash
+    # source /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/installed/hops-3.26/bin/hops.bash
 
     # Set up HOPS environment once again with HOPS_SETUP=false (necessary to pick up all the HOPS environment variables properly).
-    HOPS_SETUP=false source /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/installed/hops-3.24/bin/hops.bash
+    HOPS_SETUP=false source /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/installed/hops-3.26/bin/hops.bash
 
     # run script
     source ehthops_pipeline.sh settings.config
 
-The environment setup lines may be different for different systems. The user should modify these lines as needed.
-The correct python environment and HOPS setup must be activated before running the calibration script.
+.. note::
+
+    Note that the environment setup lines may be different for different systems. The user must modify these lines as needed.
+    The correct python environment must be activated before running the HOPS setup and the calibration pipeline.
+
 This config file can now be submitted to SLURM with **sbatch**:
 
 .. code-block:: bash
