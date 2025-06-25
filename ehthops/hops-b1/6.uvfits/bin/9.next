@@ -15,20 +15,28 @@ echo "9. Copying standard scripts and metadata to the next stage \"$NEXT\""
 # capture the name of this stage dir (e.g. "6.uvfits")
 prev_stage=$(basename "$PWD")
 
-for n in 2 3; do
+for n in 0 2 3; do
     for curr in bin/${n}.*; do
         # skip missing files
         [ ! -f "$curr" ] && continue
 
-        # compute the new step number and dest path
-        new_prefix=$((n + 1))
+        # determine new_prefix:
+        #  - if n==0, leave it as 0
+        #  - if n==2 or 3, use n+1
+        if [ "$n" -eq 0 ]; then
+            new_prefix=0
+        else
+            new_prefix=$((n + 1))
+        fi
+
+        # strip off the "bin/N." to get the rest of the name
         rest=${curr#bin/${n}.}               # e.g. "import" or "average"
         dest=$NEXT/bin/${new_prefix}.${rest}
 
         # skip if dest already exists
         [ -e "$dest" ] && continue
 
-        echo "Linking $curr → $dest"
+        echo "Linking $curr to $dest"
         # always point back to ../../<prev_stage>/bin/n.rest
         ln -s "../../${prev_stage}/bin/${n}.${rest}" "$dest"
     done

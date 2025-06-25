@@ -36,7 +36,7 @@ for n in 0 3 4; do
         # skip if dest already exists
         [ -e "$dest" ] && continue
 
-        echo "Linking $curr → $dest"
+        echo "Linking $curr to $dest"
         # always point back to ../../<prev_stage>/bin/n.rest
         ln -s "../../${prev_stage}/bin/${n}.${rest}" "$dest"
     done
