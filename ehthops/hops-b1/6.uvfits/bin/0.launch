@@ -14,6 +14,7 @@ show_help() {
     echo "  SET_METADIR     Location of preset control files, META tables, ZBL flux estimates for netcal, etc"
     echo "  SET_INPUTDIR    Used only in post-processing stages. If Stage6 then $DATADIR from Stage5; if Stage7/8, then Stage6/7 base directory"
     echo "  SET_EHTIMPATH   Path to eht-imaging source code"
+    echo "  SET_MIXEDPOL    Set to 'true' to enable mixed polarization calibration (default: false)"
     echo "  SET_OBSYEAR     Observing year"
     echo "  SET_CAMPAIGN    EAT-recognizable observing campaign name (\"EHT2017\", \"EHT2018\", \"EHT2021\", \"EHT2022\")"
     echo
@@ -23,6 +24,7 @@ show_help() {
     echo "====================="
     echo "  -M <dir>        Set METADIR"
     echo "  -I <dir>        Set INPUTDIR"
+    echo "  -m <true|false> Set MIXEDPOL (default: false)"
     echo "  -y <yyyy>       Set OBSYEAR"
     echo "  -c <campaign-name>       Set CAMPAIGN"
     echo "  -h, --help      Display this help message and exit"
@@ -32,7 +34,7 @@ show_help() {
     echo "  - The SET_* environment variables take precedence over the default values."
     echo
     echo "Example:"
-    echo "  SET_EHTIMPATH=/path/to/eht-imaging && SET_INPUTDIR=/path/to/input/files/from/previous/stage && SET_METADIR=/path/to/metadata && SET_CAMPAIGN=\"EHT2017\" && source bin/0.launch"
+    echo "  SET_EHTIMPATH=/path/to/eht-imaging && SET_INPUTDIR=/path/to/input/files/from/previous/stage && SET_METADIR=/path/to/metadata && SET_MIXEDPOL=true && SET_OBSYEAR=\"2017\" && SET_CAMPAIGN=\"EHT2017\" && source bin/0.launch"
 }
 
 if [ -f /.dockerenv ]; then
@@ -44,13 +46,17 @@ if [ -f /.dockerenv ]; then
 fi
 
 # Default values can be adjusted by defining SET_* env variables prior to running launch
+MIXEDPOL=${SET_MIXEDPOL:-"false"}
 OBSYEAR=${SET_OBSYEAR:-"2021"}
 CAMPAIGN=${SET_CAMPAIGN:-"EHT2021"}
 
 # Overwrite OBSYEAR and CAMPAIGN if passed as command-line arguments
 OPTIND=1 # start from the first argument (ignore existing shell state)
-while getopts "y:c:" opt; do
+while getopts "m:y:c:" opt; do
         case $opt in
+                m)
+                        MIXEDPOL=$OPTARG
+                        ;;
                 y)
                         OBSYEAR=$OPTARG
                         ;;
@@ -105,8 +111,11 @@ fi
 
 # Parse command-line arguments. overwrite any existing settings
 OPTIND=1 # start from the first argument (ignore existing shell state)
-while getopts "y:c:M:I:h" opt; do
+while getopts "m:y:c:M:I:h" opt; do
         case $opt in
+                m)
+                        MIXEDPOL=$OPTARG
+                        ;;
                 y)
                         OBSYEAR=$OPTARG
                         ;;
@@ -165,6 +174,7 @@ if [ x"$USE_DOCKER" == x"true" ]; then
         echo "  Meta, METADIR:        $METADIR"
         echo "  Path to eht-imaging, EHTIMPATH:        $EHTIMPATH"
         echo "  Band, BAND:        $BAND"
+        echo "  Mixed polarization calibration, MIXEDPOL: $MIXEDPOL"
         echo "  Observing year, OBSYEAR:        $OBSYEAR"
         echo "  EAT-recognizable campaign name, CAMPAIGN:        $CAMPAIGN"
         echo "  Command:     $@"
@@ -184,6 +194,7 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 		-e "METADIR=/meta"                     \
                 -e "EHTIMPATH=$EHTIMPATH"    \
 		-e "BAND=$BAND"                        \
+                -e "MIXEDPOL=$MIXEDPOL"                \
                 -e "OBSYEAR=$OBSYEAR"                  \
 		-e "CAMPAIGN=$CAMPAIGN"                  \
 		$PORTFORWARD                           \
@@ -198,6 +209,7 @@ else
         echo "  Meta, METADIR:        $METADIR"
         echo "  Path to eht-imaging, EHTIMPATH:        $EHTIMPATH"
         echo "  Band, BAND:        $BAND"
+        echo "  Mixed polarization calibration, MIXEDPOL: $MIXEDPOL"
         echo "  Observing year, OBSYEAR:        $OBSYEAR"
         echo "  EAT-recognizable campaign name, CAMPAIGN:        $CAMPAIGN"
         echo "  Command:     $@"

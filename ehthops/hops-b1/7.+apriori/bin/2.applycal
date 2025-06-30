@@ -11,6 +11,7 @@ echo "Metadata, METADIR: $METADIR"
 echo "Working directory, WRKDIR: $WRKDIR"
 echo "SEFD directory, SEFDDIR: $SEFDDIR"
 echo "Band, BAND: $BAND"
+echo "Mixedpol calibration, MIXEDPOL: $MIXEDPOL"
 
 # find all directories in $INPUTDIR that are named with expt numbers
 directories=$(find $INPUTDIR -mindepth 1 -maxdepth 1 -type d -name "[0-9]*" | sort)
@@ -19,7 +20,11 @@ directories=$(find $INPUTDIR -mindepth 1 -maxdepth 1 -type d -name "[0-9]*" | so
 for directory in $directories; do
         d=$(basename $directory)
 	mkdir -p $d
-        /usr/bin/time -v applycal $INPUTDIR/$d $SEFDDIR/SEFD_$BAND/$d $d --extrapolate --keepllabsphase > log/applycal-$d.log 2> log/applycal-$d.err &
+        if [[ "$MIXEDPOL" == true ]]; then
+            /usr/bin/time -v applycal $INPUTDIR/$d $SEFDDIR/SEFD_$BAND/$d $d --extrapolate --keepllabsphase --mixedpol > log/applycal-$d.log 2> log/applycal-$d.err &
+        else
+            /usr/bin/time -v applycal $INPUTDIR/$d $SEFDDIR/SEFD_$BAND/$d $d --extrapolate --keepllabsphase > log/applycal-$d.log 2> log/applycal-$d.err &
+        fi
 done
 
 wait $(jobs -p)
