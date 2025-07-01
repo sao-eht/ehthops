@@ -14,7 +14,7 @@ show_help() {
     echo "  SET_METADIR     Location of preset control files, META tables, ZBL flux estimates for netcal, etc"
     echo "  SET_INPUTDIR    Used only in post-processing stages. If Stage6 then $DATADIR from Stage5; if Stage7/8, then Stage6/7 base directory"
     echo "  SET_EHTIMPATH   Path to eht-imaging source code"
-    echo "  SET_MIXEDPOL    Set to 'true' to enable mixed polarization calibration (default: false)"
+    echo "  SET_MIXEDPOL    Enable mixed polarization calibration (disabled by default)"
     echo "  SET_OBSYEAR     Observing year"
     echo "  SET_CAMPAIGN    EAT-recognizable observing campaign name (\"EHT2017\", \"EHT2018\", \"EHT2021\", \"EHT2022\")"
     echo
@@ -24,7 +24,7 @@ show_help() {
     echo "====================="
     echo "  -M <dir>        Set METADIR"
     echo "  -I <dir>        Set INPUTDIR"
-    echo "  -m <true|false> Set MIXEDPOL (default: false)"
+    echo "  -m              Enable mixed polarization calibration"
     echo "  -y <yyyy>       Set OBSYEAR"
     echo "  -c <campaign-name>       Set CAMPAIGN"
     echo "  -h, --help      Display this help message and exit"
@@ -52,10 +52,10 @@ CAMPAIGN=${SET_CAMPAIGN:-"EHT2021"}
 
 # Overwrite OBSYEAR and CAMPAIGN if passed as command-line arguments
 OPTIND=1 # start from the first argument (ignore existing shell state)
-while getopts "m:y:c:" opt; do
+while getopts "y:c:m" opt; do
         case $opt in
                 m)
-                        MIXEDPOL=$OPTARG
+                        MIXEDPOL=true
                         ;;
                 y)
                         OBSYEAR=$OPTARG
@@ -111,10 +111,10 @@ fi
 
 # Parse command-line arguments. overwrite any existing settings
 OPTIND=1 # start from the first argument (ignore existing shell state)
-while getopts "m:y:c:M:I:h" opt; do
+while getopts "y:c:M:I:mh" opt; do
         case $opt in
                 m)
-                        MIXEDPOL=$OPTARG
+                        MIXEDPOL=true
                         ;;
                 y)
                         OBSYEAR=$OPTARG
