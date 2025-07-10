@@ -21,9 +21,9 @@ for directory in $directories; do
         d=$(basename $directory)
 	mkdir -p $d
         if [[ "$MIXEDPOL" == true ]]; then
-            /usr/bin/time -v applycal $INPUTDIR/$d $SEFDDIR/SEFD_$BAND/$d $d --extrapolate --keepllabsphase --mixedpol > log/applycal-$d.log 2> log/applycal-$d.err &
+            /usr/bin/time -v applycal $INPUTDIR/$d $SEFDDIR/SEFD_$BAND/$d $d $METADIR --extrapolate --keepllabsphase --mixedpol > log/applycal-$d.log 2> log/applycal-$d.err &
         else
-            /usr/bin/time -v applycal $INPUTDIR/$d $SEFDDIR/SEFD_$BAND/$d $d --extrapolate --keepllabsphase > log/applycal-$d.log 2> log/applycal-$d.err &
+            /usr/bin/time -v applycal $INPUTDIR/$d $SEFDDIR/SEFD_$BAND/$d $d $METADIR --extrapolate --keepllabsphase > log/applycal-$d.log 2> log/applycal-$d.err &
         fi
 done
 
