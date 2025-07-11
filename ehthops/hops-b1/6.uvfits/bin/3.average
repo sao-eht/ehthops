@@ -19,8 +19,11 @@ for day in daylist:
             obs = eh.obsdata.load_uvfits(uvf, polrep='circ')
             # use cuts in calibrate.py
             obs = obs.flag_sites(["SR"])
-            obs = obs.flag_anomalous('llsnr', robust_nsigma_cut=3.0)
-            obs = obs.flag_anomalous('rrsnr', robust_nsigma_cut=3.0)
+            for snrfield in ['llsnr', 'rrsnr']:
+                try:
+                    obs = obs.flag_anomalous(snrfield, robust_nsigma_cut=3.0)
+                except Exception as e:
+                    sys.stderr.write(f'Error flagging anomalous data in {uvf}.: {e}\nContinuing without flagging anomalous data.\n')
             obs = obs.avg_coherent(10.)
             obs.save_uvfits(f'{base}+avg{ext}')
         except Exception as e:
