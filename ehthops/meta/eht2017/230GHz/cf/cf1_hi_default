@@ -21,18 +21,6 @@ pc_mode          manual * use manual phase-cal phase
 if baseline JR
   notches 228973.0 228975.0
 
-* Wider shifted SMAP window
-if station S
-  sb_win -0.120 0.120 * symmetrize
-
-* Wide SPT window for intiial Rev3
-if station Y
-  sb_win -.190 0.190
-
-* ALMA rate window
-if station A
-  dr_win -2.4e-6 2.4e-6 * 2.13 and 2.32 on AS and AY for SGRA
-
 * [2017-12-12 23:08:10] lindy@eht-crunch:/data/2017-april/ce/er1/hops-hi/3.+adhoc/data$ /home/lindy/bin/alma_sbdmbd -c alist.v6
 if station A and scan 094-205959 to 095-210001 pc_delay_l 7.1703
 if station A and scan 094-205959 to 095-210001 pc_delay_r 7.1458

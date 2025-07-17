@@ -2,6 +2,16 @@
 if scan > 001-000000
 
 * Set up reasonable windows
-sb_win -0.04  0.04  * updated for non-SPT non-SMA
+sb_win -0.04  0.04  * reasonable single band delay search window in us
 mb_win -0.009 0.009 * reasonable multiband delay search window in us
-dr_win -1.2e-6 1.2e-6 * expanded window same as low band
+dr_win -1.2e-6 1.2e-6 * max non-ALMA low band rate XS on 097-1407
+
+* Wider shifted SMAP window
+if station S
+  sb_win -0.08 0.08 * symmetrize
+
+* do not need special rate window for Y in low band
+
+* ALMA rate window
+if station A
+  dr_win -2.4e-6 2.4e-6 * 2.13 and 2.32 on AS and AY for SGRA

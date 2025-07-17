@@ -5,3 +5,15 @@ if scan > 001-000000
 sb_win -0.04  0.04  * updated for non-SPT non-SMA
 mb_win -0.009 0.009 * reasonable multiband delay search window in us
 dr_win -1.2e-6 1.2e-6 * expanded window same as low band
+
+* Wider shifted SMAP window
+if station S
+  sb_win -0.120 0.120 * symmetrize
+
+* Wide SPT window for intiial Rev3
+if station Y
+  sb_win -.190 0.190
+
+* ALMA rate window
+if station A
+  dr_win -2.4e-6 2.4e-6 * 2.13 and 2.32 on AS and AY for SGRA
