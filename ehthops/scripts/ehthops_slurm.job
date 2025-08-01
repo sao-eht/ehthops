@@ -12,14 +12,15 @@
 source $HOME/.bashrc
 
 # Activate the mamba environment with the necessary packages installed.
-mamba activate nseht310
+#micromamba activate nseht311
+micromamba activate /n/home09/inatarajan/.conda/envs/ehthops310
 
 # Uncomment the following line if it is not present in your $HOME/.bashrc file or has not been run until now. In this case, the
 # bashrc file above contains this line, so it has been commented out. This is required to set up the HOPS environment properly.
-# source /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/installed/hops-3.24/bin/hops.bash
+# source /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/installed/hops-3.246/bin/hops.bash
 
 # Set up HOPS environment once again with HOPS_SETUP=false (necessary to pick up all the HOPS environment variables properly).
-HOPS_SETUP=false source /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/installed/hops-3.24/bin/hops.bash
+HOPS_SETUP=false source /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/installed/hops-3.26/bin/hops.bash
 
 # run script
 source ehthops_pipeline.sh settings.config
