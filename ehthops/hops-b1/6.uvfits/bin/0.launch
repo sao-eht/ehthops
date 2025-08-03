@@ -148,11 +148,11 @@ done
 
 # Perform some basic checks
 if [ ! -d "$METADIR" ]; then
-        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: METADIR=$(METADIR) does not exist! Exiting..."
+        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: METADIR=$METADIR does not exist! Exiting..."
         return 1
 fi
 if [ ! -d "$INPUTDIR" ]; then
-        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: INPUTDIR=$(INPUTDIR) does not exist! Exiting..."
+        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: INPUTDIR=$INPUTDIR does not exist! Exiting..."
         return 1
 fi
 
