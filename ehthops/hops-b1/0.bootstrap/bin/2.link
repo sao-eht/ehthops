@@ -17,7 +17,7 @@ mkdir -p "$DATADIR" tests temp log
 IFS=$' \t\n:,'
 
 # root file pattern to match
-ROOTFILENAME="^[a-zA-Z0-9+-]+\.[a-zA-Z0-9]{6}$"
+ROOTFILENAME="^[a-zA-Z0-9+_-]+\.[a-zA-Z0-9]{6}$"
 
 # Initialize a variable to keep track of the previous source scan directory
 # This is used to check if the current scan directory is the same as the previous one
