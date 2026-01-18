@@ -52,9 +52,14 @@ def _(a, util):
 
 @app.cell
 def _(a, hu, plt):
+    figures_uv = []
     for src in sorted(set(a.source)):
         hu.uvplot(a, src)
-        plt.show()
+        fig = plt.gcf()
+        figures_uv.append(fig)
+        plt.close(fig)
+
+    figures_uv
     return
 
 
