@@ -70,16 +70,16 @@ def _(mo):
 
 @app.cell
 def _(a, plt, wide):
-    plt.loglog(a.snr, a.coh, '.', ms=1);
-    plt.axvline(7, color='k', ls='--', lw=2, alpha=0.25);
-    plt.axhline(1, color='k', ls='--', lw=2, alpha=0.25);
-
-    plt.ylim(.2, 2);
-    plt.xlim(1, None);
-    plt.xlabel('2s SNR');
-    plt.ylabel('30s relative amplitude');
-    plt.title('30s/2s amplitude ratio');
-    wide(8, 4.5);
+    wide(8, 4.5)
+    plt.loglog(a.snr, a.coh, '.', ms=1)
+    plt.axvline(7, color='k', ls='--', lw=2, alpha=0.25)
+    plt.axhline(1, color='k', ls='--', lw=2, alpha=0.25)
+    plt.ylim(.2, 2)
+    plt.xlim(1, None)
+    plt.xlabel('2s SNR')
+    plt.ylabel('30s relative amplitude')
+    plt.title('30s/2s amplitude ratio')
+    plt.gcf()
     return
 
 
@@ -97,14 +97,14 @@ def _(mo):
 def _(a):
     # data filters
     snr_cutoff = 7  # reasonable SNR cutoff for filtering
-    a_1 = a[(a.snr > snr_cutoff) & ~a.baseline.str.contains('R')]
-    return (a_1,)
+    a_snrcut = a[(a.snr > snr_cutoff) & ~a.baseline.str.contains('R')]
+    return (a_snrcut,)
 
 
 @app.cell
-def _(a_1):
+def _(a_snrcut):
     # Compute the boundaries between expt_nos
-    sorted_a = a_1.sort_values(['expt_no', 'scan_no'])
+    sorted_a = a_snrcut.sort_values(['expt_no', 'scan_no'])
     last_scans = sorted_a.groupby('expt_no')['scan_no'].max()  # Find the 'max' scan_no for each expt_no
     elines = (last_scans.iloc[:-1] + 0.5).to_numpy()  # Drop the final expt_no and offset by 0.5
     return (elines,)
@@ -119,33 +119,43 @@ def _(mo):
 
 
 @app.cell
-def _(a_1, elines, multline, plt, tightx, wide):
+def _(a_snrcut, elines, multline, plt, tightx):
     # Get sorted list of unique sites from the baseline column
-    sites = sorted(set().union(*set(a_1.baseline)))
+    sites = sorted(set().union(*set(a_snrcut.baseline)))
     snr_split = 50
     # Define cutoffs for SNR and outliers
     outliers_coh = 0.8
     outliers_snr = 20
+
+    outputs = []
     for site in sites:
-        df_site = a_1[a_1.baseline.str.contains(site)]
+        fig = plt.figure(figsize=(12, 4))  # Create new figure for each site
+    
+        df_site = a_snrcut[a_snrcut.baseline.str.contains(site)]
         for (bl, rows) in df_site.groupby('baseline'):
             lo_mask = rows.snr < snr_split
             hi_mask = rows.snr >= snr_split
-            bl = bl if bl[1] == site else bl[::-1]  # Plot the coherence loss for each baseline to the site
+            bl = bl if bl[1] == site else bl[::-1]  # Reverse the baseline if the second character is not the site
             h = plt.errorbar(rows[hi_mask].scan_no, rows[hi_mask].coh, yerr=1.0 / rows[hi_mask].snr, fmt='.', label='_nolegend_' if hi_mask.sum() == 0 else bl, zorder=10)
             _ = plt.errorbar(rows[lo_mask].scan_no, rows[lo_mask].coh, yerr=1.0 / rows[lo_mask].snr, fmt='.', label=bl if hi_mask.sum() == 0 and lo_mask.sum() > 0 else '_nolegend_', color=h[0].get_color(), alpha=0.5)
         multline(elines)
         _ = plt.title('Coherence loss in 30 seconds [%.0f MHz]' % df_site.iloc[0].ref_freq)
-        tightx()  # Reverse the baseline if the second character is not the site
+        tightx()
         _ = plt.xlim(0, plt.xlim()[1] * 1.1)
         _ = plt.grid(axis='y', alpha=0.25)
         _ = plt.legend(loc='best')
         outliers = df_site[(df_site.coh < outliers_coh) & (df_site.snr > outliers_snr)]
         if len(outliers) > 0:
             _ = plt.plot(outliers.scan_no, outliers.coh, 'ko', ms=8, mfc='none', mew=2, zorder=-100)
-        wide(12, 4)
-        plt.show()
-        outliers['expt_no scan_id source baseline snr coh'.split()]  # Display outliers
+    
+        outputs.append(fig)
+        plt.close(fig)
+    
+        # Add outliers table right after the figure
+        if len(outliers) > 0:
+            outputs.append(outliers[['expt_no', 'scan_id', 'source', 'baseline', 'snr', 'coh']])
+
+    outputs
     return
 
 
