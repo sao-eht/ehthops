@@ -73,7 +73,7 @@ def _(a_snrcut, hu):
 
 @app.cell
 def _(stats, wa):
-    print(stats.loc[(slice(None),slice(None),wa),:])
+    stats.loc[(slice(None),slice(None),wa),:]
     return
 
 
@@ -104,7 +104,7 @@ def _(elines, hu, na, p, plt, wa, wide):
 def _(p):
     # table of outliers
     outliers = (p.LLRR_offset.abs() > 0.000050) & (p.LLRR_std.abs() > 5)
-    print(p.loc[outliers, "expt_no scan_id source timetag mbd_unwrap LLRR_offset LLRR_std".split()])
+    p.loc[outliers, "expt_no scan_id source timetag mbd_unwrap LLRR_offset LLRR_std".split()]
     return
 
 
@@ -135,33 +135,35 @@ def _(mo):
 
 
 @app.cell
-def _(na, norm, np, p, plt, pu, wa, wide):
+def _(na, norm, np, p, plt, pu, wa):
     # histogram of sigmas deviation
     lim = 8 # np.ceil(np.max(np.abs(p.LLRR_std)))
     xx = np.linspace(-lim, lim, 200)
     bins = np.linspace(-lim, lim, 161)
 
+    figures_hist = []
     for baselines in [wa, na]:
-        q = p.loc[(slice(None),slice(None),baselines),:]
+        fig3 = plt.figure(figsize=(12, 4.5))  # Create new figure
+    
+        q = p.loc[(slice(None), slice(None), baselines), :]
         (names, vals) = zip(*[(bl, rows.LLRR_std) for (bl, rows) in q.groupby('baseline')])
         names2 = list(name + ': %.1f' % np.sqrt(np.mean(val**2)) for (name, val) in zip(names, vals))
         plt.hist(vals, bins=bins, histtype='barstacked', alpha=1.0, label=names2, density=True)
-
         # Plot the normal distribution for comparison
         plt.plot(xx, norm.pdf(xx, loc=0, scale=1.0), 'k--', alpha=0.5)
-
         plt.xlabel('std away from mean')
         plt.ylabel('distribution of scans')
         plt.title('RR-LL delay offsets after subtracting mean value [%.0f MHz]' % (p.iloc[0].ref_freq))
         plt.legend(loc='upper right')
         plt.grid(alpha=0.25)
-
         std = np.mean(q.LLRR_std**2)
         pu.tag('N = %d, std=%.1f' % (len(q), std), loc='upper left')
-        plt.xlim(-lim, lim) # only show bulk distribution
+        plt.xlim(-lim, lim)  # only show bulk distribution
+    
+        figures_hist.append(fig3)
+        plt.close(fig3)
 
-        wide(12, 4.5)
-        plt.show()
+    figures_hist
     return
 
 
