@@ -86,12 +86,17 @@ def _(mo):
 
 @app.cell
 def _(pftrend, pfuv, plt, q):
+    figures_all = []
     for src in sorted(set(q.source)):
-        pftrend(q, src)
-        plt.show()
+        fig1 = pftrend(q, src)
+        figures_all.append(fig1)
+        plt.close(fig1)  # Close after adding to list
+    
+        fig2 = pfuv(q, src, 'jet')
+        figures_all.append(fig2)
+        plt.close(fig2)  # Close after adding to list
 
-        pfuv(q, src, 'jet')
-        plt.show()
+    figures_all
     return
 
 
@@ -139,7 +144,7 @@ def _(plt):
 
     def toiter(x):
         return(x if hasattr(x, '__iter__') else [x,])
-    return (wide,)
+    return
 
 
 @app.cell(hide_code=True)
@@ -151,8 +156,10 @@ def _(mo):
 
 
 @app.cell
-def _(Legend, days, itertools, np, plt, wide):
+def _(Legend, days, itertools, np, plt):
     def pftrend(b, src):
+        fig = plt.figure(figsize=(12, 4))  # Create new figure explicitly
+    
         df = b[b.source == src].copy()
         t = np.hstack((df.gmst.sort_values().values, df.gmst.sort_values().values + 24.0))
         idx = np.argmax(np.diff(t))  # Ensure that the GMST is in the range 0-24 hours
@@ -177,40 +184,36 @@ def _(Legend, days, itertools, np, plt, wide):
         lines = [plt.Line2D([0], [0], color=blc[bl], marker='.', ls='none') for bl in sorted(blc.keys())]  # Remember the axis with the fewest rows for placing the legend
         leg = Legend(lax, lines, sorted(blc.keys()), loc='best', ncol=2)
         _ = lax.add_artist(leg)
-        wide(12, 4)
         plt.subplots_adjust(hspace=0, wspace=0)
-        _ = plt.suptitle('%s fractional polarization vs GMST' % src, y=plt.gcf().subplotpars.top, va='bottom')  # plot data with errorbars  # plot a line through the data
+        _ = plt.suptitle('%s fractional polarization vs GMST' % src, y=fig.subplotpars.top, va='bottom')
+    
+        return fig  # Return the figure
     return (pftrend,)
 
 
 @app.cell
-def _(days, plt, wide):
+def _(days, plt):
     def pfuv(b, src, cmap='jet'):
+        fig = plt.figure(figsize=(12, 3))  # Create new figure explicitly
+    
         df = b[b.source == src].sort_values('fpol')
-
         ax = None
         lim = 1.1e-3 * max(df.u.abs().max(), df.v.abs().max())
-
         for(i, day) in enumerate(days):
             ax = plt.subplot(1, len(days), 1+i, sharey=ax, sharex=ax, aspect=1.0)
-
             dayrows = df[df.expt_no == day]
-
             if i > 0:
                 _ = plt.setp(ax.get_yticklabels(), visible=False)
-
             _ = plt.scatter(1e-3 * dayrows.u, 1e-3 * dayrows.v, c=dayrows.fpol, cmap=cmap, vmin=0, vmax=1)
             _ = plt.scatter(-1e-3 * dayrows.u, -1e-3 * dayrows.v, c=dayrows.fpol, cmap=cmap, vmin=0, vmax=1)
             _ = plt.grid(which='both', ls='--', alpha=0.25)
-
-        wide(12, 3)
-
         plt.xlim(-lim, lim)
         plt.ylim(-lim, lim)
-
         plt.subplots_adjust(hspace=0, wspace=0)
         _ = plt.suptitle('%s fractional polarization vs (u, v) [Gly]' %
-                         src, y=plt.gcf().subplotpars.top, va='bottom')
+                         src, y=fig.subplotpars.top, va='bottom')
+    
+        return fig  # Return the figure
     return (pfuv,)
 
 
