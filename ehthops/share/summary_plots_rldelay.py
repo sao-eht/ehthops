@@ -52,15 +52,19 @@ def _(a_snrcut):
 
 
 @app.cell
-def _(a_snrcut, elines, hu, multline, np, plt, wide):
+def _(a_snrcut, elines, hu, multline, np, plt):
     # Get sorted list of unique sites from the baseline column
     sites = sorted(set().union(*set(a_snrcut.baseline)))
     lroffset_thres = 0.0002
     # Define cutoffs
     lrstd_thres = 5.0
+
+    outputs_rl = []
     for site in sites:
         try:
             (p, stats) = hu.rl_segmented(a_snrcut, site, restarts=hu.restarts)
+        
+            fig = plt.figure(figsize=(12, 5))  # Create new figure
             hu.rlplot(p, corrected=True)
             multline(elines)
             outliers = (np.abs(p.LR_offset) > lroffset_thres) & (np.abs(p.LR_std) > lrstd_thres) & ~(p.baseline.str.contains('L') & (np.abs(np.abs(p.LR_offset) - 0.00145) < lroffset_thres))
@@ -68,12 +72,20 @@ def _(a_snrcut, elines, hu, multline, np, plt, wide):
                 _ = plt.plot(p[outliers].scan_no, 1000.0 * p[outliers].LR_offset_wrap, 'ko', ms=8, mfc='none', mew=2, zorder=-100)
             _ = plt.title('R-L delay after subtracting mean value [%.0f MHz]' % p.iloc[0].ref_freq)
             _ = plt.xlim(0, 1.05 * plt.xlim()[1])
-            wide(12, 5)
-            plt.show()
-            print(p.loc[outliers, 'expt_no scan_id source timetag baseline ref_pol mbd_unwrap LR_offset LR_offset_wrap'.split()])
+        
+            outputs_rl.append(fig)
+            plt.close(fig)
+        
+            # Add outliers table right after the figure
+            outlier_data = p.loc[outliers, ['expt_no', 'scan_id', 'source', 'timetag', 'baseline', 'ref_pol', 'mbd_unwrap', 'LR_offset', 'LR_offset_wrap']]
+            if len(outlier_data) > 0:
+                outputs_rl.append(outlier_data)
+            
         except Exception as e:
-            print(f'Error processing site {site}: {e}\nMoving on to next site...')
+            outputs_rl.append(f'Error processing site {site}: {e}\nMoving on to next site...')
             continue
+
+    outputs_rl
     return
 
 
@@ -119,7 +131,7 @@ def _(plt):
 
     def toiter(x):
         return(x if hasattr(x, '__iter__') else [x,])
-    return multline, wide
+    return (multline,)
 
 
 if __name__ == "__main__":
