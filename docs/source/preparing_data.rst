@@ -65,8 +65,7 @@ Notes on data organization
 There are are a few important points to consider regarding the organization of the data:
 
 - The **<expt_no>/<scan_no>/<input_mk4_files>** structure must be preserved.
-- Somewhere along the path in **$SRCDIR/$CORRDAT/.../** before **<expt_no>/<scan_no>/**, the string **-$BAND-**, 
-where **$BAND** is one of {b1, b2, b3, b4} (or {lo, hi} in the case of EHT 2017 data), must occur.
+- Somewhere along the path in **$SRCDIR/$CORRDAT/.../** before **<expt_no>/<scan_no>/**, the string **-$BAND-** with values b1/b2/b3/b4 (or lo/hi in the case of EHT 2017 data) must occur.
 
 The packaged EHT data made available for calibration almost always honour the above structure. In the case of mixedpol data, 
 if $HAXP is true, then the ALMA-only data in the **-haxp** directories will replace the polconverted ALMA data in the **-hops** 
