@@ -82,7 +82,11 @@ do
     then
         SET_SRCDIR="${config[SET_SRCDIR]}" && SET_CORRDAT="${config[SET_CORRDAT]}" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_HAXP="${config[SET_HAXP]}" && source bin/0.launch
         source bin/1.version
-        source bin/2.link
+        if ! source bin/2.link; then
+            echo "ERROR: 2.link failed in stage $stage — ABORTING PIPELINE!!!" >&2
+            cd "$workdir"
+            return 1
+        fi
         source bin/3.fourfit
         source bin/4.alists
         source bin/5.check
