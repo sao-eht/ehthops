@@ -136,7 +136,7 @@ Regardless of whether you are using the public version of HOPS or the version pr
 EHT-HOPS pipeline developers, the following steps are the same.
 
 The HOPS developers recommend building HOPS in a separate directory from the source code (this is separate from the install directory for HOPS).
-Untar HOPS version 3.24 to */path/to/parentdir* and in *parentdir* create a build directory in which to compile HOPS.
+Untar HOPS version 3.24 (or 3.26) to */path/to/parentdir* and in *parentdir* create a build directory in which to compile HOPS.
 The install location for HOPS binaries is specified using the **--prefix** option passed to configure::
 
    tar -xvzf hops-3.24-3753.tar.gz

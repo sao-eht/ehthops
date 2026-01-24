@@ -124,7 +124,7 @@ A sample configuration file for submitting the job to SLURM on Cannon cluster is
 .. note::
 
     Note that the environment setup lines may be different for different systems. The user must modify these lines as needed.
-    The correct python environment must be activated before running the HOPS setup and the calibration pipeline.
+    The correct python environment must be activated before activating the HOPS (3.24 or 3.26) environment and running the pipeline.
 
 Copy this SLURM job file from *scripts/* to *hops-b3/* and submit to SLURM with **sbatch**:
 
