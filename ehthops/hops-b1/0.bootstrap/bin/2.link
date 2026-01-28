@@ -126,6 +126,6 @@ if ! find "$DATADIR" -mindepth 1 -maxdepth 1 -type d -regex '.*/[0-9]\{4,5\}' -p
     echo "ERROR: No data in the archive to link for band $BAND!" >&2
     echo "       SRCDIR=$SRCDIR" >&2
     echo "       CORRDAT=$CORRDAT" >&2
-    echo "       Ensure that the above paths exist and the string '$BAND' exists somewhere along the path to the data archive." >&2
+    echo "       Ensure that the above paths exist and the string '-$BAND-' exists somewhere along the path to the data archive." >&2
     return 1 2>/dev/null || exit 1
 fi
