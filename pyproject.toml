@@ -1,0 +1,29 @@
+[project]
+name = "ehthops"
+version = "0.12.0"
+description = "Meta-environment for running EHT-HOPS"
+readme = "README.md"
+requires-python = ">=3.10,<3.11"
+
+dependencies = [
+  "numpy",
+  "scipy",
+  "pandas",
+  "matplotlib",
+  "seaborn",
+  "astropy",
+  "requests",
+  "marimo",
+  "tqdm",
+]
+
+[project.optional-dependencies]
+post = [
+  "scikit-learn",
+  "statsmodels",
+  "future",
+  "tables",
+]
+
+[tool.uv]
+managed = true
