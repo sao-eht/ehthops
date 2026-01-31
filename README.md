@@ -11,9 +11,9 @@ The entire pipeline can be run on a SLURM cluster as follows (we assume b4 data 
 
 ```bash
 git clone https://github.com/sao-eht/ehthops.git
-cd ehthops/scripts
-cp ehthops_pipeline.sh settings.config ehthops_slurm_v2.job ../ehthops/hops-b4
-cd ../ehthops/hops-b4
+cd ehthops/ehthops/scripts
+cp ehthops_pipeline.sh settings.config ehthops_slurm_v2.job ../hops-b4
+cd ../hops-b4
 sbatch --export=EAT_SOURCE_CODE=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/src/eat,EHTIM_SOURCE_CODE=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/src/eht-imaging,CONFIG_FILE=settings.config ehthops_slurm_v2.job
 ```
 
