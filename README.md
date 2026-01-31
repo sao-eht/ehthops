@@ -7,7 +7,7 @@ EHT-HOPS calibration pipeline for mm-VLBI observations
 
 ## Quickstart
 
-The entire pipeline can be run on a SLURM cluster as follows (we assume b4 data is being processed):
+The entire pipeline can be run on a SLURM cluster as follows (we assume b4 data are being processed):
 
 ```bash
 git clone https://github.com/sao-eht/ehthops.git
