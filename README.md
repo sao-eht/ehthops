@@ -14,7 +14,7 @@ git clone https://github.com/sao-eht/ehthops.git
 cd ehthops/ehthops/scripts
 cp ehthops_pipeline.sh settings.config ehthops_slurm_v2.job ../hops-b4
 cd ../hops-b4
-sbatch --export=EAT_SOURCE_CODE=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/src/eat,EHTIM_SOURCE_CODE=/n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/src/eht-imaging,CONFIG_FILE=settings.config ehthops_slurm_v2.job
+sbatch --export=EAT_SOURCE_CODE=/path/to/eat,EHTIM_SOURCE_CODE=/path/to/eht-imaging,CONFIG_FILE=settings.config ehthops_slurm_v2.job
 ```
 
 Some points to note:
