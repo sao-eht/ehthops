@@ -8,7 +8,8 @@ EHT-HOPS calibration pipeline for mm-VLBI observations
 ## Quickstart
 
 The EHT-HOPS pipeline is managed by the fast Python package manager `uv`. The best way to install uv on an HPC cluster is via `pipx`.
-[Install pipx](https://pipx.pypa.io/stable/installation/) (alternatively, [from source](https://github.com/pypa/pipx)) and install `uv` via `pipx`:
+Install pipx [via pip](https://pipx.pypa.io/stable/installation/) or alternatively, [from source](https://github.com/pypa/pipx).
+Then install `uv` via `pipx`:
 ```bash
 pipx install uv
 ```
