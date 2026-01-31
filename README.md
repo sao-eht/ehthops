@@ -19,7 +19,7 @@ sbatch --export=EAT_SOURCE_CODE=/path/to/eat,EHTIM_SOURCE_CODE=/path/to/eht-imag
 
 Some points to note:
 
-- Providing EAT_SOURCE_CODE to sbatch is mandatory since EAT contains all the calibration routines.
+- Providing EAT_SOURCE_CODE to `sbatch` is mandatory since EAT contains all the calibration routines.
 - Providing EHTIM_SOURCE_CODE is not mandatory, but required if post-processing (stages 6/7/8) is being requested.
 - If CONFIG_FILE is not supplied, a configuration file named __settings.config__ is assumed to be present in the current directory.
 
