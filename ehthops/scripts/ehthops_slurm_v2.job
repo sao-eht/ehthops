@@ -1,0 +1,85 @@
+#!/bin/bash
+#SBATCH -c 40 # Number of cores requested
+#SBATCH -t 1-00:00:00 # Runtime
+#SBATCH -p blackhole # Partition
+#SBATCH --mem=32G # Memory per node in MB by default (--mem or --mem-per-cpu)
+#SBATCH -e slurm-%j.err
+#SBATCH -o slurm-%j.out
+
+# Set up configuration file path (can be overridden via environment variable or command line)
+CONFIG_FILE="${1:-${CONFIG_FILE:-settings.config}}"
+
+# Set up env -- this may be different for different systems; the following are reasonable guidelines
+
+# source default bash settings from user's bashrc file.
+source "$HOME/.bashrc"
+
+# (Optional) silence uv hardlink warnings on HPC filesystems.
+export UV_LINK_MODE=copy
+
+# This script assumes it is run from within ehthops/hops-bx directories.
+RUN_DIR="$(pwd)"
+EHTHOPS_REPO="$(cd ../.. && pwd)"
+
+# Run from the root of the repo where pyproject.toml lives.
+cd "$EHTHOPS_REPO"
+uv sync --all-extras
+
+# Activate uv venv so that `python` resolves correctly in sourced scripts.
+source .venv/bin/activate
+
+# ------------------------------------------------------------
+# Install/refresh editable local libraries (EAT required; eht-imaging optional)
+#
+# Users can provide paths via environment variables when submitting the job:
+#   sbatch --export=EAT_SOURCE_CODE=/path/to/eat,EHTIM_SOURCE_CODE=/path/to/eht-imaging ehthops_slurm.job
+
+: "${EAT_SOURCE_CODE:?Set EAT_SOURCE_CODE to your EAT checkout (e.g. EAT_SOURCE_CODE=/path/to/eat sbatch run.sbatch)}"
+
+# Install EAT if not importable.
+if ! uv run python -c "import eat" >/dev/null 2>&1; then
+  uv pip install -e "$EAT_SOURCE_CODE"
+fi
+
+# Install eht-imaging only if user provided a path AND it's not already importable.
+if [[ -n "${EHTIM_SOURCE_CODE:-}" ]]; then
+  if ! uv run python -c "import ehtim" >/dev/null 2>&1; then
+    uv pip install -e "$EHTIM_SOURCE_CODE"
+  fi
+else
+  echo "NOTE: EHTIM_SOURCE_CODE not set; skipping editable install of eht-imaging." >&2
+fi
+
+# Set up HOPS environment once again with HOPS_SETUP=false (necessary to pick up all the HOPS environment variables properly).
+HOPS_SETUP=false source /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/installed/hops-3.26/bin/hops.bash
+
+# Return to the run directory.
+cd "$RUN_DIR"
+
+# Fail if eht-imaging is required but not available.
+# stages="0.bootstrap 1.+flags+wins ... 6.uvfits 7.+apriori 8.+polcal"
+
+if [[ -f "$CONFIG_FILE" ]]; then
+  # Extract the stages value, strip quotes
+  STAGES=$(
+    sed -nE 's/^[[:space:]]*stages[[:space:]]*=[[:space:]]*"(.*)"/\1/p' "$CONFIG_FILE"
+  )
+
+  if [[ -n "$STAGES" ]]; then
+    if [[ "$STAGES" =~ (^|[[:space:]])(6\.uvfits|7\.\+apriori|8\.\+polcal)([[:space:]]|$) ]]; then
+      if ! uv run python -c "import ehtim" >/dev/null 2>&1; then
+        echo "ERROR: $CONFIG_FILE requests stages that require eht-imaging:" >&2
+        echo "       $STAGES" >&2
+        echo "       Provide EHTIM_SOURCE_CODE=/path/to/eht-imaging or remove stages 6/7/8." >&2
+        exit 1
+      fi
+    fi
+  else
+    echo "WARNING: Could not parse stages from $CONFIG_FILE" >&2
+  fi
+else
+  echo "WARNING: $CONFIG_FILE not found; cannot validate whether eht-imaging is required." >&2
+fi
+
+# source the pipeline script (not `bash` but `source` because ehthops_pipeline.sh uses `return`).
+source ehthops_pipeline.sh "$CONFIG_FILE"
