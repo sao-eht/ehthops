@@ -23,4 +23,4 @@ Some points to note:
 - Providing EHTIM_SOURCE_CODE is not mandatory, but required if post-processing (stages 6/7/8) is being requested.
 - If CONFIG_FILE is not supplied, a configuration file named __settings.config__ is assumed to be present in the current directory.
 
-For a complete description of the pipeline and tutorial, refer to the documentation linked above.
+Always ensure that the values in __settings.config__ are correct. For a complete description of the pipeline and tutorial, refer to the documentation linked above.
