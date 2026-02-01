@@ -82,7 +82,7 @@ For this tutorial, we will assign the following values to the keywords:
       SET_EHTIMPATH="/home/user/software/eht-imaging"
       stages="0.bootstrap 1.+flags+wins 2.+pcal 3.+adhoc 4.+delays 5.+close 6.uvfits"
       SET_OBSYEAR="2017"
-      SET_FILTERSTRING="-b3-"
+      SET_FILTERSTRING="-lo-"
       SET_CFBAND="lo"
       SET_MIXEDPOL=true
       SET_HAXP=true
