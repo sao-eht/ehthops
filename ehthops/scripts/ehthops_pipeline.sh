@@ -64,7 +64,7 @@ workdir=$(pwd)
 if [[ "${stages[0]}" == "1.+flags+wins" ]]; then
     echo "Stage 0.boostrap not requested. Running only 0.bootstrap setup..."
     cd 0.bootstrap
-    SET_SRCDIR="${config[SET_SRCDIR]}" && SET_CORRDAT="${config[SET_CORRDAT]}" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_HAXP="${config[SET_HAXP]}" && source bin/0.launch
+    SET_SRCDIR="${config[SET_SRCDIR]}" && SET_CORRDAT="${config[SET_CORRDAT]}" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_FILTERSTRING="${config[SET_FILTERSTRING]}" && SET_CFBAND="${config[SET_CFBAND]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_HAXP="${config[SET_HAXP]}" && source bin/0.launch
     source bin/9.next
     cd ..
 fi
@@ -80,7 +80,7 @@ do
     # Run fourfit for stages 0-5
     if [[ $stage =~ ^[0-5] ]]
     then
-        SET_SRCDIR="${config[SET_SRCDIR]}" && SET_CORRDAT="${config[SET_CORRDAT]}" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_HAXP="${config[SET_HAXP]}" && source bin/0.launch
+        SET_SRCDIR="${config[SET_SRCDIR]}" && SET_CORRDAT="${config[SET_CORRDAT]}" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_FILTERSTRING="${config[SET_FILTERSTRING]}" && SET_CFBAND="${config[SET_CFBAND]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_HAXP="${config[SET_HAXP]}" && source bin/0.launch
         source bin/1.version
         if ! source bin/2.link; then
             echo "ERROR: 2.link failed in stage $stage — ABORTING PIPELINE!!!" >&2
@@ -117,7 +117,7 @@ do
     # Run stage 6 after the 5 fringe-fitting stages; INPUTDIR is now 5.+close/data
     if [ $stage == "6.uvfits" ]
     then
-        SET_EHTIMPATH="${config[SET_EHTIMPATH]}" && SET_INPUTDIR="$workdir/5.+close/data" && SET_METADIR="${config[SET_METADIR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_CAMPAIGN="${config[SET_CAMPAIGN]}" && source bin/0.launch
+        SET_EHTIMPATH="${config[SET_EHTIMPATH]}" && SET_INPUTDIR="$workdir/5.+close/data" && SET_METADIR="${config[SET_METADIR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_FILTERSTRING="${config[SET_FILTERSTRING]}" && SET_CFBAND="${config[SET_CFBAND]}" && SET_CAMPAIGN="${config[SET_CAMPAIGN]}" && source bin/0.launch
         source bin/1.convert
         source bin/2.import
         source bin/3.average
@@ -127,7 +127,7 @@ do
     # Run stage 7 after the 6 uvfits stage; INPUTDIR is now 6.uvfits
     if [ $stage == "7.+apriori" ]
     then
-        SET_EHTIMPATH="${config[SET_EHTIMPATH]}" && SET_INPUTDIR="$workdir/6.uvfits" && SET_METADIR="${config[SET_METADIR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_CAMPAIGN="${config[SET_CAMPAIGN]}" && source bin/0.launch
+        SET_EHTIMPATH="${config[SET_EHTIMPATH]}" && SET_INPUTDIR="$workdir/6.uvfits" && SET_METADIR="${config[SET_METADIR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_FILTERSTRING="${config[SET_FILTERSTRING]}" && SET_CFBAND="${config[SET_CFBAND]}" && SET_CAMPAIGN="${config[SET_CAMPAIGN]}" && source bin/0.launch
         source bin/1.antab2sefd
         source bin/2.applycal
         source bin/3.import
@@ -137,7 +137,7 @@ do
     # Run stage 8 after the 7 apriori stage; INPUTDIR is now 7.+apriori
     if [ $stage == "8.+polcal" ]
     then
-        SET_EHTIMPATH="${config[SET_EHTIMPATH]}" && SET_INPUTDIR="$workdir/7.+apriori" && SET_METADIR="${config[SET_METADIR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_CAMPAIGN="${config[SET_CAMPAIGN]}" && source bin/0.launch
+        SET_EHTIMPATH="${config[SET_EHTIMPATH]}" && SET_INPUTDIR="$workdir/7.+apriori" && SET_METADIR="${config[SET_METADIR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_FILTERSTRING="${config[SET_FILTERSTRING]}" && SET_CFBAND="${config[SET_CFBAND]}" && SET_CAMPAIGN="${config[SET_CAMPAIGN]}" && source bin/0.launch
         source bin/1.gainratiocal
         source bin/2.import
         source bin/3.average

@@ -20,16 +20,21 @@ outfiletype='both' #'hdf5', 'pickle', 'both'
 
 # band-specific parameters
 datadir="$WRKDIR/" #data to process
-band="$BAND" #label to denote band (e.g. 'b1') derived from environment variable
+band="$CFBAND" #label to denote band (e.g. 'b1')
 
 echo "2. Importing UVFITS to HDF5..."
 echo "	Work directory in which to output HDF5 files, WRKDIR: \"$WRKDIR\""
 echo "	Metadata directory containing VEX directory, METADIR: \"$METADIR\""
 echo "	EHTIMPATH: \"$EHTIMPATH\""
-echo "	Band label, BAND: \"$BAND\""
+echo "	Band label, CFBAND: \"$CFBAND\""
 echo "	Campaign/observation code, CAMPAIGN: \"$CAMPAIGN\""
 
 mkdir -p log
+
+if [ -z "${CFBAND:-}" ]; then
+    echo "Warning: CFBAND is empty! Skipping import from UVFITS to HDF5..." >&2
+    exit 0
+fi
 
 # FIRST: COHERENT SCAN-LONG AVERAGE
 idtag='vis_scan_averaged_coherent'

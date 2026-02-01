@@ -14,6 +14,7 @@ show_help() {
     echo "  SET_METADIR     Location of preset control files, META tables, ZBL flux estimates for netcal, etc"
     echo "  SET_INPUTDIR    Used only in post-processing stages. If Stage6 then $DATADIR from Stage5; if Stage7/8, then Stage6/7 base directory"
     echo "  SET_EHTIMPATH   Path to eht-imaging source code"
+    echo "  SET_CFBAND      Band name for some post-processing steps (e.g., \"b1\", \"b2\", etc)"
     echo "  SET_MIXEDPOL    Enable mixed polarization calibration (disabled by default)"
     echo "  SET_OBSYEAR     Observing year"
     echo "  SET_CAMPAIGN    EAT-recognizable observing campaign name (\"EHT2017\", \"EHT2018\", \"EHT2021\", \"EHT2022\")"
@@ -26,6 +27,7 @@ show_help() {
     echo "  -I <dir>        Set INPUTDIR"
     echo "  -m              Enable mixed polarization calibration"
     echo "  -y <yyyy>       Set OBSYEAR"
+    echo "  -B <band>       Set CFBAND"
     echo "  -c <campaign-name>       Set CAMPAIGN"
     echo "  -h, --help      Display this help message and exit"
     echo
@@ -49,10 +51,11 @@ fi
 MIXEDPOL=${SET_MIXEDPOL:-"false"}
 OBSYEAR=${SET_OBSYEAR:-"2021"}
 CAMPAIGN=${SET_CAMPAIGN:-"EHT2021"}
+CFBAND=${SET_CFBAND:-""} # Band name; if empty, UVFITS=>HDF5 import is skipped
 
 # Overwrite OBSYEAR and CAMPAIGN if passed as command-line arguments
 OPTIND=1 # start from the first argument (ignore existing shell state)
-while getopts "y:c:m" opt; do
+while getopts "y:c:B:m" opt; do
         case $opt in
                 m)
                         MIXEDPOL=true
@@ -62,6 +65,9 @@ while getopts "y:c:m" opt; do
                         ;;
                 c)
                         CAMPAIGN=$OPTARG
+                        ;;
+                B)
+                        CFBAND=$OPTARG
                         ;;
         esac
 done
@@ -96,19 +102,6 @@ DEFAULT_METADIR="$TOPDIR/../meta/eht$OBSYEAR/230GHz"
 METADIR=${SET_METADIR:-$DEFAULT_METADIR}        # location of preset control files, META tables, ZBL flux estimates for netcal, etc
 EHTIMPATH=${SET_EHTIMPATH:-""}                  # may use custom path to ehtim source (ehtim module is subdir of this directory)
 
-# Determine the band to process -- used by hops2uvfits.py in 3.import
-# special handling for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
-if [[ $OBSYEAR = "2017" ]]; then
-	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
-	if [[ $BAND = "b3" ]]; then
-		BAND="lo"
-	elif [[ $BAND = "b4" ]]; then
-		BAND="hi"
-	fi
-else
-	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
-fi
-
 # Parse command-line arguments. overwrite any existing settings
 OPTIND=1 # start from the first argument (ignore existing shell state)
 while getopts "y:c:M:I:mh" opt; do
@@ -121,6 +114,9 @@ while getopts "y:c:M:I:mh" opt; do
                         ;;
                 c)
                         CAMPAIGN=$OPTARG
+                        ;;
+                B)
+                        CFBAND=$OPTARG
                         ;;
                 M)
                         METADIR=$OPTARG
@@ -156,6 +152,11 @@ if [ ! -d "$INPUTDIR" ]; then
         return 1
 fi
 
+# Warn if CFBAND is empty (UVFITS->HDF5 import will be skipped when empty)
+if [ -z "$CFBAND" ]; then
+        echo "WARNING: CFBAND is empty. UVFITS=>HDF5 import and amplitude calibration will be skipped."
+fi
+
 # Parse arguments
 USE_DOCKER=${USE_DOCKER:-false}
 if [ x"$1" == x"--docker" ]; then
@@ -173,9 +174,10 @@ if [ x"$USE_DOCKER" == x"true" ]; then
         echo "  Top level work dir, TOPDIR:   $TOPDIR"
         echo "  Meta, METADIR:        $METADIR"
         echo "  Path to eht-imaging, EHTIMPATH:        $EHTIMPATH"
-        echo "  Band, BAND:        $BAND"
+        echo "  Control-file band, CFBAND:        $CFBAND"
         echo "  Mixed polarization calibration, MIXEDPOL: $MIXEDPOL"
         echo "  Observing year, OBSYEAR:        $OBSYEAR"
+        echo "  Band name, CFBAND:        $CFBAND"
         echo "  EAT-recognizable campaign name, CAMPAIGN:        $CAMPAIGN"
         echo "  Command:     $@"
 
@@ -193,9 +195,10 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 		-e "INPUTDIR=/data"                      \
 		-e "METADIR=/meta"                     \
                 -e "EHTIMPATH=$EHTIMPATH"    \
-		-e "BAND=$BAND"                        \
+		-e "CFBAND=$CFBAND"                        \
                 -e "MIXEDPOL=$MIXEDPOL"                \
                 -e "OBSYEAR=$OBSYEAR"                  \
+                -e "CFBAND=$CFBAND"                    \
 		-e "CAMPAIGN=$CAMPAIGN"                  \
 		$PORTFORWARD                           \
 		eventhorizontelescope/eat-notebook     \
@@ -208,9 +211,10 @@ else
         echo "  Top level work dir, TOPDIR:   $TOPDIR"
         echo "  Meta, METADIR:        $METADIR"
         echo "  Path to eht-imaging, EHTIMPATH:        $EHTIMPATH"
-        echo "  Band, BAND:        $BAND"
+        echo "  Control-file band, CFBAND:        $CFBAND"
         echo "  Mixed polarization calibration, MIXEDPOL: $MIXEDPOL"
         echo "  Observing year, OBSYEAR:        $OBSYEAR"
+        echo "  Band name, CFBAND:        $CFBAND"
         echo "  EAT-recognizable campaign name, CAMPAIGN:        $CAMPAIGN"
         echo "  Command:     $@"
 fi

@@ -37,6 +37,8 @@ The launch script can be run with the **-h** option to display the help message:
    -S <dir>        Set the base data source directory (i.e. single input data location) "
    -C <colon-separated-list-of-dirs>    Set the correlation releases/tags to use in order of precedence"
    -M <dir>        Set the metadata directory (e.g. preset control files, META tables, ZBL flux estimates for netcal)"
+   -F <string>    Set the filter string to select which data directories to link from the archive"
+   -B <band-label>  Set the band label (e.g. b1, b2, b3, b4); for EHT 2017 data, use 'lo' and 'hi'"
    -h, --help      Display this help message and exit"
 
    Example:

@@ -9,7 +9,6 @@ fi
 echo "9. Copying files for next stage"
 echo "  Container data source, SRCDIR:    \"$SRCDIR\""
 echo "  Metadata directory, METADIR:    \"$METADIR\""
-echo "  Band, BAND:    \"$BAND\""
 
 N=$(basename $PWD | sed 's/^\([0-9]*\)\..*/\1/')
 NEXT=$(echo ../$(expr $N + 1).*)

@@ -10,7 +10,7 @@ echo "HOPS data to post-process, INPUTDIR: $INPUTDIR"
 echo "Metadata, METADIR: $METADIR"
 echo "Working directory, WRKDIR: $WRKDIR"
 echo "SEFD directory, SEFDDIR: $SEFDDIR"
-echo "Band, BAND: $BAND"
+echo "Band, CFBAND: $CFBAND"
 echo "Mixedpol calibration, MIXEDPOL: $MIXEDPOL"
 
 # find all directories in $INPUTDIR that are named with expt numbers
@@ -21,9 +21,9 @@ for directory in $directories; do
         d=$(basename $directory)
 	mkdir -p $d
         if [[ "$MIXEDPOL" == true ]]; then
-            /usr/bin/time -v applycal $INPUTDIR/$d $WRKDIR $SEFDDIR/SEFD_$BAND/$d $d $METADIR --extrapolate --keepllabsphase --mixedpol > log/applycal-$d.log 2> log/applycal-$d.err &
+            /usr/bin/time -v applycal $INPUTDIR/$d $WRKDIR $SEFDDIR/SEFD_$CFBAND/$d $d $METADIR --extrapolate --keepllabsphase --mixedpol > log/applycal-$d.log 2> log/applycal-$d.err &
         else
-            /usr/bin/time -v applycal $INPUTDIR/$d $WRKDIR $SEFDDIR/SEFD_$BAND/$d $d $METADIR --extrapolate --keepllabsphase > log/applycal-$d.log 2> log/applycal-$d.err &
+            /usr/bin/time -v applycal $INPUTDIR/$d $WRKDIR $SEFDDIR/SEFD_$CFBAND/$d $d $METADIR --extrapolate --keepllabsphase > log/applycal-$d.log 2> log/applycal-$d.err &
         fi
 done
 

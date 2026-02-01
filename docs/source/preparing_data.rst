@@ -65,14 +65,14 @@ Notes on data organization
 There are are a few important points to consider regarding the organization of the data:
 
 - The **<expt_no>/<scan_no>/<input_mk4_files>** structure must be preserved.
-- Somewhere along the path in **$SRCDIR/$CORRDAT/.../** before **<expt_no>/<scan_no>/**, the string **-$BAND-** with values b1/b2/b3/b4 (or lo/hi in the case of EHT 2017 data) must occur.
+- Somewhere along the path in **$SRCDIR/$CORRDAT/.../** before **<expt_no>/<scan_no>/**, the string **$FILTERSTRING** is expected to occur (best used for filtering data by band).
 
 The packaged EHT data made available for calibration almost always honour the above structure. In the case of mixedpol data, 
 if $HAXP is true, then the ALMA-only data in the **-haxp** directories will replace the polconverted ALMA data in the **-hops** 
 directories for calibration. In that case, this naming pattern will also be expected for the **-haxp** directories.
 
 The EHT-HOPS pipeline does not expect the data to be organized in any specific way beyond this. There could be any number of 
-directories between $CORRDAT and the **<expt_no>/** level, as long as the string **-$BAND-** is present somewhere in that path. 
+directories between $CORRDAT and the **<expt_no>/** level, as long as the string **$FILTERSTRING** is present somewhere in that path. 
 In the EHT 2017 data downloaded for this tutorial, the band designation is indicated by the strings "-hi-" and "-lo-" in the path.
 
 The data are now ready for calibration.

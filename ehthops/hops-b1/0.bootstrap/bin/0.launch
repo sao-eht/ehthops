@@ -17,6 +17,8 @@ show_help() {
     echo "  SET_SRCDIR      Single input data location for correlator source data"
     echo "  SET_SHRDIR      Location of shared resources (summary notebooks, etc)"
     echo "  SET_OBSYEAR     Campaign year"
+    echo "  SET_FILTERSTRING  Regex pattern to filter directories to process"
+    echo "  SET_CFBAND        Band whose control files (if shipped with the repo) are to be used in calibration"
     echo "  SET_MIXEDPOL    Enable mixed polarization calibration"
     echo "  SET_HAXP        Use HAXP data for ALMA (i.e. assume linearpol ALMA data present in -haxp directories)"
     echo
@@ -39,7 +41,7 @@ show_help() {
     echo "  - The SET_* environment variables take precedence over the default values."
     echo
     echo "Example:"
-    echo "  SET_SRCDIR=/path/to/data/archive && SET_CORRDAT=\"Rev1-Cal:Rev1-Sci\" && SET_METADIR=/path/to/metadata && SET_OBSYEAR=2021 && source bin/0.launch"
+    echo "  SET_SRCDIR=/path/to/data/archive && SET_CORRDAT=\"Rev1-Cal:Rev1-Sci\" && SET_METADIR=/path/to/metadata && SET_OBSYEAR=2021 source bin/0.launch"
 }
 
 if [ -f /.dockerenv ]; then
@@ -80,21 +82,9 @@ SHRDIR=${SET_SHRDIR:-$DEFAULT_SHRDIR}          # location of shared resources (s
 MIXEDPOL=${SET_MIXEDPOL:-"false"}              # passed to pipeline scripts to control behavior
 HAXP=${SET_HAXP:-"false"}                      # flag to mix-in haxp products into source data
 
-# special handling for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
-if [[ $OBSYEAR = "2017" ]]; then
-	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
-	if [[ $BAND = "b3" ]]; then
-		BAND="lo"
-	elif [[ $BAND = "b4" ]]; then
-		BAND="hi"
-	fi
-else
-	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
-fi
-
 # Parse remaining command-line arguments, overwrite any existing settings
 OPTIND=1 # start from the first argument (ignore existing shell state)
-while getopts "y:d:S:C:M:mxh" opt; do
+while getopts "y:d:S:C:M:F:B:mxh" opt; do
         case $opt in
                 y)
                         OBSYEAR=$OPTARG # already handled above
@@ -113,6 +103,12 @@ while getopts "y:d:S:C:M:mxh" opt; do
                         ;;
                 M)
                         METADIR=$OPTARG
+                        ;;
+                F)
+                        FILTERSTRING=$OPTARG
+                        ;;
+                B)
+                        CFBAND=$OPTARG
                         ;;
                 h|help)
                         show_help
@@ -150,6 +146,15 @@ if [[ $MIXEDPOL = "false" && $HAXP = "true" ]]; then
         echo "MIXEDPOL set to true because HAXP is set to true."
 fi
 
+# Warn if FILTERSTRING is empty
+if [ -z "${FILTERSTRING}" ]; then
+        echo "WARNING:: FILTERSTRING is empty; continuing without directory filtering."
+fi
+# Warn if CFBAND is empty
+if [ -z "${CFBAND}" ]; then
+        echo "WARNING:: CFBAND is empty; continuing without band-specific control files."
+fi
+
 # Parse arguments
 USE_DOCKER=${USE_DOCKER:-false}
 if [ x"$1" == x"--docker" ]; then
@@ -169,7 +174,8 @@ if [ x"$USE_DOCKER" == x"true" ]; then
         echo "  HOPS data output, DATADIR:   $DATADIR"
         echo "  Dir to share resources b/w stages, SHRDIR:       $SHRDIR"
         echo "  Meta, METADIR:        $METADIR"
-        echo "  Band, BAND:        $BAND"
+        echo "  Filter string, FILTERSTRING:        $FILTERSTRING"
+        echo "  Band, CFBAND:        $CFBAND"
         echo "  Campaign year, OBSYEAR:        $OBSYEAR"
         echo "  Mixed polarization calibration, MIXEDPOL:        $MIXEDPOL"
         echo "  Use HAXP data for ALMA, HAXP:        $HAXP"
@@ -192,7 +198,7 @@ if [ x"$USE_DOCKER" == x"true" ]; then
 		-e "SRCDIR=/data"                      \
 		-e "SHRDIR=/usr/local/pipeline/share"  \
 		-e "METADIR=/meta"                     \
-		-e "BAND=$BAND"                        \
+		-e "CFBAND=$CFBAND"                        \
 		-e "OBSYEAR=$OBSYEAR"                  \
 		-e "MIXEDPOL=$MIXEDPOL"                \
                 -e "HAXP=$HAXP"                        \
@@ -209,7 +215,8 @@ else
         echo "  HOPS data output, DATADIR:   $DATADIR"
         echo "  Dir to share resources b/w stages, SHRDIR:       $SHRDIR"
         echo "  Meta, METADIR:        $METADIR"
-        echo "  Band, BAND:        $BAND"
+        echo "  Control-file band, CFBAND:        $CFBAND"
+        echo "  Filter string, FILTERSTRING:        $FILTERSTRING"
         echo "  Campaign year, OBSYEAR:        $OBSYEAR"
         echo "  Mixed polarization calibration, MIXEDPOL:        $MIXEDPOL"
         echo "  Use HAXP data for ALMA, HAXP:        $HAXP"
@@ -224,8 +231,12 @@ N=$(basename $PWD | sed 's/^\([0-9]*\)\..*/\1/')
 NDIR=$(echo ../$N.*)
 
 CFSET1=${METADIR}"/cf/cf"${N}"_bx_*"
-CFSET2=${METADIR}"/cf/cf"${N}"_"${BAND}"_*"
-
-echo ${CFSET1} ${CFSET2} "-> $NDIR"
-cp -n ${CFSET1} ${CFSET2} "$NDIR"
+if [ -n "${CFBAND}" ]; then
+        CFSET2="${METADIR}/cf/cf${N}_${CFBAND}_*"
+        echo ${CFSET1} ${CFSET2} "-> $NDIR"
+        cp -n ${CFSET1} ${CFSET2} "$NDIR"
+else
+        echo ${CFSET1} "-> $NDIR"
+        cp -n ${CFSET1} "$NDIR"
+fi
 

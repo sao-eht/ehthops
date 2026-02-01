@@ -3,6 +3,7 @@
 echo "2. Running fourfit..."
 echo "	Container work directory, WRKDIR: \"$WRKDIR\""
 echo "	Container HOPS data output, DATADIR:    \"$DATADIR\""
+echo "	Control-file band, CFBAND:    \"$CFBAND\""
 
 cd $WRKDIR
 md5sum `which fourfit` > log/fourfit.md5
@@ -10,7 +11,11 @@ md5sum `which fourfit` > log/fourfit.md5
 N=$(basename $PWD | sed 's/^\([0-9]*\)\..*/\1/')
 
 # concatenate control files in order: all bands, band-specific, stage-specific (including past stages)
-cat cf*_bx_* cf*_${BAND}_* > temp/cf_all
+if [ -n "${CFBAND}" ]; then
+    cat cf*_bx_* cf*_${CFBAND}_* > temp/cf_all
+else
+    cat cf*_bx_* > temp/cf_all
+fi
 find . -maxdepth 1 -type f -name 'cf*' -not -name 'cf*_b?_*' -exec cat {} + >> temp/cf_all
 #(time parallel --bar --joblog log/parallel.log \
 (time parallel --nice 15 --load 95% --joblog log/parallel.log \
