@@ -15,6 +15,7 @@ dependencies = [
   "requests",
   "marimo",
   "tqdm",
+  "pyyaml",
 ]
 
 [project.optional-dependencies]
@@ -24,6 +25,21 @@ post = [
   "future",
   "tables",
 ]
+dev = [
+  "pytest>=7.0",
+  "pytest-cov>=4.0",
+  "ruff>=0.1.0",
+]
+
+[project.scripts]
+ehthops = "ehthops.cli:main"
 
 [tool.uv]
 managed = true
+
+[tool.ruff]
+line-length = 100
+select = ["E", "W", "F", "I", "B", "C4"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
