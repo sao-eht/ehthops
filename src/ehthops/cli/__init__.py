@@ -2,6 +2,6 @@
 CLI module for the EHT HOPS pipeline.
 """
 
-from .ehthops import main
+from ehthops.cli.ehthops import main
 
 __all__ = ['main']

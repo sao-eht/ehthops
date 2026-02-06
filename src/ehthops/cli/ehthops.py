@@ -6,95 +6,108 @@ A Python implementation of the EHT HOPS data processing pipeline.
 """
 
 import argparse
+import logging
 import sys
-import yaml
 from pathlib import Path
+from typing import Dict, Any, Optional, Union
 
 from ehthops.logging import setup_logging
+from ehthops.staging import launch_stage, link_hops_directories
+from ehthops.config import load_config, validate_config, get_base_dir, get_stage_name, get_stage_map
 
 
-def load_config(config_path):
-    """Load configuration from YAML file."""
-    try:
-        with open(config_path, 'r') as file:
-            config = yaml.safe_load(file)
-        return config
-    except FileNotFoundError:
-        print(f"Error: Configuration file '{config_path}' not found.")
-        sys.exit(1)
-    except yaml.YAMLError as e:
-        print(f"Error: Invalid YAML in configuration file: {e}")
-        sys.exit(1)
-
-
-def validate_config(config):
-    """Validate required configuration parameters."""
-    required_sections = ['data', 'pipeline', 'observation']
+def run_pipeline(config: Dict[str, Any], logger: logging.Logger, base_dir: Optional[Union[str, Path]] = None) -> None:
+    """
+    Run the EHT-HOPS pipeline.
     
-    for section in required_sections:
-        if section not in config:
-            print(f"Error: Missing required section '{section}' in configuration.")
-            return False
-    
-    # Check required data fields
-    if 'srcdir' not in config['data']:
-        print("Error: Missing 'srcdir' in data configuration.")
-        return False
-    
-    if 'stages' not in config['pipeline']:
-        print("Error: Missing 'stages' in pipeline configuration.")
-        return False
-    
-    return True
+    Args:
+        config: Configuration dictionary from YAML
+        logger: Logger instance
+        base_dir: Base directory for pipeline outputs.
+                 If not specified, must be provided via config or will error.
+    """
+    logger.info("Starting EHT-HOPS Pipeline")
 
-
-def run_pipeline(config, logger):
-    """Run the EHT HOPS pipeline."""
-    logger.info("Starting EHT HOPS Pipeline")
-    
     # Display configuration summary
     logger.info(f"Source directory: {config['data']['srcdir']}")
-    logger.info(f"Correlation data: {config['data']['corrdat']}")
+    logger.info(f"Filter subdirectories in order: {config['data']['corrdat']}")
     logger.info(f"Campaign: {config['observation']['campaign']}")
     logger.info(f"Year: {config['observation']['year']}")
+    logger.info(f"Band: {config['data']['band']}")
     
     stages = config['pipeline']['stages']
     logger.info(f"Pipeline stages to run: {len(stages)} stages")
     
-    for i, stage in enumerate(stages):
-        logger.info(f"Stage {i}/{len(stages)}: {stage}")
+    base_dir = get_base_dir(config, base_dir)
+    logger.info(f"Using base directory: {base_dir}")
+    
+    if not base_dir.exists():
+        logger.info(f"Creating base directory: {base_dir}")
+        base_dir.mkdir(parents=True, exist_ok=True)
+    
+    for i, stage in enumerate(stages, start=1):
+        stage_name = get_stage_name(stage)
+        logger.info(f"Stage {i}/{len(stages)}: {stage} ({stage_name})")
         
-        # TODO: Implement actual stage processing
+        try:
+            env = launch_stage(config, stage, base_dir)
+        except Exception as e:
+            logger.error(f"Failed to launch stage {stage} ({stage_name}): {e}")
+            raise
+        
+        logger.info(f"  Processing stage {stage} ({stage_name})...")
+        
+        # Run linking step for stages 0-5 (before uvfits conversion)
+        if stage <= 5:
+            try:
+                logger.info(f"Linking MK4 data from {config['data']['srcdir']} to {base_dir/stage_name}/")
+                link_hops_directories(env)
+            except RuntimeError as e:
+                logger.error(f"Linking failed: {e}")
+                raise
+        
+        # TODO: Implement stage-specific processing
         # This is where you would call the appropriate processing functions
-        # For now, just simulate the stage execution
-        logger.info(f"  Processing stage {stage}...")
+        # for each stage based on the stage name
         
-        # Example of what each stage might do:
-        if stage == "0.bootstrap":
-            logger.info("  - Setting up data directories")
-            logger.info("  - Validating input data")
-        elif stage == "1.+flags+wins":
-            logger.info("  - Applying flags")
-            logger.info("  - Setting time windows")
-        elif stage == "2.+pcal":
-            logger.info("  - Running phase calibration")
-        # ... etc for other stages
+        if stage == 0: pass            
+        elif stage == 1: pass
+        elif stage == 2: pass
+        elif stage == 3: pass
+        elif stage == 4: pass
+        elif stage == 5: pass
+        elif stage == 6: pass
+        elif stage == 7: pass
+        elif stage == 8: pass
         
-        logger.info(f"  Stage {stage} completed")
+        logger.info(f"  Stage {stage} ({stage_name}) completed")
     
     logger.info("Pipeline execution completed successfully")
 
 
-def main():
-    """Main entry point for the EHT HOPS pipeline."""
+def main() -> None:
+    """Main entry point for the EHT-HOPS pipeline."""
+    
+    # Get stage mapping for help text
+    STAGE_MAP = get_stage_map()
+    
+    stage_help = "Valid stages:\n"
+    for num, name in STAGE_MAP.items():
+        stage_help += f"  {num}: {name}\n"
+    
     parser = argparse.ArgumentParser(
-        description="EHT HOPS Data Processing Pipeline",
+        description="EHT-HOPS Data Processing Pipeline",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
+        epilog=f"""
+{stage_help}
 Examples:
+  %(prog)s settings.yaml --base-dir /path/to/outputs
+  %(prog)s -v settings.yaml --base-dir ~/eht/run1
+  %(prog)s --dry-run settings.yaml --base-dir ./outputs
+  %(prog)s settings.yaml --stages 0 1 2
+  
+  # Or specify base_dir in settings.yaml under pipeline section
   %(prog)s settings.yaml
-  %(prog)s -v /path/to/custom/settings.yaml
-  %(prog)s --dry-run settings.yaml
         """
     )
     
@@ -118,15 +131,22 @@ Examples:
     parser.add_argument(
         '--stages',
         nargs='+',
-        help='Run only specific stages (e.g., --stages "0.bootstrap" "1.+flags+wins")'
+        type=int,
+        choices=range(0, 9),
+        metavar='STAGE',
+        help='Run only specific stages (integers 0-8, e.g., --stages 0 1 2)'
+    )
+    
+    parser.add_argument(
+        '--base-dir',
+        help='Base directory for pipeline outputs. Stage directories will be created here. '
+             'Can also be specified in settings.yaml under pipeline.base_dir'
     )
     
     args = parser.parse_args()
     
-    # Setup logging
     logger = setup_logging(args.verbose)
     
-    # Load and validate configuration
     config = load_config(args.config)
     
     if not validate_config(config):
@@ -137,17 +157,25 @@ Examples:
         logger.info(f"Overriding stages with: {args.stages}")
         config['pipeline']['stages'] = args.stages
     
-    # Run pipeline or show dry-run
     if args.dry_run:
         logger.info("DRY RUN MODE - No actual processing will be performed")
         logger.info("Configuration loaded successfully:")
         logger.info(f"  Config file: {args.config}")
         logger.info(f"  Source dir: {config['data']['srcdir']}")
-        logger.info(f"  Stages: {config['pipeline']['stages']}")
+        
+        # Display stages with their names
+        stage_info = []
+        for stage_num in config['pipeline']['stages']:
+            stage_name = get_stage_name(stage_num)
+            stage_info.append(f"{stage_num} ({stage_name})")
+        logger.info(f"  Stages: {', '.join(stage_info)}")
+        
+        if args.base_dir:
+            logger.info(f"  Base dir: {args.base_dir}")
         logger.info("Pipeline would execute the above configuration.")
     else:
         try:
-            run_pipeline(config, logger)
+            run_pipeline(config, logger, base_dir=args.base_dir)
         except KeyboardInterrupt:
             logger.warning("Pipeline interrupted by user")
             sys.exit(1)
@@ -155,7 +183,7 @@ Examples:
             logger.error(f"Pipeline failed with error: {e}")
             if args.verbose:
                 import traceback
-                traceback.print_exc()
+                traceback.print_exception()
             sys.exit(1)
 
 
