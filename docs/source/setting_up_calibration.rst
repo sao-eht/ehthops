@@ -21,10 +21,9 @@ Conventionally, in order of increasing frequency, the bands are named 1, 2, 3, a
 
 .. note::
 
-    The 2017 campaign has only two bands named "lo" and "hi". The shell scripts driving the calibration are aware of this
-    and will make the appropriate substitutions for 2017 data, mapping "lo" -> "b3" and "hi" -> "b4".
+    The 2017 campaign has only two bands named "lo" and "hi". We adopt the convention that b3=>lo and b4=>hi.
 
-Additional the repository contains the following directories:
+Additionally, the repository contains the following directories:
 
 - **scripts**: Contains the driver scripts for running the calibration pipeline and sample configuration files.
 - **share**: Jupyter noteboks that are run after each calibration stage to summarize the results and provide diagnostic information.
@@ -66,6 +65,7 @@ The sample configuration file *ehthops/settings.config* contains the following k
 - **SET_EHTIMPATH**: Path to eht-imaging source code.
 - **stages**: Stages to run (i.e. directory names found under *hops-bx*) as a space-separated string.
 - **SET_OBSYEAR**: 4-letter code representing year of observation.
+- **SET_FILTERSTRING**: Optional substring used to filter which data directories are linked from the archive. Ignored if empty.
 - **SET_MIXEDPOL**: Boolean value. Set this to true to request mixedpol calibration. This will assume that all ALMA data are in linear polarization basis while the rest are in circular polarization basis.
 - **SET_HAXP**: Boolean value. Set this to true to indicate that ALMA linear polarization data are present in *-haxp* directories and must replace circularly polarized ALMA data originally linked from *-hops* directories. Setting this to true will automatically set MIXEDPOL=true.
 - **SET_CAMPAIGN**: An EAT-recognizable code; currently EHT2017, EHT2018, EHT2021, EHT2022 are supported.
@@ -81,6 +81,7 @@ For this tutorial, we will assign the following values to the keywords:
       SET_EHTIMPATH="/home/user/software/eht-imaging"
       stages="0.bootstrap 1.+flags+wins 2.+pcal 3.+adhoc 4.+delays 5.+close 6.uvfits"
       SET_YEAR="2017"
+      SET_FILTERSTRING=""
       SET_MIXEDPOL=true
       SET_HAXP=true
       SET_CAMPAIGN="EHT2017"
