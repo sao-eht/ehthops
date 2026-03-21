@@ -64,7 +64,7 @@ workdir=$(pwd)
 if [[ "${stages[0]}" == "1.+flags+wins" ]]; then
     echo "Stage 0.boostrap not requested. Running only 0.bootstrap setup..."
     cd 0.bootstrap
-    SET_SRCDIR="${config[SET_SRCDIR]}" && SET_CORRDAT="${config[SET_CORRDAT]}" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_HAXP="${config[SET_HAXP]}" && source bin/0.launch
+    SET_SRCDIR="${config[SET_SRCDIR]}" && SET_CORRDAT="${config[SET_CORRDAT]}" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_FILTERSTRING="${config[SET_FILTERSTRING]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_HAXP="${config[SET_HAXP]}" && source bin/0.launch
     source bin/9.next
     cd ..
 fi
@@ -80,7 +80,7 @@ do
     # Run fourfit for stages 0-5
     if [[ $stage =~ ^[0-5] ]]
     then
-        SET_SRCDIR="${config[SET_SRCDIR]}" && SET_CORRDAT="${config[SET_CORRDAT]}" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_HAXP="${config[SET_HAXP]}" && source bin/0.launch
+        SET_SRCDIR="${config[SET_SRCDIR]}" && SET_CORRDAT="${config[SET_CORRDAT]}" && SET_METADIR="${config[SET_METADIR]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_FILTERSTRING="${config[SET_FILTERSTRING]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_HAXP="${config[SET_HAXP]}" && source bin/0.launch
         source bin/1.version
         if ! source bin/2.link; then
             echo "ERROR: 2.link failed in stage $stage — ABORTING PIPELINE!!!" >&2

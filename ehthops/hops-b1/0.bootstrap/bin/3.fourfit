@@ -3,6 +3,7 @@
 echo "2. Running fourfit..."
 echo "	Container work directory, WRKDIR: \"$WRKDIR\""
 echo "	Container HOPS data output, DATADIR:    \"$DATADIR\""
+echo "	Band, BAND:    \"$BAND\""
 
 cd $WRKDIR
 md5sum `which fourfit` > log/fourfit.md5
