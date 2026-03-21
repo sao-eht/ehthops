@@ -3,29 +3,21 @@
 OUTDIR=${SET_OUTDIR:-"$WRKDIR/tests"}
 
 echo "4. Sanity check"
-echo "	Container work directory, WRKDIR: \"$WRKDIR\""
-echo "	Container HOPS data output, DATADIR:    \"$DATADIR\""
-echo "	Notebook output, OUTDIR:          \"$OUTDIR\""
+echo "  Container work directory, WRKDIR: \"$WRKDIR\""
+echo "  Container HOPS data output, DATADIR:    \"$DATADIR\""
+echo "  Notebook output, OUTDIR:          \"$OUTDIR\""
 
 cd $WRKDIR
 mkdir -p "$OUTDIR"
 
-find "$SHRDIR" -maxdepth 1 -type f -name "*.ipynb" | while read -r f; do
-	fname=$(basename "$f")
-        echo "$fname"
-	papermill "$SHRDIR/$fname" "$OUTDIR/$fname" > "log/$fname.log" 2> "log/$fname.err" #& # uncomment to run notebooks concurrently
-done
-#wait $(jobs -p) # uncomment to run notebooks concurrently
-
-find "$OUTDIR" -maxdepth 1 -type f -name "*.ipynb" | while read -r f; do
+# Execute and export Marimo notebooks to HTML
+find "$SHRDIR" -maxdepth 1 -type f -name "*.py" | while read -r f; do
         fname=$(basename "$f")
         echo "$fname"
-        jupyter nbconvert                          \
-                --to html "$f"             \
-                --output  "$OUTDIR/${fname%ipynb}html" \
-                >         "log/${fname%ipynb}html.log" \
-                2>        "log/${fname%ipynb}html.err" &
+        marimo export html "$f" \
+                --output "$OUTDIR/${fname%.py}.html" \
+                > "log/${fname}.log" \
+                2> "log/${fname}.err"
 done
-wait $(jobs -p)
 
 echo "DONE"
