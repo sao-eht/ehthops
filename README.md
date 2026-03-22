@@ -18,9 +18,9 @@ pipx install uv
 ```bash
 git clone https://github.com/sao-eht/ehthops.git
 cd ehthops/ehthops/scripts
-cp ehthops_pipeline.sh settings.config ehthops_slurm_v2.job ../hops-b4
+cp ehthops_pipeline.sh settings.config ehthops_slurm.job ../hops-b4
 cd ../hops-b4
-sbatch --export=EAT_SOURCE_CODE=/path/to/eat,EHTIM_SOURCE_CODE=/path/to/eht-imaging,CONFIG_FILE=/path/to/configfile ehthops_slurm_v2.job
+sbatch --export=EAT_SOURCE_CODE=/path/to/eat,EHTIM_SOURCE_CODE=/path/to/eht-imaging,CONFIG_FILE=/path/to/configfile ehthops_slurm.job
 ```
 
 Things to note:
