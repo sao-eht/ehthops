@@ -98,7 +98,7 @@ The install location for HOPS binaries is specified using the ``--prefix`` optio
    make install
 
 .. note::
-   Do not forget the ``\-\-enable-devel`` flag above! Without it, some necessary HOPS utilities will not be built.
+   Do not forget the ``--enable-devel`` flag above! Without it, some necessary HOPS utilities will not be built.
 
 The HOPS environment can be activated in the shell with
 
