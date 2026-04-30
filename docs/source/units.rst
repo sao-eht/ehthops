@@ -2,13 +2,13 @@
 Units in various HOPS products
 ==============================
 
-By Lindy Blackburn
+by Lindy Blackburn
 
 Amplitude
 ---------
 
-    the alist amplitude is taken directly from type 208 fringe summ
-    the alist amplitude is in correlation coefficient with corrections applied to try to bring it to ideal analog correlation coefficient. this includes van-vleck correction and a small correction due to coherence loss from gridding
+    the ``alist`` amplitude is taken directly from ``type_208`` fringe sum
+    the ``alist`` amplitude is in correlation coefficient with corrections applied to try to bring it to ideal analog correlation coefficient. this includes van-vleck correction and a small correction due to coherence loss from gridding
 
 Signal-to-noise ratio
 ---------------------
@@ -70,7 +70,7 @@ sign convention in control file
     positive pc_delay for REM station results in positive slope of baseline phase vs frequency (between bands)
     positive pc_phases for REM station results in positive baseline phase shift
     positive adhoc phases for REM station results in positive baseline phase shift
-    "The delay on baseline AB is positive if the signal arrives at station B after station A (Rogers et al. 1974). The phase is positive as well, modulo 2π ambiguities." ((link)[https://eht-wiki.haystack.mit.edu/@api/deki/files/45/=sign-of-phases.pdf])
+    "The delay on baseline AB is positive if the signal arrives at station B after station A (Rogers et al. 1974). The phase is positive as well, modulo 2π ambiguities." (https://eht-wiki.haystack.mit.edu/@api/deki/files/45/=sign-of-phases.pdf).
 
 Type 212 data
 -------------
@@ -86,28 +86,28 @@ Type 212 data
 
 HOPS alist amplitude/SNR
 
-    1. Stepping backward through fourfit:
-    2. alist amplitude and SNR comes directly from type_208
-    3. `fill_208.c`:
+    1. Stepping backward through ``fourfit``:
+    2. ``alist`` amplitude and SNR comes directly from ``type_208``
+    3. ``fill_208.c``:
     
        .. code-block:: c
           
           struct type_status *status,
           t208->amplitude = status->delres_max/10000.
           t208->snr = status->snr;
-    4. `fill_fringe_info.c`:
+    4. ``fill_fringe_info.c``:
 
        .. code-block:: c
           
           extern struct type_status status;
           error += fill_208 (pass, &param, &status, &t202, &t208);
-    5. `output.c`:
+    5. ``output.c``:
 
        .. code-block:: c
           
           fill_fringe_info (root, pass, fringe_name)
-    6. The SNR is actually calculated in `make_plotdata`, from first principles, `delres_max` and `amp_corr_fact` (just to undo the fact that is was previously applied to `delres_max`)
-    7. `make_plotdata.c`:
+    6. The SNR is actually calculated in ``make_plotdata``, from first principles, ``delres_max`` and ``amp_corr_fact`` (just to undo the fact that is was previously applied to ``delres_max``)
+    7. ``make_plotdata.c``:
 
        .. code-block:: c
           
@@ -115,7 +115,7 @@ HOPS alist amplitude/SNR
           eff_npol = pass->npols > 2 ? 2 : pass->npols;
                                         /*  Signal to Noise Ratio */
           status.snr = status.delres_max * param.inv_sigma * sqrt((double)status.total_ap_frac * eff_npol) / (1.0E4 * status.amp_corr_fact);
-    8. `search.c`:
+    8. ``search.c``:
 
        .. code-block:: c
           
@@ -125,20 +125,20 @@ HOPS alist amplitude/SNR
           max_amp[lag] = amps[mbd_index][dr_index];
           global_max = max_amp[lag]
           update (pass, max_mbd_cell, global_max, max_lag, max_dr_cell, GLOBAL);
-    9. `update.c`:
+    9. ``update.c``:
 
        .. code-block:: c
           
           extern struct type_status status;
           update (struct type_pass* pass, int mbd_cell, double max_val, int lag, int drate_cell, int flag)
           status.delres_max = max_val;
-    10. `norm_fx.c`:
+    10. ``norm_fx.c``:
 
         .. code-block:: c
           
            status.total_ap_frac   += datum->usbfrac;
-    11. `amp_corr_fact` includes the correction for `fringe rate`, and folded into `delres_max`
-    12. `interp.c`:
+    11. ``amp_corr_fact`` includes the correction for ``fringe rate``, and folded into ``delres_max``
+    12. ``interp.c``:
 
         .. code-block:: c
           
@@ -157,9 +157,9 @@ HOPS alist amplitude/SNR
            status.amp_corr_fact = status.amp_rate_corr;
            status.delres_max = drfmax * status.amp_corr_fact;
 
-But what about the **type 212** data?
+But what about the ``type_212`` data?
 
-    1. `make_plotdata.c`:
+    1. ``make_plotdata.c``:
 
        .. code-block:: c
           
@@ -179,13 +179,13 @@ But what about the **type 212** data?
              plot.phasor[pass->nfreq][ap] = sum_ap[ap];
              plot.weights[pass->nfreq][ap] = ap_cnt[ap];
              }
-    2. `fill_fringe_info.c`:
+    2. ``fill_fringe_info.c``:
 
        .. code-block:: c
           
           for (fr=0; fr<pass->nfreq; fr++)
             error += fill_212 (pass, &status, &param, fr, fringe.t212[fr]);
-    3. `fill_212.c`:
+    3. ``fill_212.c``:
 
        .. code-block:: c
 

@@ -55,7 +55,7 @@ Some notes on the environment variables and running the stages manually:
   - *antab/* -- contains the ANTAB files for all tracks and bands for the campaign.
   - *vex/* -- contains the observed VEX schedules for the campaign.
 
-.. note::
+.. todo::
    Instructions to run as Docker image to be added.
 
 Helper scripts

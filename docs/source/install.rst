@@ -1,58 +1,42 @@
 ================================================
-Meta-Environment Setup for the EHT-HOPS Pipeline
+Installing the EHT-HOPS pipeline
 ================================================
 
 This page describes how to prepare the *meta environment* required to run the EHT-HOPS pipeline under SLURM.
-The pipeline expects a mixed environment consisting of:
+This environment consists of:
 
-* An existing ``HOPS`` installation (required),
-* A Python virtual environment managed with ``uv``,
-* A local editable copy of ``EAT`` (required), and
-* A local editable copy of ``eht-imaging`` (optional).
+1. A ``HOPS`` installation [compatible versions are 3.24 and 3.26],
+2. A Python virtual environment shipped alongside ``ehthops`` (+ local copies of ``EAT`` and ``eht-imaging``).
 
-.. note::
-
-   The SLURM script is designed to assemble this environment automatically at runtime, but the same requirements
-   apply when preparing the installation manually. If running via SLURM, follow the procedure in ``README.md``
-   to launch the pipeline. The manual ``HOPS`` installation is still required, but the ``uv`` environment and
-   editable dependencies will be set up automatically by the SLURM script.
-
-Installing HOPS
----------------
+HOPS (one-time setup)
+--------------------------------
 
 Pre-requisites
 ^^^^^^^^^^^^^^
 
-On Ubuntu, some or all of the following packages may be necessary to be able to compile HOPS successfully.
-Note that the exact names might differ on different systems
+1. On Ubuntu, some or all of the following packages may be necessary for HOPS compilation to succeed.
+Note that the exact names might differ on different systems.
 
 .. code-block:: bash
 
    sudo apt install gcc make gfortran libx11-dev ghostscript libfftw3-dev parallel
    sudo apt install gdb flex bison pkg-config autoconf automake gettext libtool
 
-``FFTW`` is a pre-requisite for HOPS that should have been installed in the previous step. If not,
-download `FFTW <https://fftw.org/>`_ manually and run the following commands to install it
-
-.. code-block:: bash
-
-   ./configure --prefix=</path/to/install/fftw> --enable-shared --enable-threads --enable-openmp
-   make
-   make install
-
-If ``FFTW`` has been installed in a non-standard path, the following environment variables may be necessary.
-Try this only if HOPS complains that FFTW3 is missing
+2. Ensure that the above step has installed ``FFTW3``. If not, `install it manually from the 
+official page <https://fftw.org/>`_. *If* HOPS complains ``FFTW3`` is missing (e.g. ``FFTW3`` is
+installed in a non-standard path), ensure that the following environment variables are set.
 
 .. code-block:: bash
 
    export FFTW3_LIBS="-L</path/to/fftw/lib>"
    export FFTW3_CFLAGS="-I</path/to/fftw/include>"
 
-``PGPLOT`` is a pre-requisite for HOPS. Download `PGPLOT <https://sites.astro.caltech.edu/~tjp/pgplot/>`_ and
-follow `these instructions <https://www.gnu.org/software/gnuastro/manual/html_node/PGPLOT.html>`_ to
-install it. Note that the switch from ``g77`` to ``gfortran`` is necessary on any modern Linux system.
+3. Download `PGPLOT <https://sites.astro.caltech.edu/~tjp/pgplot/>`_ and follow
+`these instructions <https://www.gnu.org/software/gnuastro/manual/html_node/PGPLOT.html>`_
+to install it. Note that the recommended switch from ``g77`` to ``gfortran`` is necessary
+on any modern Linux system.
 
-Define the following environment variables before compiling HOPS v3.24 so that ``PGPLOT`` and ``FFTW`` are
+4. Define the following environment variables before compiling HOPS so that ``PGPLOT`` and ``FFTW`` are
 discoverable by HOPS during compilation
 
 .. code-block:: bash
@@ -66,52 +50,61 @@ discoverable by HOPS during compilation
 
 Downloading and installing HOPS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-We have tested the following on both HOPS v3.24 and v3.26.
+
+The `public release of HOPS <https://www.haystack.mit.edu/haystack-observatory-postprocessing-system-hops/>`_
+does not contain some astronomy-specific utilities. Some parts of the pipeline (such as the ``average`` command)
+may not exist or work as expected. **Please contact the EHT-HOPS pipeline developers** to obtain the correct version
+of HOPS compatible with ``ehthops``.
 
 .. note::
-   The public version of HOPS shown below does not contain some astronomy-specific utilities. Some parts of the pipeline
-   (such as the *average* command) may not exist or work as expected. Please contact the EHT-HOPS pipeline developers for
-   the customised version of HOPS. These utilities will be made available outside HOPS in a future release.
+   The missing utilities will be made available as part of the ``EAT`` library in a future release,
+   at which point the public release of HOPS will be sufficient for the pipeline:
 
-Download `HOPS <https://www.haystack.mit.edu/haystack-observatory-postprocessing-system-hops/>`_
+   .. code-block:: bash
 
-.. code-block:: bash
+      wget -nH https://web.mit.edu/haystack-www/hops/hops-3.24-3753.tar.gz
 
-   wget -nH https://web.mit.edu/haystack-www/hops/hops-3.24-3753.tar.gz
+   Until then, the correct way to obtain HOPS is to contact the EHT-HOPS pipeline developers.
 
-The -nH argument prevents the entire directory structure on the host from being recreated locally.
-Regardless of whether you are using the public version of HOPS or the version provided by the
-EHT-HOPS pipeline developers, the following steps are the same.
-
-The HOPS developers recommend building HOPS in a separate directory from the source code
-(this is separate from the install directory for HOPS). Untar HOPS version 3.24 (or 3.26)
-to ``/path/to/parentdir`` and create a ``build`` directory under ``parentdir`` in which to compile HOPS.
-The install location for HOPS binaries is specified using the ``--prefix`` option passed to configure
+Developers of HOPS recommend building the software in an isolated ``build`` directory and installing it in
+a separate location specified using ``configure --prefix``. Assuming that we are unpacking HOPS 3.24 under
+``/home/user/software/src`` and installing it under ``/home/user/software/installed/hops-3.24``, the
+installation steps would be as follows:
 
 .. code-block:: bash
 
-   tar -xvzf hops-3.24-3753.tar.gz
+   cd /home/user/software/src
+   tar -xvzf hops-3.24-3753.tar.gz # this will create a directory named hops-3.24
    mkdir bld-3.24 # at the same directory level as hops-3.24
    cd bld-3.24
-   ../hops-3.24/configure --prefix=</path/to/install/hops-3.24> --enable-devel
+   ../hops-3.24/configure --prefix=/home/user/software/installed/hops-3.24 --enable-devel
    make all
    make install
 
-.. note::
-   Do not forget the ``--enable-devel`` flag above! Without it, some necessary HOPS utilities will not be built.
+.. warning::
 
-The HOPS environment can be activated in the shell with
+   The ``--enable-devel`` flag is mandatory to ensure that certain HOPS utilities used within ``ehthops``
+   are built and installed.
+
+Once installed, the HOPS environment can be activated in the shell with
 
 .. code-block:: bash
 
-   source </path/to/hops-3.24/bin/hops.bash>
+   source /home/user/software/installed/hops-3.24/bin/hops.bash
 
-Installing EHT-HOPS Pipeline Environment
-----------------------------------------
+Note that 
 
-The EHT-HOPS pipeline is managed by the fast Python package manager ``uv``. The best way to install
-``uv`` on an HPC cluster is via ``pipx``. Install ``pipx`` `via pip <https://pipx.pypa.io/stable/installation/>`_
-or `from source <https://github.com/pypa/pipx>`_ and add it to ``PATH``. Then install ``uv`` via ``pipx``:
+Python environment and local dependencies
+------------------------------------------------
+
+Pre-requisites
+^^^^^^^^^^^^^^^^^
+
+1. The EHT-HOPS pipeline is managed by the fast Python package manager ``uv``. The best way to install
+``uv`` on an HPC cluster is via ``pipx`` which installs ``uv`` in an isolated environment.
+Install ``pipx`` `via pip <https://pipx.pypa.io/stable/installation/>`_ or `from
+source <https://github.com/pypa/pipx>`_ and add it to your ``PATH`` environment variable. Then install
+``uv`` via ``pipx``:
 
 .. code-block:: bash
 
@@ -126,8 +119,20 @@ suppress hardlink warnings by telling ``uv`` to copy files instead of linking th
 
    export UV_LINK_MODE=copy
 
-Clone the EHT-HOPS repository to a suitable location, drop into the root of the repo (where ``pyproject.toml`` lives)
-and install the meta-environment for the pipeline with
+.. note::
+   We support and recommend ``uv`` to ensure that the Python environment is properly isolated and
+   reproducible across different systems and users. Other tools such as ``conda`` or ``mamba``
+   may also be used, but the user is responsible for ensuring that the correct versions of all
+   dependencies are installed and that the environment is properly activated when running the pipeline. 
+
+Installing the base ``ehthops`` Python environment
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. note::
+   We recommend repeating the following steps every time ``ehthops`` is cloned and set up for a new data reduction
+   to ensure that the Python environment is properly configured.
+
+Clone `the EHT-HOPS repository <https://github.com/sao-eht/ehthops>`_ and install the Python environment locally:
 
 .. code-block:: bash
 
@@ -135,17 +140,19 @@ and install the meta-environment for the pipeline with
    cd ehthops
    uv sync --all-extras
 
-The local virtual environment will be created in the repository root under ``.venv/`` with all the dependencies installed.
-The virtual environment can now be activated with
+The local virtual environment will be created in the repository root under ``.venv/`` and can be activated with
 
 .. code-block:: bash
 
    source .venv/bin/activate
 
+Updating the Python environment
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Ensure that the ``uv`` environment is active in the shell before proceeding to install the editable dependencies.
 
 The pipeline requires a local copy of the ``EAT`` package which can be obtained `here <https://github.com/sao-eht/eat>`_.
-Change directory to a suitable location, clone the repository, and install in editable mode:
+Change directory to a suitable location, clone the repository, and install it in editable mode:
 
 .. code-block:: bash
 

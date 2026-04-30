@@ -9,22 +9,22 @@ single directory corresponding to an epoch/track/HOPS expt number.
 We will calibrate the publicly available L1 data from the EHT 2017 observing campaign for this tutorial.
 These data can be downloaded either from the `ALMA Science Portal <https://almascience.nrao.edu/almadata/ec/eht/>`_ or `CyVerse Data Commons (DOI: 10.25739/kat4-na03) <https://datacommons.cyverse.org/browse/iplant/home/shared/commons_repo/curated/EHTC_2017L1_May2022>`_.
 
-For this tutorial, we will download the data from the directory **2016.1.01154.V**:
+For this tutorial, we will download the data from the directory ``2016.1.01154.V``:
 
 .. code-block:: bash
 
     cd /home/user/calibration/data
     wget -r -np -nH --cut-dirs=3 -A "*-hops.tgz,*-haxp.tgz" https://almascience.nrao.edu/almadata/ec/eht/2016.1.01154.V/
 
-The **\*-hops.tgz** files consist of the final correlated data (in which ALMA correlations have been converted to circular
-polarization basis), while the **\*-haxp.tgz** files contain the mixedpol ALMA-only data.
+The ``*-hops.tgz`` files consist of the final correlated data (in which ALMA correlations have been converted to circular
+polarization basis), while the ``*-haxp.tgz`` files contain the mixedpol ALMA-only data.
 
 .. note::
 
-    If the **-x** option is passed to **0.launch**, the ALMA data in the **-haxp** directories will replace the polconverted
-    **-hops** ALMA data during calibration. In this tutorial, we concern ourselves only with the polconverted data in **-hops**.
+    If the ``-x`` option is passed to ``0.launch``, the ALMA data in the ``-haxp`` directories will replace the polconverted
+    ``-hops`` ALMA data during calibration. In this tutorial, we concern ourselves only with the polconverted data in ``-hops``.
     
-Untar the data to the destination directory **/home/user/calibration/data/extracted/2016.1.01154.V** using the following script:
+Untar the data to the destination directory ``/home/user/calibration/data/extracted/2016.1.01154.V`` using the following script:
 
 .. code-block:: bash
 
@@ -64,15 +64,16 @@ Notes on data organization
 
 There are are a few important points to consider regarding the organization of the data:
 
-- The **<expt_no>/<scan_no>/<input_mk4_files>** structure must be preserved.
-- Somewhere along the path in **$SRCDIR/$CORRDAT/.../** before **<expt_no>/<scan_no>/**, the string **-$BAND-** with values b1/b2/b3/b4 (or lo/hi in the case of EHT 2017 data) and, optionally, the string **FILTERSTRING**, must occur.
+- The ``<expt_no>/<scan_no>/<input_mk4_files>`` structure must be preserved.
+- Somewhere along the path in ``$SRCDIR/$CORRDAT/.../`` before ``<expt_no>/<scan_no>/``, the string ``-$BAND-`` with values b1/b2/b3/b4 (or lo/hi in the case of EHT 2017 data) and, optionally, the string ``FILTERSTRING``, must occur.
 
 The packaged EHT data made available for calibration almost always honour the above structure. In the case of mixedpol data, 
-if $HAXP is true, then the ALMA-only data in the **-haxp** directories will replace the polconverted ALMA data in the **-hops** 
-directories for calibration. In that case, this naming pattern will also be expected for the **-haxp** directories.
+if ``$HAXP`` is ``true``, then the ALMA-only data in the ``-haxp`` directories will replace the polconverted ALMA data in the ``-hops`` 
+directories for calibration. In that case, this naming pattern will also be expected for the ``-haxp`` directories.
 
 The EHT-HOPS pipeline does not expect the data to be organized in any specific way beyond this. There could be any number of 
-directories between $CORRDAT and the **<expt_no>/** level, as long as the string **-$BAND-** (and, optionally, **FILTERSTRING**) is present somewhere in that path. 
-In the EHT 2017 data downloaded for this tutorial, the band designation is indicated by the strings "-hi-" and "-lo-" in the path.
+directories between ``$CORRDAT`` and the ``<expt_no>/`` level, as long as the string ``-$BAND-`` (and, optionally, ``FILTERSTRING``)
+is present somewhere in that path. In the EHT 2017 data downloaded for this tutorial, the band designation is indicated by the
+strings ``-hi-`` and ``-lo-`` in the path.
 
 The data are now ready for calibration.

@@ -2,14 +2,13 @@
 Setting up the calibration run
 ==============================
 
-The EHT-HOPS pipeline is driven by a series of shell scripts that execute the various stages of the calibration process step-by-step.
+``ehthops`` pipeline is driven by a series of shell scripts that execute the various stages of the calibration process step-by-step.
 Sample driver scripts for running the entire pipeline are provided in the **scripts** directory of the EHT-HOPS repository.
 
 Setting up the repository
 -------------------------
 
-Clone the public git repository for the EHT-HOPS pipeline.
-All the calibrated output files will be created within this directory:
+Clone the public git repository for the EHT-HOPS pipeline. All the calibrated output files will be created within this directory:
 
 .. code-block:: bash
 
