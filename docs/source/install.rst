@@ -5,7 +5,7 @@ Installing the EHT-HOPS pipeline
 This page describes how to prepare the *meta environment* required to run the EHT-HOPS pipeline under SLURM.
 This environment consists of:
 
-1. A ``HOPS`` installation [compatible versions are 3.24 and 3.26],
+1. A ``HOPS`` installation [version 3.26],
 2. A Python virtual environment shipped alongside ``ehthops`` (+ local copies of ``EAT`` and ``eht-imaging``).
 
 HOPS (one-time setup)
@@ -62,22 +62,22 @@ of HOPS compatible with ``ehthops``.
 
    .. code-block:: bash
 
-      wget -nH https://web.mit.edu/haystack-www/hops/hops-3.24-3753.tar.gz
+      wget -nH https://web.mit.edu/haystack-www/hops/<hops-version-number>.tar.gz
 
    Until then, the correct way to obtain HOPS is to contact the EHT-HOPS pipeline developers.
 
 Developers of HOPS recommend building the software in an isolated ``build`` directory and installing it in
-a separate location specified using ``configure --prefix``. Assuming that we are unpacking HOPS 3.24 under
-``/home/user/software/src`` and installing it under ``/home/user/software/installed/hops-3.24``, the
-installation steps would be as follows:
+a separate location specified using ``configure --prefix``. Assuming that we are unpacking the custom
+HOPS 3.26 version obtained from the developers to ``/home/user/software/src`` and installing it under
+``/home/user/software/installed/hops-3.26``, the installation steps would be as follows:
 
 .. code-block:: bash
 
    cd /home/user/software/src
-   tar -xvzf hops-3.24-3753.tar.gz # this will create a directory named hops-3.24
-   mkdir bld-3.24 # at the same directory level as hops-3.24
-   cd bld-3.24
-   ../hops-3.24/configure --prefix=/home/user/software/installed/hops-3.24 --enable-devel
+   tar -xvzf hops-dv-tc-3.26swc.tar.gz # this will create a directory named hops-3.26
+   mkdir bld-3.26 # at the same directory level as hops-3.26
+   cd bld-3.26
+   ../hops-3.26/configure --prefix=/home/user/software/installed/hops-3.26 --enable-devel
    make all
    make install
 
@@ -90,7 +90,7 @@ Once installed, the HOPS environment can be activated in the shell with
 
 .. code-block:: bash
 
-   source /home/user/software/installed/hops-3.24/bin/hops.bash
+   source /home/user/software/installed/hops-3.26/bin/hops.bash
 
 Note that 
 
