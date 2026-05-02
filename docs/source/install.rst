@@ -166,3 +166,13 @@ clone the ``dev`` branch of ``eht-imaging``, and install it in editable mode:
 
    git clone --branch dev https://github.com/achael/eht-imaging.git
    uv pip install -e eht-imaging
+
+Once the above steps are completed, the Python environment should be properly set up to run the EHT-HOPS pipeline.
+All four bands can be processed with the same environment since the dependencies are shared across bands.
+
+.. note::
+   
+   By default, the pipeline will create all the output data products in the same directory as the input data and code.
+   The easiest way to recalibrate the same data with new settings or calibrate new data, is to clone ``ehthops``
+   anew and set the Python environment up in the new clone.
+
