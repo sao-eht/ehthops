@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.19.4"
+__generated_with = "0.23.0"
 app = marimo.App()
 
 
@@ -57,18 +57,38 @@ def _(a_snrcut):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    For all rows uniquely identified by *index_cols*, we compute the polarization fraction (and its error) using the corresponding SNR values for each polarization product. Entries in the alist file for which all four polarization products are not present are ignored.
+    For all rows uniquely identified by *index_cols*, we compute the fractional polarization (and its error) using the corresponding SNR values for each polarization product. Entries in the alist file for which all four polarization products are not present are ignored.
+
+    To ensure that mixedpol visibilities are accounted for, we pivot on two disjointed sets of polarizations, (LL, LR, RL, RR) and (XL, XR, YL, YR), and combine the two dataframes just before plotting polfrac by source.
     """)
     return
 
 
 @app.cell
-def _(a_snrcut, np):
+def _(a_snrcut, np, pd):
     index_cols = 'expt_no scan_no gmst timetag baseline source u v'.split()
-    p = a_snrcut.pivot_table(aggfunc='first', index=index_cols, columns=['polarization'], values=['snr']).dropna()
-    p['fpol'] = np.sqrt(p.snr.LR * p.snr.RL / (p.snr.LL * p.snr.RR))
-    p['fpol_err'] = np.sqrt(2.0 / (p.snr.LL * p.snr.RR))
-    q = p.reset_index()
+
+    circ_pols = {'LL', 'LR', 'RL', 'RR'}
+    mixed_pols  = {'XL', 'XR', 'YL', 'YR'}
+
+    a_circ = a_snrcut[a_snrcut.polarization.isin(circ_pols)]
+    a_mixed = a_snrcut[a_snrcut.polarization.isin(mixed_pols)]
+
+    frames = []
+
+    if not a_circ.empty:
+        p_circ = a_circ.pivot_table(aggfunc='first', index=index_cols, columns=['polarization'], values=['snr']).dropna()
+        p_circ['fpol'] = np.sqrt(p_circ.snr.LR * p_circ.snr.RL / (p_circ.snr.LL * p_circ.snr.RR))
+        p_circ['fpol_err'] = np.sqrt(2.0 / (p_circ.snr.LL * p_circ.snr.RR))
+        frames.append(p_circ)
+
+    if not a_mixed.empty:
+        p_mixed = a_mixed.pivot_table(aggfunc='first', index=index_cols, columns=['polarization'], values=['snr']).dropna()
+        p_mixed['fpol'] = np.sqrt(p_mixed.snr.XR * p_mixed.snr.YL / (p_mixed.snr.XL * p_mixed.snr.YR))
+        p_mixed['fpol_err'] = np.sqrt(2.0 / (p_mixed.snr.XL * p_mixed.snr.YR))
+        frames.append(p_mixed)
+
+    q = pd.concat(frames).reset_index() if frames else pd.DataFrame()
     return (q,)
 
 
@@ -91,7 +111,7 @@ def _(pftrend, pfuv, plt, q):
         fig1 = pftrend(q, src)
         figures_all.append(fig1)
         plt.close(fig1)  # Close after adding to list
-    
+
         fig2 = pfuv(q, src, 'jet')
         figures_all.append(fig2)
         plt.close(fig2)  # Close after adding to list
@@ -111,6 +131,7 @@ def _(mo):
 @app.cell
 def _():
     import marimo as mo
+
     return (mo,)
 
 
@@ -129,7 +150,7 @@ def _():
     from matplotlib.legend import Legend
 
     sns.reset_orig()
-    return Legend, hops, itertools, np, os, plt, util
+    return Legend, hops, itertools, np, os, pd, plt, util
 
 
 @app.cell
@@ -144,6 +165,7 @@ def _(plt):
 
     def toiter(x):
         return(x if hasattr(x, '__iter__') else [x,])
+
     return
 
 
@@ -159,7 +181,7 @@ def _(mo):
 def _(Legend, days, itertools, np, plt):
     def pftrend(b, src):
         fig = plt.figure(figsize=(12, 4))  # Create new figure explicitly
-    
+
         df = b[b.source == src].copy()
         t = np.hstack((df.gmst.sort_values().values, df.gmst.sort_values().values + 24.0))
         idx = np.argmax(np.diff(t))  # Ensure that the GMST is in the range 0-24 hours
@@ -186,8 +208,9 @@ def _(Legend, days, itertools, np, plt):
         _ = lax.add_artist(leg)
         plt.subplots_adjust(hspace=0, wspace=0)
         _ = plt.suptitle('%s fractional polarization vs GMST' % src, y=fig.subplotpars.top, va='bottom')
-    
+
         return fig  # Return the figure
+
     return (pftrend,)
 
 
@@ -195,7 +218,7 @@ def _(Legend, days, itertools, np, plt):
 def _(days, plt):
     def pfuv(b, src, cmap='jet'):
         fig = plt.figure(figsize=(12, 3))  # Create new figure explicitly
-    
+
         df = b[b.source == src].sort_values('fpol')
         ax = None
         lim = 1.1e-3 * max(df.u.abs().max(), df.v.abs().max())
@@ -212,8 +235,9 @@ def _(days, plt):
         plt.subplots_adjust(hspace=0, wspace=0)
         _ = plt.suptitle('%s fractional polarization vs (u, v) [Gly]' %
                          src, y=fig.subplotpars.top, va='bottom')
-    
+
         return fig  # Return the figure
+
     return (pfuv,)
 
 
