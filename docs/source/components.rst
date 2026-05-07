@@ -11,12 +11,10 @@ A detailed description of the capabilities of the pipeline can be found in
 Stages in the pipeline
 ----------------------
 
-.. figure:: components.png
+.. figure:: ehthops-control-flow.png
    :alt: Control flow in the EHT-HOPS pipeline
 
-   Control flow in the EHT-HOPS pipeline. The red border encompass the scripts that are run during each stage of the pipeline.
-   The green ellipses denote the locations at which the data are stored during each round of calibration. Symbolic links are
-   created from the local archive at the beginning of each stage at these locations, instead of copying them over to save disk space.
+   A typical EHT-HOPS pipeline workflow (Natarajan et al., in prep).
 
 The HOPS ``fourfit`` program performs fringe-fitting. It takes as input a control file consisting of commands that control data selection
 and the calibration parameters to be used. Calibration scripts in the ``eat`` library are also used to generate control files which are passed
