@@ -89,7 +89,7 @@ where
 ``<scan_no>``
     Directory names corresponding to the scan number. These directories contain all input ``mk4`` files corresponding to a single scan.
 
-Refer to the :ref:`command-line-options` section for more information on how
+Refer to the :ref:`launching-the-pipeline` section for more information on how
 the data organization determines the options passed to the ``0.launch`` script at each stage.
 
 .. _metadata-organization:
@@ -119,5 +119,5 @@ The metadata directory (by default, found under ``ehthops/meta``) must be organi
         │   └── <track>.vex
         └── array.txt
 
-Refer to the :ref:`command-line-options` section for more information on how to set ``METADIR``
+Refer to the :ref:`launching-the-pipeline` section for more information on how to set ``METADIR``
 environment variable at each stage in the ``0.launch`` script.
