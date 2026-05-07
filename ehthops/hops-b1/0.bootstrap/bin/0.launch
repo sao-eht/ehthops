@@ -28,11 +28,10 @@ show_help() {
     echo "  -y <yyyy>       Campaign year"
     echo "  -m              Enable mixed polarization calibration"
     echo "  -x              Use HAXP data for ALMA (i.e. assume linearpol ALMA data present in -haxp directories)"
-    echo "  -p <pattern>    Set the directory pattern for matching (regex); this is the parent directory of the <expt-no>/<scan> directories"
-    echo "  -d <depth>      Set the directory depth for searching (integer); this is the distance between <CORRDAT> and <scan> directories"
     echo "  -S <dir>        Set the base data source directory (i.e. single input data location) "
     echo "  -C <colon-separated-list-of-dirs>    Set the correlation releases/tags to use in order of precedence"
     echo "  -M <dir>        Set the metadata directory (e.g. preset control files, META tables, ZBL flux estimates for netcal)"
+    echo "  -F <regex>      Set the filter string to select which directories to process"
     echo "  -h, --help      Display this help message and exit"
     echo
     echo "Note:"
@@ -56,7 +55,7 @@ OBSYEAR=${SET_OBSYEAR:-"2021"}
 
 # Overwrite OBSYEAR if passed from command line argument as it affects some default values
 OPTIND=1 # start from the first argument (ignore existing shell state)
-while getopts "y:" opt; do
+while getopts ":y:" opt; do
         case $opt in
                 y)
                         OBSYEAR=$OPTARG
@@ -95,7 +94,7 @@ fi
 
 # Parse remaining command-line arguments, overwrite any existing settings
 OPTIND=1 # start from the first argument (ignore existing shell state)
-while getopts "y:d:S:C:M:F:mxh" opt; do
+while getopts "y:mxS:C:M:F:h" opt; do
         case $opt in
                 y)
                         OBSYEAR=$OPTARG # already handled above
