@@ -92,7 +92,7 @@ For this tutorial, we will assign the following values to the keywords:
       SET_CAMPAIGN="EHT2017"
       SET_INPUTDIR=""
 
-More information on how to determine the values of the command-line options can be found :ref:`here <command-line-options>`.
+More information on how to determine the values of the command-line options can be found :ref:`here <launching-the-pipeline>`.
 
 Submitting the calibration job to SLURM
 ---------------------------------------

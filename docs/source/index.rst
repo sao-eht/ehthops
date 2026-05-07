@@ -12,7 +12,7 @@ Welcome to ehthops's documentation!
 
    intro
    install
-   components
+   pipeline_components
    running
    tutorial
    units
