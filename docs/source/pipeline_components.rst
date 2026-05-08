@@ -16,10 +16,11 @@ Stages in the pipeline
 
    A typical EHT-HOPS pipeline workflow (Natarajan et al., in prep).
 
-The HOPS ``fourfit`` program performs fringe-fitting. It takes as input a control file consisting of commands that control data selection
-and the calibration parameters to be used. Calibration scripts in the ``eat`` library are also used to generate control files which are passed
-to `fourfit` in the following stage. The control files can also include commands added by the user manually after inspecting the data and the
-calibration solutions.
+The HOPS ``fourfit`` program performs fringe-fitting. A control file consisting of "control commands" that specify data selection
+and the calibration parameters is passed as input to ``fourfit``. At each fringe-fitting stage, calibration scripts in the ``eat``
+library are used to generate more control commands and files which are then appended to the original set of commands and passed
+on to ``fourfit`` in subsequent stages. Control commands added manually by the user after inspecting the data and the calibration
+solutions may also be added to the control files.
 
 Fringe-fitting is performed in stages 0 to 5, with each stage building on the solutions derived in the previous stage.
 All stages consist of the following common steps:
@@ -35,12 +36,12 @@ All stages consist of the following common steps:
 
 The stage-specific steps (usually step 7) perform additional operations and write out control files to be input to the following stages.
 
-- ``7.pcal`` in stage ``1.+flags+wins`` -- applies flags and search windows and derives phase bandpass solutions.
-- ``7.adhoc`` in stage ``2.+pcal`` -- applies bandpass phase calibration solutions and derives adhoc phase solutions.
-- ``7.delays`` in stage ``3.+adhoc`` -- applies adhoc phase solutions and derives R/L delay solutions.
-- ``7.close`` in stage ``4.+delays`` -- applies delay calibration solutions and globalizes fringe solutions.
+- ``7.pcal`` in stage ``1.+flags+wins`` -- derives phase bandpass solutions.
+- ``7.adhoc`` in stage ``2.+pcal`` -- derives adhoc phase solutions.
+- ``7.delays`` in stage ``3.+adhoc`` -- derives R-L delay solutions.
+- ``7.close`` in stage ``4.+delays`` -- globalizes fringe solutions.
 
-Stage ``5.+close`` performs one final round of fringe-fitting in which all the solutions are applied.
+Stage ``5.+close`` performs one final round of fringe-fitting in which all the solutions obtained above are applied.
 
 The post-processing stages are not part of the main pipeline workflow, and are run only as needed:
 
