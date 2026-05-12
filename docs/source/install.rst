@@ -14,17 +14,61 @@ HOPS (one-time setup)
 Pre-requisites
 ^^^^^^^^^^^^^^
 
-1. On Ubuntu, some or all of the following packages may be necessary for HOPS compilation to succeed.
-Note that the exact names might differ on different systems.
+1. On Ubuntu/Debian, install the required build tools and libraries with:
 
 .. code-block:: bash
 
+   sudo apt update
    sudo apt install gcc make gfortran libx11-dev ghostscript libfftw3-dev parallel
    sudo apt install gdb flex bison pkg-config autoconf automake gettext libtool
 
-2. Ensure that the above step has installed ``FFTW3``. If not, `install it manually from the 
-official page <https://fftw.org/>`_. *If* HOPS complains ``FFTW3`` is missing (e.g. ``FFTW3`` is
-installed in a non-standard path), ensure that the following environment variables are set.
+On a shared HPC system, you may not have ``sudo`` access and the system may not
+use ``apt``. In that case, first check whether the required tools are already
+available (note that the command-line invocation of ``ghostscript`` is ``gs``):
+
+.. code-block:: bash
+
+   for cmd in gcc make gfortran gs parallel gdb flex bison pkg-config autoconf automake gettext libtool; do
+       if command -v "$cmd" >/dev/null 2>&1; then
+           printf "OK      %-12s %s\n" "$cmd" "$(command -v "$cmd")"
+       else
+           printf "MISSING %-12s\n" "$cmd"
+       fi
+   done
+
+   if pkg-config --exists fftw3; then
+       echo "OK      fftw3       $(pkg-config --modversion fftw3)"
+   else
+       echo "MISSING fftw3 or pkg-config cannot find fftw3"
+   fi
+
+For any missing dependency, check if it is available as an environment module. For instance:
+
+.. code-block:: bash
+
+   module avail gcc
+   module avail fftw
+   module avail ghostscript
+   module avail parallel
+
+If they are, load them with ``module load`` and ensure that the environment variables they set are
+properly exported in the shell. For instance, if ``fftw`` is available as a module, loading it with
+
+.. code-block:: bash
+
+   module load fftw
+
+should set the necessary environment variables for HOPS to find it during compilation.
+
+.. note::
+   At this point, if you are still missing dependencies, ask the system administrators to install
+   the equivalent packages or provide them through the module system. Instructions for a custom 
+   ``FFTW3`` installation are provided below.
+
+2. **If** ``FFTW3`` **is still missing**, install it manually `from the official page
+<https://fftw.org/>`_. Since a custom installation will not place ``FFTW3`` in a standard location,
+HOPS might complain that ``FFTW3`` is missing. To prevent this, ensure that the following environment
+variables are set:
 
 .. code-block:: bash
 
@@ -37,7 +81,7 @@ to install it. Note that the recommended switch from ``g77`` to ``gfortran`` is 
 on any modern Linux system.
 
 4. Define the following environment variables before compiling HOPS so that ``PGPLOT`` and ``FFTW`` are
-discoverable by HOPS during compilation
+discoverable by HOPS during compilation:
 
 .. code-block:: bash
 
