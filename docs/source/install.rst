@@ -140,7 +140,7 @@ Pre-requisites
    reproducible across different systems and users. Other tools such as ``conda`` or ``mamba``
    may also be used, but the user is responsible for ensuring that the correct versions of all
    dependencies are installed and that the environment is properly activated when running the pipeline.
-   If going the ``conda`` route, we suggest using ``micromamba`` instead, which is considerably faster and lighter.
+   If going the ``conda`` route, we suggest using ``micromamba`` instead, which is considerably faster and lighter than ``conda``.
 
 1. ``ehthops`` uses GNU Parallel to run multiple fringe-fitting jobs in parallel. If ``parallel`` is not available on the system,
 it can be installed `from the official page <https://www.gnu.org/software/parallel/>`_ or via the system package manager.
