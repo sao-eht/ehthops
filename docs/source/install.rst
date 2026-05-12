@@ -28,7 +28,7 @@ available (note that the command-line invocation of ``ghostscript`` is ``gs``):
 
 .. code-block:: bash
 
-   for cmd in gcc make gfortran gs parallel gdb flex bison pkg-config autoconf automake gettext libtool; do
+   for cmd in gcc make gfortran gs parallel gdb flex bison pkg-config autoconf automake gettext libtoolize; do
        if command -v "$cmd" >/dev/null 2>&1; then
            printf "OK      %-12s %s\n" "$cmd" "$(command -v "$cmd")"
        else
