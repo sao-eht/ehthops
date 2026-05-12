@@ -19,7 +19,7 @@ Pre-requisites
 .. code-block:: bash
 
    sudo apt update
-   sudo apt install gcc make gfortran libx11-dev ghostscript libfftw3-dev parallel
+   sudo apt install gcc make gfortran libx11-dev ghostscript libfftw3-dev
    sudo apt install gdb flex bison pkg-config autoconf automake gettext libtool
 
 On a shared HPC system, you may not have ``sudo`` access and the system may not
@@ -28,7 +28,7 @@ available (note that the command-line invocation of ``ghostscript`` is ``gs``):
 
 .. code-block:: bash
 
-   for cmd in gcc make gfortran gs parallel gdb flex bison pkg-config autoconf automake gettext libtoolize; do
+   for cmd in gcc make gfortran gs gdb flex bison pkg-config autoconf automake gettext libtoolize; do
        if command -v "$cmd" >/dev/null 2>&1; then
            printf "OK      %-12s %s\n" "$cmd" "$(command -v "$cmd")"
        else
@@ -49,7 +49,6 @@ For any missing dependency, check if it is available as an environment module. F
    module avail gcc
    module avail fftw
    module avail ghostscript
-   module avail parallel
 
 If they are, load them with ``module load`` and ensure that the environment variables they set are
 properly exported in the shell. For instance, if ``fftw`` is available as a module, loading it with
@@ -136,7 +135,37 @@ Python environment and local dependencies
 Pre-requisites
 ^^^^^^^^^^^^^^^^^
 
-1. The EHT-HOPS pipeline is managed by the fast Python package manager ``uv``. The best way to install
+.. note::
+   We support and recommend ``uv`` to ensure that the Python environment is properly isolated and
+   reproducible across different systems and users. Other tools such as ``conda`` or ``mamba``
+   may also be used, but the user is responsible for ensuring that the correct versions of all
+   dependencies are installed and that the environment is properly activated when running the pipeline.
+   If going the ``conda`` route, we suggest using ``micromamba`` instead, which is considerably faster and lighter.
+
+1. ``ehthops`` uses GNU Parallel to run multiple fringe-fitting jobs in parallel. If ``parallel`` is not available on the system,
+it can be installed `from the official page <https://www.gnu.org/software/parallel/>`_ or via the system package manager.
+For instance, on Ubuntu/Debian:
+
+.. code-block:: bash
+
+   sudo apt update
+   sudo apt install parallel
+
+will install GNU Parallel. On an HPC system, check if it is available as an environment module and load it if so:
+
+.. code-block:: bash
+
+   module avail parallel # if successful, load it with the following command
+   module load parallel
+
+Otherwise, ask the system administrators to install it or provide it through the module system.
+
+.. note::
+   ``parallel`` can also be installed via ``micromamba``. Ensure that the correct version
+   is installed and that the environment is properly activated when running the pipeline.
+   Note that the ``uv`` environment created in the next step is independent of any ``micromamba`` environment.
+
+2. The EHT-HOPS pipeline is managed by the fast Python package manager ``uv``. The best way to install
 ``uv`` on an HPC cluster is via ``pipx`` which installs ``uv`` in an isolated environment.
 Install ``pipx`` `via pip <https://pipx.pypa.io/stable/installation/>`_ or `from
 source <https://github.com/pypa/pipx>`_ and add it to your ``PATH`` environment variable. Then install
@@ -155,11 +184,8 @@ suppress hardlink warnings by telling ``uv`` to copy files instead of linking th
 
    export UV_LINK_MODE=copy
 
-.. note::
-   We support and recommend ``uv`` to ensure that the Python environment is properly isolated and
-   reproducible across different systems and users. Other tools such as ``conda`` or ``mamba``
-   may also be used, but the user is responsible for ensuring that the correct versions of all
-   dependencies are installed and that the environment is properly activated when running the pipeline. 
+Without the above setting ``uv`` will copy files after throwing warnings about hardlinking.
+These can be safely ignored as long as the ``uv sync`` command in the next section completes successfully.
 
 Installing the base ``ehthops`` Python environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
