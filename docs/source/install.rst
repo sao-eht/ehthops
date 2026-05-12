@@ -28,7 +28,7 @@ installed in a non-standard path), ensure that the following environment variabl
 
 .. code-block:: bash
 
-   export FFTW3_LIBS="-L</path/to/fftw/lib>"
+   export FFTW3_LIBS="-L</path/to/fftw/lib> -lfftw3"
    export FFTW3_CFLAGS="-I</path/to/fftw/include>"
 
 3. Download `PGPLOT <https://sites.astro.caltech.edu/~tjp/pgplot/>`_ and follow
