@@ -103,8 +103,8 @@ for d in $CORRDAT; do
 
             # If HAXP=true then replace ALMA data with the contents of "haxp" directories
             if [[ "$HAXP" == true ]]; then
-                # Generate haxp parent directory names by replacing "hops" with "haxp"
-                haxp_src_scan_dir="${src_scan_dir/hops\//haxp/}"
+                # Generate haxp parent directory names by replacing the last occurrence of "hops" with "haxp"
+                haxp_src_scan_dir=$(echo "$src_scan_dir" | sed 's|\(.*\)hops/|\1haxp/|')
 
                 # remove all files starting with "A" in the dest scan dir
                 find "$dest_scan_dir" -name "A*" -exec rm {} \;
