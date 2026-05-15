@@ -22,9 +22,21 @@ cp -n bin/[01234569]* "$NEXT/bin"
 #------------------------------------------------------------------------------
 echo "Copying (no clobber) control files to the next stage"
 
-echo cf* data/cf* "-> $NEXT"
-cp -n cf* data/cf*    "$NEXT"
-
+found_cf_files=false
+if ls cf* 1>/dev/null 2>&1; then
+	echo "cf* -> $NEXT"
+	cp -n cf* "$NEXT"
+	found_cf_files=true
+fi
+if ls data/cf* 1>/dev/null 2>&1; then
+	echo "data/cf* -> $NEXT"
+	cp -n data/cf* "$NEXT"
+	found_cf_files=true
+fi
+if ! $found_cf_files; then
+	echo "  WARNING: No control files found to copy to the next stage! This is expected for stage 0.bootstrap." >&2
+	echo "  Otherwise, check if the current stage has generated the necessary control files." >&2
+fi
 #------------------------------------------------------------------------------
 if [ -d data/adhoc ]; then
 	echo "Copying adhoc-phase files to the next stage"
