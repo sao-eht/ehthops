@@ -3,9 +3,19 @@
 # Usage: `[SET_ENVVAR=...] 0.launch --docker [docker command]` or
 #        `[SET_ENVVAR=...] && source 0.launch [docker command]`
 
+# Bail out the right way: 'return' if the script is sourced, 'exit' if executed.
+# (Works in both bash and zsh; must come before any top-level return/exit.)
+_sourced=0
+if [ -n "$ZSH_VERSION" ]; then
+	case $ZSH_EVAL_CONTEXT in *:file*) _sourced=1;; esac
+elif [ -n "$BASH_VERSION" ]; then
+	[ "$0" != "${BASH_SOURCE[0]}" ] && _sourced=1
+fi
+if [ "$_sourced" -eq 1 ]; then _bail=return; else _bail=exit; fi
+
 # Function to display help message
 show_help() {
-    echo "Usage: [SET_ENVVAR1=...] && [SET_ENVVAR2=...] && source bin/$(basename "${BASH_SOURCE[0]}") [options]"
+    echo "Usage: [SET_ENVVAR1=...] && [SET_ENVVAR2=...] && source bin/$(basename "${BASH_SOURCE[0]:-$0}") [options]"
     echo
     echo "Useful environment variables:"
     echo "============================="
@@ -47,7 +57,7 @@ if [ -f /.dockerenv ]; then
 	echo "  1. sets up the host environment for HOPS, or"
 	echo "  2. launches a HOPS docker container."
 	echo "Avoid running it inside a container."
-	exit 1
+	$_bail 1
 fi
 
 # Default values can be adjusted by defining SET_* env variables prior to running launch
@@ -119,32 +129,32 @@ while getopts "y:mxS:C:M:F:h" opt; do
                         ;;
                 h)
                         show_help
-                        return 0
+                        $_bail 0
                         ;;
                 \?)
                         echo "Invalid option: -$OPTARG" >&2
                         show_help
-                        return 1
+                        $_bail 1
                         ;;
                 :)
                         echo "Option -$OPTARG requires an argument." >&2
                         show_help
-                        return 1
+                        $_bail 1
                         ;;
         esac
 done
 
 # Perform some basic checks
 if [ ! -d "$METADIR" ]; then
-        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: METADIR=${METADIR} does not exist! Exiting..."
-        return 1
+        echo "From $(basename "${BASH_SOURCE[0]:-$0}") ERROR:: METADIR=${METADIR} does not exist! Exiting..."
+        $_bail 1
 fi
 if [ ! -d "$SRCDIR" ]; then
-        echo "From $(basename "${BASH_SOURCE[0]}") ERROR:: SRCDIR=${SRCDIR} does not exist! Exiting..."
-        return 1
+        echo "From $(basename "${BASH_SOURCE[0]:-$0}") ERROR:: SRCDIR=${SRCDIR} does not exist! Exiting..."
+        $_bail 1
 fi
 if [ ! -d "$SHRDIR" ]; then
-        echo "From $(basename "${BASH_SOURCE[0]}") WARNING:: SHRDIR=${SHRDIR} does not exist! Continuing without generating summary notebooks..."
+        echo "From $(basename "${BASH_SOURCE[0]:-$0}") WARNING:: SHRDIR=${SHRDIR} does not exist! Continuing without generating summary notebooks..."
 fi
 
 # if MIXEDPOL=false and HAXP=true, then set MIXEDPOL=true and throw a warning
@@ -160,14 +170,14 @@ fi
 
 # Parse arguments
 USE_DOCKER=${USE_DOCKER:-false}
-if [ x"$1" == x"--docker" ]; then
+if [ x"$1" = x"--docker" ]; then
 	USE_DOCKER=true
 	shift
 fi
 
 # Run docker or setup environment
 # When running docker, we link the DIR paths to absolute paths, and set corresponding ENV variables in docker with -v
-if [ x"$USE_DOCKER" == x"true" ]; then
+if [ x"$USE_DOCKER" = x"true" ]; then
 	echo "0. Launching a HOPS docker container"
 
         echo "  Corr release(s), CORRDAT:   $CORRDAT"
@@ -184,7 +194,7 @@ if [ x"$USE_DOCKER" == x"true" ]; then
         echo "  Use HAXP data for ALMA, HAXP:        $HAXP"
         echo "  Command:     $@"
 
-	if [ $# == 0 ]; then # no command line argument
+	if [ $# = 0 ]; then # no command line argument
 		PORTFORWARD='-p 8888:8888'
 	fi
 
@@ -231,12 +241,27 @@ else
 fi
 
 # copy stage-specific control files from METADIR
-N=$(basename $PWD | sed 's/^\([0-9]*\)\..*/\1/')
-NDIR=$(echo ../$N.*)
+(
+	if [ -n "$ZSH_VERSION" ]; then
+		setopt null_glob
+	elif [ -n "$BASH_VERSION" ]; then
+		shopt -s nullglob
+	fi
 
-CFSET1=${METADIR}"/cf/cf"${N}"_bx_*"
-CFSET2=${METADIR}"/cf/cf"${N}"_"${BAND}"_*"
+	N=$(basename "$PWD" | sed 's/^\([0-9]*\)\..*/\1/')
+	NDIR=$(echo ../"$N".*)
 
-echo ${CFSET1} ${CFSET2} "-> $NDIR"
-cp -n ${CFSET1} ${CFSET2} "$NDIR"
+	# The '*' MUST be written literally here. Do not move the pattern into a
+	# variable: bash re-globs the contents of an unquoted variable, but zsh
+	# does not (GLOB_SUBST is off by default). So a pattern stored in a variable
+	# would be passed through as is and cause cp to fail.
+	cffiles=( "${METADIR}"/cf/cf"${N}"_bx_* "${METADIR}"/cf/cf"${N}"_"${BAND}"_* )
+
+	if [ "${#cffiles[@]}" -gt 0 ]; then
+		echo "${cffiles[*]} -> $NDIR"
+		cp -n "${cffiles[@]}" "$NDIR"
+	else
+		echo "WARNING: No control files matching cf${N}_bx_* or cf${N}_${BAND}_* in ${METADIR}/cf/. Nothing to copy during launch." >&2
+	fi
+)
 
