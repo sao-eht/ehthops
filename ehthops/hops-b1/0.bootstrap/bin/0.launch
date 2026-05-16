@@ -32,7 +32,7 @@ show_help() {
     echo "  -C <colon-separated-list-of-dirs>    Set the correlation releases/tags to use in order of precedence"
     echo "  -M <dir>        Set the metadata directory (e.g. preset control files, META tables, ZBL flux estimates for netcal)"
     echo "  -F <regex>      Set the filter string to select which directories to process"
-    echo "  -h, --help      Display this help message and exit"
+    echo "  -h              Display this help message and exit"
     echo
     echo "Note:"
     echo "  - The equivalent command-line options take precedence over the SET_* environment variables."
@@ -117,7 +117,7 @@ while getopts "y:mxS:C:M:F:h" opt; do
                 F)
                         FILTERSTRING=$OPTARG
                         ;;
-                h|help)
+                h)
                         show_help
                         return 0
                         ;;
