@@ -16,14 +16,23 @@ echo "Mixedpol calibration, MIXEDPOL: $MIXEDPOL"
 # find all directories in $INPUTDIR that are named with expt numbers
 directories=$(find $INPUTDIR -mindepth 1 -maxdepth 1 -type d -name "[0-9]*" | sort)
 
+# check if GNU time utility is available -- time -v for Linux and gtime -v for macOS.
+if /usr/bin/time -v true 2>/dev/null; then
+    TIME_CMD="/usr/bin/time -v"
+elif command -v gtime >/dev/null 2>&1 && gtime -v true 2>/dev/null; then
+    TIME_CMD="gtime -v"
+else
+    TIME_CMD=""
+fi
+
 # loop through epochs and calibrate
 for directory in $directories; do
         d=$(basename $directory)
 	mkdir -p $d
         if [[ "$MIXEDPOL" == true ]]; then
-            /usr/bin/time -v applycal $INPUTDIR/$d $WRKDIR $SEFDDIR/SEFD_$BAND/$d $d $METADIR --extrapolate --keepllabsphase --mixedpol > log/applycal-$d.log 2> log/applycal-$d.err &
+            $TIME_CMD applycal $INPUTDIR/$d $WRKDIR $SEFDDIR/SEFD_$BAND/$d $d $METADIR --extrapolate --keepllabsphase --mixedpol > log/applycal-$d.log 2> log/applycal-$d.err &
         else
-            /usr/bin/time -v applycal $INPUTDIR/$d $WRKDIR $SEFDDIR/SEFD_$BAND/$d $d $METADIR --extrapolate --keepllabsphase > log/applycal-$d.log 2> log/applycal-$d.err &
+            $TIME_CMD applycal $INPUTDIR/$d $WRKDIR $SEFDDIR/SEFD_$BAND/$d $d $METADIR --extrapolate --keepllabsphase > log/applycal-$d.log 2> log/applycal-$d.err &
         fi
 done
 
