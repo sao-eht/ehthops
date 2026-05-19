@@ -87,6 +87,7 @@ DEFAULT_SHRDIR="$TOPDIR/../share"
 SHRDIR=${SET_SHRDIR:-$DEFAULT_SHRDIR}          # location of shared resources (summary notebooks, etc)
 
 # Default values can be adjusted by defining SET_* env variables prior to running launch
+FILTERSTRING=${SET_FILTERSTRING:-""}           # optional filterstring to match data to keep
 MIXEDPOL=${SET_MIXEDPOL:-"false"}              # passed to pipeline scripts to control behavior
 HAXP=${SET_HAXP:-"false"}                      # flag to mix-in haxp products into source data
 
