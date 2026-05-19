@@ -1,0 +1,2076 @@
+VEX_rev = 1.5;
+*    SCHED vers: Development version 11.5. Started Apr. 2
+*    VEX/SCHED:  1.5.87
+*    Other versions: Sched:  11.5  Plot: 1.06  JPL-ephem: 1.01
+*------------------------------------------------------------------------------
+$GLOBAL;
+     ref $EXPER = e24d10;
+*                                                      +------------+
+*                         PI revision number:          |    3.0000  |
+*                                                      +------------+
+*    mode:       R2DBE
+*------------------------------------------------------------------------------
+$EXPER;
+*
+def e24d10;
+     exper_name = e24d10;
+     exper_description = "ALMA+EHT VLBI April 2024 M84 + EHT-only Sombrero";
+     PI_name = "EHTC";
+     PI_email = not@an.address;
+*    address:   The Event Horizon Telescope Collaboration
+*               Global
+*                
+*                
+*    phone:     TBD
+*    during obs:TBD
+*    fax:        
+*    notes:     M84 with ALMA, Sombrero without ALMA
+*
+*    year, doy: 2024, 100
+*    date     : Tue  9 Apr 2024
+*    MJD      : 60409
+     exper_nominal_start=2024y100d22h59m00s;
+     exper_nominal_stop=2024y101d10h42m00s;
+*
+     target_correlator = HAYSTACK;
+*
+*    integr_time    :     1.000 s
+*    number_channels:    64
+*    number_antenna :  8
+*    cross_polarize : Yes
+*    weight_func    : UNIFORM
+*    distrib_medium : FTP
+*    distrib_format : FITS
+*    source_pos_cat : STANDARD
+*    distribute_to  : 
+*                     Sub-bands 1 and 4 to MPIfR, 2 and 3 to Haystack
+*
+enddef;
+*------------------------------------------------------------------------------
+$MODE;
+*
+def band6;
+     ref $PROCEDURES = Mode_01;
+     ref $FREQ = 226100.00MHz1x2048MHz:Nn:Pv:Gl:Ax:Sz:Aa:Lm:Kt:Mg:Sw:Mm;
+     ref $IF = LO@226084MHzLPolNoTone:Nn:Pv:Gl:Ax:Sz:Aa:Lm:Kt:Mg:Sw:Mm;
+     ref $BBC = 1BBCs:Nn:Pv:Gl:Ax:Sz:Aa:Lm:Kt:Mg:Sw:Mm;
+     ref $TRACKS = MARK5B.1Ch2bit1to1:Nn:Pv:Gl:Ax:Sz:Aa:Lm:Kt:Mg:Sw:Mm;
+*    ref $HEAD_POS = DiskVoid <= obsolete definition
+     ref $ROLL = NoRoll:Nn:Pv:Gl:Ax:Sz:Aa:Lm:Kt:Mg:Sw:Mm;
+*    ref $PASS_ORDER = DiskVoid <= obsolete definition
+     ref $PHASE_CAL_DETECT = NoDetect:Nn:Pv:Gl:Ax:Sz:Aa:Lm:Kt:Mg:Sw:Mm;
+enddef;
+*------------------------------------------------------------------------------
+$STATION;
+*
+def Nn;
+     ref $SITE = NOEMA;
+     ref $ANTENNA = NOEMA;
+     ref $DAS = 2NONE<;
+enddef;
+*
+def Pv;
+     ref $SITE = PICOVEL;
+     ref $ANTENNA = PICOVEL;
+     ref $DAS = 2NONE<;
+enddef;
+*
+def Gl;
+     ref $SITE = THULE;
+     ref $ANTENNA = THULE;
+     ref $DAS = 2NONE<;
+enddef;
+*
+def Ax;
+     ref $SITE = APEX;
+     ref $ANTENNA = APEX;
+     ref $DAS = 2NONE<#02;
+enddef;
+*
+def Sz;
+     ref $SITE = SPT;
+     ref $ANTENNA = SPT;
+     ref $DAS = 2NONE<;
+enddef;
+*
+def Aa;
+     ref $SITE = ALMA;
+     ref $ANTENNA = ALMA;
+     ref $DAS = 2NONE<#02;
+enddef;
+*
+def Lm;
+     ref $SITE = LMT;
+     ref $ANTENNA = LMT;
+     ref $DAS = 2NONE<;
+enddef;
+*
+def Kt;
+     ref $SITE = KITTPEAK;
+     ref $ANTENNA = KITTPEAK;
+     ref $DAS = 2NONE<#02;
+enddef;
+*
+def Mg;
+     ref $SITE = SMTO;
+     ref $ANTENNA = SMTO;
+     ref $DAS = 2NONE<;
+enddef;
+*
+def Sw;
+     ref $SITE = SMAP;
+     ref $ANTENNA = SMAP;
+     ref $DAS = 2NONE<;
+enddef;
+*
+def Mm;
+     ref $SITE = JCMT;
+     ref $ANTENNA = JCMT;
+     ref $DAS = 2NONE<;
+enddef;
+*------------------------------------------------------------------------------
+$PROCEDURES;
+*
+def Mode_01;
+     procedure_name_prefix =  "01";
+     tape_change =  420 sec;
+     headstack_motion =    6 sec;
+     new_source_command =    5 sec;
+     new_tape_setup =   20 sec;
+     setup_always = on :  20 sec;
+     parity_check = off : 100 sec;
+     tape_prepass = off : 600 sec;
+     preob_cal  = on :  10 sec : preob;
+     midob_cal  = on :  15 sec : midob;
+     postob_cal = on :   0 sec : postob;
+enddef;
+*------------------------------------------------------------------------------
+$SITE;
+*
+def NOEMA;
+     site_type = fixed;
+     site_name = NOEMA;
+     site_ID = Nn;
+*    elev= 2617.59 long=-005:54:24. lat= 44:38:01.2
+     site_position = 4524000.43000 m:  468042.14000 m: 4460309.76000 m;
+     site_velocity =  0.000000   m/yr:  0.000000   m/yr:  0.000000  m/yr;
+*    First line below is VEX standard format.  Use only when readers are ready.
+*    site_position_epoch = 1858y322d;
+     site_position_epoch =       0;
+enddef;
+*
+def PICOVEL;
+     site_type = fixed;
+     site_name = PICOVEL;
+     site_ID = Pv;
+*    elev= 2919.41 long= 003:23:33. lat= 37:03:58.1
+     site_position = 5088967.74544 m: -301681.18586 m: 3825012.20561 m;
+     site_velocity =  0.000000   m/yr:  0.000000   m/yr:  0.000000  m/yr;
+*    First line below is VEX standard format.  Use only when readers are ready.
+*    site_position_epoch = 1997y001d;
+     site_position_epoch =   50449;
+enddef;
+*
+def THULE;
+     site_type = fixed;
+     site_name = THULE;
+     site_ID = Gl;
+*    elev=   89.40 long= 068:41:08. lat= 76:32:06.6
+     site_position =  541547.00000 m:-1387978.60000 m: 6180982.00000 m;
+     site_velocity =  0.000000   m/yr:  0.000000   m/yr:  0.000000  m/yr;
+*    First line below is VEX standard format.  Use only when readers are ready.
+*    site_position_epoch = 2008y001d;
+     site_position_epoch =   54466;
+enddef;
+*
+def APEX;
+     site_type = fixed;
+     site_name = APEX;
+     site_ID = Ax;
+*    elev= 5104.47 long= 067:45:32. lat=-23:00:20.8
+     site_position = 2225039.52970 m:-5441197.62920 m:-2479303.35970 m;
+     site_velocity =  0.000000   m/yr:  0.000000   m/yr:  0.000000  m/yr;
+*    First line below is VEX standard format.  Use only when readers are ready.
+*    site_position_epoch = 1997y001d;
+     site_position_epoch =   50449;
+     horizon_map_az =  1.0 deg: 39.0: 40.0: 68.0: 78.0: 86.0: 94.5:103.0:360.0;
+     horizon_map_el =  3.0 deg: 15.0: 15.0:  9.6:  3.0:  3.0:  5.2:  3.0:  3.0;
+enddef;
+*
+def SPT;
+     site_type = fixed;
+     site_name = SPT;
+     site_ID = Sz;
+*    elev= 2857.39 long=-045:00:00. lat=-90:00:00.0
+     site_position =       0.01000 m:       0.01000 m:-6359609.70000 m;
+     site_velocity =  0.000000   m/yr:  0.000000   m/yr:  0.000000  m/yr;
+*    First line below is VEX standard format.  Use only when readers are ready.
+*    site_position_epoch = 2008y001d;
+     site_position_epoch =   54466;
+enddef;
+*
+def ALMA;
+     site_type = fixed;
+     site_name = ALMA;
+     site_ID = Aa;
+*    elev= 5070.37 long= 067:45:17. lat=-23:01:45.2
+     site_position = 2225061.16360 m:-5440057.36994 m:-2481681.15054 m;
+     site_velocity =  0.000000   m/yr:  0.000000   m/yr:  0.000000  m/yr;
+*    First line below is VEX standard format.  Use only when readers are ready.
+*    site_position_epoch = 2011y085d;
+     site_position_epoch =   55646;
+enddef;
+*
+def LMT;
+     site_type = fixed;
+     site_name = LMT;
+     site_ID = Lm;
+*    elev= 4593.30 long= 097:18:53. lat= 18:59:08.8
+     site_position = -768715.63200 m:-5988507.07200 m: 2063354.85200 m;
+     site_velocity =  0.000000   m/yr:  0.000000   m/yr:  0.000000  m/yr;
+*    First line below is VEX standard format.  Use only when readers are ready.
+*    site_position_epoch = 2008y001d;
+     site_position_epoch =   54466;
+enddef;
+*
+def KITTPEAK;
+     site_type = fixed;
+     site_name = KITTPEAK;
+     site_ID = Kt;
+*    elev= 1901.07 long= 111:36:53. lat= 31:57:12.0
+     site_position =-1995957.62800 m:-5037394.44600 m: 3357047.27400 m;
+     site_velocity =  0.000000   m/yr:  0.000000   m/yr:  0.000000  m/yr;
+*    First line below is VEX standard format.  Use only when readers are ready.
+*    site_position_epoch = 2011y085d;
+     site_position_epoch =   55646;
+enddef;
+*
+def SMTO;
+     site_type = fixed;
+     site_name = SMTO;
+     site_ID = Mg;
+*    elev= 3158.70 long= 109:53:28. lat= 32:42:05.8
+     site_position =-1828796.20000 m:-5054406.80000 m: 3427865.20000 m;
+     site_velocity =  0.000000   m/yr:  0.000000   m/yr:  0.000000  m/yr;
+*    First line below is VEX standard format.  Use only when readers are ready.
+*    site_position_epoch = 1997y001d;
+     site_position_epoch =   50449;
+     horizon_map_az =  4.0 deg: 14.0: 29.0: 34.0: 39.0: 59.0: 61.0: 64.0: 69.0:
+                                74.0: 85.0: 93.0: 98.0:103.0:107.0:113.0:118.0:
+                               133.0:148.0:153.0:158.0:180.0:187.0:192.0:207.0:
+                               218.0:223.0:243.0:248.0:262.0:272.0:295.0:325.0:
+                               337.0:340.0:360.0;
+     horizon_map_el = 20.0 deg: 18.0: 18.0: 19.0: 22.0: 22.0: 24.0: 23.0: 22.0:
+                                24.0: 24.0: 24.0: 28.0: 28.0: 28.0: 20.0: 20.0:
+                                13.0: 12.0: 13.0: 13.0: 11.0: 11.0: 11.0:  6.0:
+                                 9.0: 10.0: 12.0: 15.0: 20.0: 23.0: 24.0: 20.0:
+                                26.0: 19.0: 19.0;
+enddef;
+*
+def SMAP;
+     site_type = fixed;
+     site_name = SMAP;
+     site_ID = Sw;
+*    elev= 4115.06 long= 155:28:39. lat= 19:49:27.2
+     site_position =-5464555.49300 m:-2492927.98900 m: 2150797.17600 m;
+     site_velocity =  0.000000   m/yr:  0.000000   m/yr:  0.000000  m/yr;
+*    First line below is VEX standard format.  Use only when readers are ready.
+*    site_position_epoch = 1997y001d;
+     site_position_epoch =   50449;
+     horizon_map_az =  0.0 deg: 44.0: 45.0: 56.0: 57.0:359.0;
+     horizon_map_el =  8.0 deg:  8.0: 24.0: 24.0:  8.0:  8.0;
+enddef;
+*
+def JCMT;
+     site_type = fixed;
+     site_name = JCMT;
+     site_ID = Mm;
+*    elev= 4120.05 long= 155:28:37. lat= 19:49:22.2
+     site_position =-5464584.67600 m:-2493001.17000 m: 2150653.98200 m;
+     site_velocity =  0.000000   m/yr:  0.000000   m/yr:  0.000000  m/yr;
+*    First line below is VEX standard format.  Use only when readers are ready.
+*    site_position_epoch = 1997y001d;
+     site_position_epoch =   50449;
+enddef;
+*------------------------------------------------------------------------------
+$ANTENNA;
+*
+def NOEMA;
+     axis_type = az : el;
+     antenna_motion = el :  30.0 deg/min : 30 sec;  * 1000.000 deg/sec/sec
+     antenna_motion = az :  60.0 deg/min : 30 sec;  * 1000.000 deg/sec/sec
+     axis_offset =    0.00000 m;
+enddef;
+*
+def PICOVEL;
+     axis_type = az : el;
+     antenna_motion = el :  30.0 deg/min : 30 sec;  * 1000.000 deg/sec/sec
+     antenna_motion = az :  30.0 deg/min : 30 sec;  * 1000.000 deg/sec/sec
+     axis_offset =    0.00000 m;
+enddef;
+*
+def THULE;
+     axis_type = az : el;
+     antenna_motion = el : 120.0 deg/min : 30 sec;  * 1000.000 deg/sec/sec
+     antenna_motion = az : 120.0 deg/min : 30 sec;  * 1000.000 deg/sec/sec
+     axis_offset =    0.00000 m;
+enddef;
+*
+def APEX;
+     axis_type = az : el;
+     antenna_motion = el :  60.0 deg/min : 30 sec;  * 1000.000 deg/sec/sec
+     antenna_motion = az :  60.0 deg/min : 30 sec;  * 1000.000 deg/sec/sec
+     axis_offset =    0.00000 m;
+enddef;
+*
+def SPT;
+     axis_type = az : el;
+     antenna_motion = el : 120.0 deg/min : 30 sec;  * 1000.000 deg/sec/sec
+     antenna_motion = az : 120.0 deg/min : 30 sec;  * 1000.000 deg/sec/sec
+     axis_offset =    0.00000 m;
+enddef;
+*
+def ALMA;
+     axis_type = az : el;
+     antenna_motion = el : 180.0 deg/min : 30 sec;  *    9.000 deg/sec/sec
+     antenna_motion = az : 360.0 deg/min : 30 sec;  *   18.000 deg/sec/sec
+     axis_offset =    0.00000 m;
+enddef;
+*
+def LMT;
+     axis_type = az : el;
+     antenna_motion = el :  60.0 deg/min : 30 sec;  *    1.000 deg/sec/sec
+     antenna_motion = az :  42.0 deg/min : 30 sec;  *    0.500 deg/sec/sec
+     axis_offset =    3.30000 m;
+enddef;
+*
+def KITTPEAK;
+     axis_type = az : el;
+     antenna_motion = el :  60.0 deg/min : 30 sec;  *    9.000 deg/sec/sec
+     antenna_motion = az :  60.0 deg/min : 30 sec;  *   18.000 deg/sec/sec
+     axis_offset =    0.00000 m;
+enddef;
+*
+def SMTO;
+     axis_type = az : el;
+     antenna_motion = el :  60.0 deg/min : 30 sec;  * 1000.000 deg/sec/sec
+     antenna_motion = az :  60.0 deg/min : 30 sec;  * 1000.000 deg/sec/sec
+     axis_offset =    0.00000 m;
+enddef;
+*
+def SMAP;
+     axis_type = az : el;
+     antenna_motion = el : 120.0 deg/min : 30 sec;  * 1000.000 deg/sec/sec
+     antenna_motion = az : 240.0 deg/min : 30 sec;  * 1000.000 deg/sec/sec
+     axis_offset =    0.00000 m;
+enddef;
+*
+def JCMT;
+     axis_type = az : el;
+     antenna_motion = el :  42.0 deg/min : 30 sec;  * 1000.000 deg/sec/sec
+     antenna_motion = az :  66.0 deg/min : 30 sec;  * 1000.000 deg/sec/sec
+     axis_offset =    0.00000 m;
+enddef;
+*------------------------------------------------------------------------------
+$DAS;
+*
+def 2NONE<;
+     record_transport_type = Mark5C;
+     electronics_rack_type = none;
+     number_drives = 2;
+     headstack = 1 :            : 0 ;
+     headstack = 2 :            : 1 ;
+     tape_motion = adaptive : 0 min: 0 min: 10 sec;
+enddef;
+*
+def 2NONE<#02;
+     record_transport_type = Mark6;
+     electronics_rack_type = none;
+     number_drives = 2;
+     headstack = 1 :            : 0 ;
+     headstack = 2 :            : 1 ;
+     tape_motion = adaptive : 0 min: 0 min: 10 sec;
+enddef;
+*------------------------------------------------------------------------------
+$SOURCE;
+*
+def M84;
+     source_name = M84;
+*    this source had calibrator code:  
+     ra = 12h25m03.7433000s; dec =  12d53'13.139000"; ref_coord_frame = J2000;
+*    ra = 12h22m31.5819836s; dec =  13d09'49.768391"; ref_coord_frame = B1950;
+*    ra = 12h26m18.6183309s; dec =  12d45'04.435690"; ref_coord_frame = Date;
+enddef;
+*
+def SOMBRERO;
+     source_name = SOMBRERO;
+*    this source had calibrator code:  
+     ra = 12h39m59.4318000s; dec = -11d37'22.996000"; ref_coord_frame = J2000;
+*    ra = 12h37m23.3864016s; dec = -11d20'55.072158"; ref_coord_frame = B1950;
+*    ra = 12h41m16.0548770s; dec = -11d45'29.570169"; ref_coord_frame = Date;
+enddef;
+*
+def OJ287;
+     source_name = OJ287;
+*    this source had calibrator code: V
+*    alternate source name: J0854+2006
+*    alternate source name: 0851+202
+*    alternate source name: J0854+20
+*    rfc_2012b Petrov, 2012, unpublished 191510 observations
+     ra = 08h54m48.8749300s; dec =  20d06'30.640780"; ref_coord_frame = J2000;
+*    ra = 08h51m57.2506184s; dec =  20d17'58.417327"; ref_coord_frame = B1950;
+*    ra = 08h56m12.3542100s; dec =  20d01'00.428846"; ref_coord_frame = Date;
+enddef;
+*
+def 3C273;
+     source_name = 3C273;
+*    this source had calibrator code: V
+*    alternate source name: J1229+0203
+*    alternate source name: 3C273B
+*    alternate source name: 1226+023
+*    alternate source name: J1229+02
+*    GSFC 2011B astro solution     31886 Observations
+     ra = 12h29m06.6997290s; dec =  02d03'08.598280"; ref_coord_frame = J2000;
+*    ra = 12h26m33.2458327s; dec =  02d19'43.305776"; ref_coord_frame = B1950;
+*    ra = 12h30m22.1083327s; dec =  01d54'59.668799"; ref_coord_frame = Date;
+enddef;
+*
+def M87;
+     source_name = M87;
+*    this source had calibrator code: V
+*    alternate source name: J1230+1223
+*    alternate source name: 3C274
+*    alternate source name: 1228+126
+*    alternate source name: J1230+12
+*    rfc_2012b Petrov, 2012, unpublished 47163 observations
+     ra = 12h30m49.4233820s; dec =  12d23'28.043660"; ref_coord_frame = J2000;
+*    ra = 12h28m17.5692797s; dec =  12d40'01.748835"; ref_coord_frame = B1950;
+*    ra = 12h32m04.1547481s; dec =  12d15'20.469070"; ref_coord_frame = Date;
+enddef;
+*
+def 3C279;
+     source_name = 3C279;
+*    this source had calibrator code: V
+*    alternate source name: J1256-0547
+*    alternate source name: 1253-055
+*    alternate source name: J1256-05
+*    GSFC 2011B astro solution      7402 Observations
+     ra = 12h56m11.1665670s; dec = -05d47'21.524810"; ref_coord_frame = J2000;
+*    ra = 12h53m35.8312994s; dec = -05d31'07.995950"; ref_coord_frame = B1950;
+*    ra = 12h57m27.4824927s; dec = -05d55'21.141425"; ref_coord_frame = Date;
+enddef;
+*------------------------------------------------------------------------------
+$FREQ;
+*
+def 226100.00MHz1x2048MHz;
+* mode =  1    stations =Nn:Pv:Gl:Ax:Sz:Aa:Lm:Kt:Mg:Sw:Mm
+     sample_rate =  4096.000 Ms/sec;  * (2bits/sample)
+     chan_def = :226100.00 MHz : U :2048.00 MHz : &CH01 : &BBC01 : &NoCal; *Lcp
+enddef;
+*------------------------------------------------------------------------------
+$IF;
+*
+def LO@226084MHzLPolNoTone;
+* mode =  1    stations =Nn:Pv:Gl:Ax:Sz:Aa:Lm:Kt:Mg:Sw:Mm
+     if_def = &IF_A1 : A1 : L :226084.00 MHz : U ; * PCall off!   0.0   0.0  NA     0 NA
+enddef;
+*------------------------------------------------------------------------------
+$BBC;
+*
+def 1BBCs;
+* mode =  1    stations =Nn:Pv:Gl:Ax:Sz:Aa:Lm:Kt:Mg:Sw:Mm
+     BBC_assign = &BBC01 :  1 : &IF_A1;
+enddef;
+*------------------------------------------------------------------------------
+$PHASE_CAL_DETECT;
+*
+def NoDetect;
+* mode =  1    stations =Nn:Pv:Gl:Ax:Sz:Aa:Lm:Kt:Mg:Sw:Mm
+     phase_cal_detect = &NoCal;
+enddef;
+*------------------------------------------------------------------------------
+$TRACKS;
+*
+def MARK5B.1Ch2bit1to1;
+* mode =  1    stations =Nn:Pv:Gl:Ax:Sz:Aa:Lm:Kt:Mg:Sw:Mm
+*    format = MARK5B, and fan-out = 1
+*    mode requires ******Mb/s/tr; stations using disks
+     track_frame_format = MARK5B;
+     fanout_def =   : &CH01 : sign : 1:  2;
+     fanout_def =   : &CH01 :  mag : 1:  3;
+enddef;
+*------------------------------------------------------------------------------
+$HEAD_POS;
+def DiskVoid;
+* mode =  1    stations =Nn:Pv:Gl:Ax:Sz:Aa:Lm:Kt:Mg:Sw:Mm
+*     Head positions irrelevant for Disk: empty def
+enddef;
+*------------------------------------------------------------------------------
+$PASS_ORDER;
+*
+def DiskVoid;
+* mode =  1    stations =Nn:Pv:Gl:Ax:Sz:Aa:Lm:Kt:Mg:Sw:Mm
+*     Pass orders irrelevant for Disk: empty def
+enddef;
+*------------------------------------------------------------------------------
+$ROLL;
+*
+def NoRoll;
+* mode =  1    stations =Nn:Pv:Gl:Ax:Sz:Aa:Lm:Kt:Mg:Sw:Mm
+*    barrel-roll set to 'roll_off', so reverse-roll by  0 (1 head)
+     roll = off;
+enddef;
+*------------------------------------------------------------------------------
+$SCHED;
+* schedule section for experiment e24d10  
+* ALMA+EHT VLBI April 2024 M84 + EHT-only Sombrero                        
+scan 100-2259;
+     start=2024y100d22h59m00s; mode=band6; source=3C279;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Nn:    0 sec:  180 sec:    0.000 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec:    0.000 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec:    0.000 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec:    0.000 GB:   :       : 1;
+endscan;
+scan 100-2305;
+     start=2024y100d23h05m00s; mode=band6; source=SOMBRERO;
+     station=Nn:    0 sec:  180 sec:  184.615 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec:  184.615 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec:  184.615 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec:  184.615 GB:   :       : 1;
+endscan;
+scan 100-2311;
+     start=2024y100d23h11m00s; mode=band6; source=3C273;
+     station=Nn:    0 sec:  180 sec:  369.230 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec:  369.230 GB:   :       : 1;
+     station=Gl:    0 sec:  180 sec:    0.000 GB:   :       : 1;
+     station=Ax:  180 sec:  180 sec:  369.230 GB:   :       : 1;
+endscan;
+scan 100-2317;
+     start=2024y100d23h17m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec:  553.845 GB:   :       : 1;
+     station=Pv:    0 sec:   70 sec:  553.845 GB:   :       : 1;
+     station=Gl:    0 sec:   70 sec:  184.615 GB:   :       : 1;
+     station=Ax:    0 sec:   70 sec:  553.845 GB:   :       : 1;
+endscan;
+scan 100-2319;
+     start=2024y100d23h19m00s; mode=band6; source=M84;
+     station=Nn:    0 sec:  190 sec:  625.639 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec:  625.639 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec:  256.410 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec:  625.639 GB:   :       : 1;
+endscan;
+scan 100-2323;
+     start=2024y100d23h23m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec:  820.511 GB:   :       : 1;
+endscan;
+scan 100-2325;
+     start=2024y100d23h25m00s; mode=band6; source=M84;
+     station=Nn:    0 sec:  180 sec:  892.305 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec:  820.511 GB:   :       : 1;
+     station=Gl:    0 sec:  180 sec:  451.281 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec:  820.511 GB:   :       : 1;
+endscan;
+scan 100-2331;
+     start=2024y100d23h31m00s; mode=band6; source=3C279;
+     station=Nn:    0 sec:  180 sec: 1076.920 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec: 1005.126 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 1005.126 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec:  369.230 GB:   :       : 1;
+endscan;
+scan 100-2337;
+     start=2024y100d23h37m00s; mode=band6; source=SOMBRERO;
+     station=Nn:    0 sec:  180 sec: 1261.535 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec: 1189.741 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 1189.741 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec:  553.845 GB:   :       : 1;
+endscan;
+scan 100-2350;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+* intent = "ALMA:PROJECT_FIRST_SCAN:m84"
+* intent = "ALMA:SCHEDBLOCK_STARTER:m84"
+     start=2024y100d23h50m00s; mode=band6; source=3C273;
+     station=Nn:    0 sec:  180 sec: 1446.150 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec: 1374.355 GB:   :       : 1;
+     station=Gl:    0 sec:  180 sec:  635.896 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 1374.355 GB:   :       : 1;
+     station=Aa:    0 sec:  180 sec:    0.000 GB:   :       : 1;
+endscan;
+scan 100-2356;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y100d23h56m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec: 1630.765 GB:   :       : 1;
+     station=Pv:    0 sec:   70 sec: 1558.970 GB:   :       : 1;
+     station=Gl:    0 sec:   70 sec:  820.511 GB:   :       : 1;
+     station=Ax:    0 sec:   70 sec: 1558.970 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec:  184.615 GB:   :       : 1;
+endscan;
+scan 100-2358;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y100d23h58m00s; mode=band6; source=M84;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Nn:    0 sec:  190 sec: 1702.560 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 1630.765 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec:  892.305 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 1630.765 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec:  256.410 GB:   :       : 1;
+endscan;
+scan 101-0002;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d00h02m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec: 1897.431 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec:  451.281 GB:   :       : 1;
+endscan;
+scan 101-0004;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d00h04m00s; mode=band6; source=M84;
+     station=Nn:    0 sec:  190 sec: 1969.226 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 1825.636 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec: 1087.177 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 1825.636 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec:  523.076 GB:   :       : 1;
+endscan;
+scan 101-0008;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d00h08m00s; mode=band6; source=M87;
+     station=Aa:    0 sec:   60 sec:  717.947 GB:   :       : 1;
+endscan;
+scan 101-0012;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d00h12m00s; mode=band6; source=3C279;
+     station=Ax:    0 sec:  120 sec: 2020.508 GB:   :       : 1;
+     station=Sz:    0 sec:  120 sec:  738.460 GB:   :       : 1;
+     station=Aa:    0 sec:  120 sec:  779.485 GB:   :       : 1;
+endscan;
+scan 101-0016;
+     start=2024y101d00h16m00s; mode=band6; source=SOMBRERO;
+     station=Nn:    0 sec:  180 sec: 2164.097 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec: 2020.508 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 2143.584 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec:  861.536 GB:   :       : 1;
+endscan;
+scan 101-0017;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d00h17m00s; mode=band6; source=OJ287;
+     station=Gl:    0 sec:  120 sec: 1282.048 GB:   :       : 1;
+     station=Aa:    0 sec:  120 sec:  902.562 GB:   :       : 1;
+     station=Lm:    0 sec:  120 sec:    0.000 GB:   :       : 1;
+     station=Kt:    0 sec:  120 sec:    0.000 GB:   :       : 1;
+endscan;
+scan 101-0028;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+* intent = "ALMA:SCHEDBLOCK_STARTER:m84"
+     start=2024y101d00h28m00s; mode=band6; source=3C273;
+     station=Nn:    0 sec:  180 sec: 2348.712 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec: 2205.123 GB:   :       : 1;
+     station=Gl:    0 sec:  180 sec: 1405.125 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 2328.199 GB:   :       : 1;
+     station=Aa:    0 sec:  180 sec: 1025.638 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec:  123.077 GB:   :       : 1;
+endscan;
+scan 101-0034;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d00h34m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec: 2533.327 GB:   :       : 1;
+     station=Pv:    0 sec:   70 sec: 2389.738 GB:   :       : 1;
+     station=Gl:    0 sec:   70 sec: 1589.740 GB:   :       : 1;
+     station=Ax:    0 sec:   70 sec: 2512.814 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec: 1210.253 GB:   :       : 1;
+     station=Lm:    0 sec:   70 sec:  307.692 GB:   :       : 1;
+endscan;
+scan 101-0036;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d00h36m00s; mode=band6; source=M84;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Nn:    0 sec:  190 sec: 2605.122 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 2461.532 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec: 1661.534 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 2584.609 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 1282.048 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec:  379.486 GB:   :       : 1;
+endscan;
+scan 101-0040;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d00h40m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec: 2799.993 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec: 1476.919 GB:   :       : 1;
+endscan;
+scan 101-0042;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d00h42m00s; mode=band6; source=M84;
+     station=Nn:    0 sec:  190 sec: 2871.788 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 2656.404 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec: 1856.406 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 2779.480 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 1548.714 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec:  574.357 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec:  123.077 GB:   :       : 1;
+endscan;
+scan 101-0046;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d00h46m00s; mode=band6; source=M87;
+     station=Aa:    0 sec:   60 sec: 1743.585 GB:   :       : 1;
+endscan;
+scan 101-0050;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d00h50m00s; mode=band6; source=3C279;
+     station=Ax:    0 sec:  120 sec: 2974.352 GB:   :       : 1;
+     station=Sz:    0 sec:  120 sec: 1046.151 GB:   :       : 1;
+     station=Aa:    0 sec:  120 sec: 1805.124 GB:   :       : 1;
+endscan;
+scan 101-0054;
+     start=2024y101d00h54m00s; mode=band6; source=SOMBRERO;
+     station=Nn:    0 sec:  180 sec: 3066.659 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec: 2851.275 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 3097.428 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec: 1169.228 GB:   :       : 1;
+endscan;
+scan 101-0055;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d00h55m00s; mode=band6; source=OJ287;
+     station=Gl:    0 sec:  120 sec: 2051.277 GB:   :       : 1;
+     station=Aa:    0 sec:  120 sec: 1928.200 GB:   :       : 1;
+     station=Lm:    0 sec:  120 sec:  769.229 GB:   :       : 1;
+     station=Kt:    0 sec:  120 sec:  317.948 GB:   :       : 1;
+endscan;
+scan 101-0106;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+* intent = "ALMA:SCHEDBLOCK_STARTER:m84"
+     start=2024y101d01h06m00s; mode=band6; source=3C273;
+     station=Nn:    0 sec:  180 sec: 3251.274 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec: 3035.890 GB:   :       : 1;
+     station=Gl:    0 sec:  180 sec: 2174.354 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 3282.043 GB:   :       : 1;
+     station=Aa:    0 sec:  180 sec: 2051.277 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec:  892.305 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:  441.025 GB:   :       : 1;
+endscan;
+scan 101-0112;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d01h12m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec: 3435.889 GB:   :       : 1;
+     station=Pv:    0 sec:   70 sec: 3220.505 GB:   :       : 1;
+     station=Gl:    0 sec:   70 sec: 2358.969 GB:   :       : 1;
+     station=Ax:    0 sec:   70 sec: 3466.658 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec: 2235.892 GB:   :       : 1;
+     station=Lm:    0 sec:   70 sec: 1076.920 GB:   :       : 1;
+     station=Kt:    0 sec:   70 sec:  625.639 GB:   :       : 1;
+endscan;
+scan 101-0114;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d01h14m00s; mode=band6; source=M84;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Nn:    0 sec:  190 sec: 3507.684 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 3292.300 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec: 2430.763 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 3538.453 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 2307.687 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 1148.715 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec:  697.434 GB:   :       : 1;
+endscan;
+scan 101-0118;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d01h18m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec: 3702.555 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec: 2502.558 GB:   :       : 1;
+endscan;
+scan 101-0120;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d01h20m00s; mode=band6; source=M84;
+     station=Nn:    0 sec:  190 sec: 3774.350 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 3487.171 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec: 2625.635 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 3733.324 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 2574.353 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 1343.586 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec:  892.305 GB:   :       : 1;
+endscan;
+scan 101-0124;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d01h24m00s; mode=band6; source=M87;
+     station=Aa:    0 sec:   60 sec: 2769.224 GB:   :       : 1;
+endscan;
+scan 101-0128;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d01h28m00s; mode=band6; source=3C279;
+     station=Ax:    0 sec:  120 sec: 3928.196 GB:   :       : 1;
+     station=Sz:    0 sec:  120 sec: 1353.843 GB:   :       : 1;
+     station=Aa:    0 sec:  120 sec: 2830.762 GB:   :       : 1;
+     station=Lm:    0 sec:  120 sec: 1538.458 GB:   :       : 1;
+endscan;
+scan 101-0132;
+     start=2024y101d01h32m00s; mode=band6; source=SOMBRERO;
+     station=Nn:    0 sec:  180 sec: 3969.221 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec: 3682.042 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 4051.272 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec: 1476.919 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 1661.534 GB:   :       : 1;
+endscan;
+scan 101-0133;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d01h33m00s; mode=band6; source=OJ287;
+     station=Gl:    0 sec:  120 sec: 2820.506 GB:   :       : 1;
+     station=Aa:    0 sec:  120 sec: 2953.839 GB:   :       : 1;
+     station=Kt:    0 sec:  120 sec: 1087.177 GB:   :       : 1;
+     station=Mg:    0 sec:  120 sec:    0.000 GB:   :       : 1;
+endscan;
+scan 101-0144;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+* intent = "ALMA:SCHEDBLOCK_STARTER:m84"
+     start=2024y101d01h44m00s; mode=band6; source=3C273;
+     station=Nn:    0 sec:  180 sec: 4153.836 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec: 3866.657 GB:   :       : 1;
+     station=Gl:    0 sec:  180 sec: 2943.583 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 4235.887 GB:   :       : 1;
+     station=Aa:    0 sec:  180 sec: 3076.916 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 1846.149 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 1210.253 GB:   :       : 1;
+endscan;
+scan 101-0150;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d01h50m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec: 4338.451 GB:   :       : 1;
+     station=Pv:    0 sec:   70 sec: 4051.272 GB:   :       : 1;
+     station=Gl:    0 sec:   70 sec: 3128.198 GB:   :       : 1;
+     station=Ax:    0 sec:   70 sec: 4420.502 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec: 3261.531 GB:   :       : 1;
+     station=Lm:    0 sec:   70 sec: 2030.764 GB:   :       : 1;
+     station=Kt:    0 sec:   70 sec: 1394.868 GB:   :       : 1;
+endscan;
+scan 101-0152;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d01h52m00s; mode=band6; source=M84;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Nn:    0 sec:  190 sec: 4410.246 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 4123.067 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec: 3199.992 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 4492.297 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 3333.325 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 2102.559 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 1466.663 GB:   :       : 1;
+endscan;
+scan 101-0156;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d01h56m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec: 4605.117 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec: 3528.197 GB:   :       : 1;
+endscan;
+scan 101-0158;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d01h58m00s; mode=band6; source=M84;
+     station=Nn:    0 sec:  190 sec: 4676.912 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 4317.938 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec: 3394.864 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 4687.168 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 3599.991 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 2297.430 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 1661.534 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec:  123.077 GB:   :       : 1;
+endscan;
+scan 101-0202;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d02h02m00s; mode=band6; source=M87;
+     station=Aa:    0 sec:   60 sec: 3794.863 GB:   :       : 1;
+endscan;
+scan 101-0206;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d02h06m00s; mode=band6; source=3C279;
+     station=Gl:    0 sec:  120 sec: 3589.735 GB:   :       : 1;
+     station=Ax:    0 sec:  120 sec: 4882.039 GB:   :       : 1;
+     station=Sz:    0 sec:  120 sec: 1661.534 GB:   :       : 1;
+     station=Aa:    0 sec:  120 sec: 3856.401 GB:   :       : 1;
+     station=Lm:    0 sec:  120 sec: 2492.302 GB:   :       : 1;
+     station=Kt:    0 sec:  120 sec: 1856.406 GB:   :       : 1;
+endscan;
+scan 101-0210;
+     start=2024y101d02h10m00s; mode=band6; source=SOMBRERO;
+     station=Nn:    0 sec:  180 sec: 4871.783 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec: 4512.810 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 5005.116 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec: 1784.611 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 2615.378 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 1979.482 GB:   :       : 1;
+endscan;
+scan 101-0211;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d02h11m00s; mode=band6; source=OJ287;
+     station=Gl:    0 sec:  120 sec: 3712.812 GB:   :       : 1;
+     station=Aa:    0 sec:  120 sec: 3979.478 GB:   :       : 1;
+     station=Mg:    0 sec:  120 sec:  317.948 GB:   :       : 1;
+endscan;
+scan 101-0222;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+* intent = "ALMA:SCHEDBLOCK_STARTER:m84"
+     start=2024y101d02h22m00s; mode=band6; source=3C273;
+     station=Nn:    0 sec:  180 sec: 5056.398 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec: 4697.424 GB:   :       : 1;
+     station=Gl:    0 sec:  180 sec: 3835.888 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 5189.730 GB:   :       : 1;
+     station=Aa:    0 sec:  180 sec: 4102.554 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 2799.993 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 2164.097 GB:   :       : 1;
+endscan;
+scan 101-0228;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d02h28m00s; mode=band6; source=M87;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Nn:    0 sec:   70 sec: 5241.013 GB:   :       : 1;
+     station=Pv:    0 sec:   70 sec: 4882.039 GB:   :       : 1;
+     station=Gl:    0 sec:   70 sec: 4020.503 GB:   :       : 1;
+     station=Ax:    0 sec:   70 sec: 5374.345 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec: 4287.169 GB:   :       : 1;
+     station=Lm:    0 sec:   70 sec: 2984.608 GB:   :       : 1;
+     station=Kt:    0 sec:   70 sec: 2348.712 GB:   :       : 1;
+     station=Mg:    0 sec:   70 sec:  441.025 GB:   :       : 1;
+endscan;
+scan 101-0230;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d02h30m00s; mode=band6; source=M84;
+     station=Nn:    0 sec:  190 sec: 5312.808 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 4953.834 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec: 4092.298 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 5446.140 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 4358.964 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 3056.403 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 2420.507 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec:  512.819 GB:   :       : 1;
+endscan;
+scan 101-0234;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d02h34m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec: 5507.679 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec: 4553.835 GB:   :       : 1;
+endscan;
+scan 101-0236;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d02h36m00s; mode=band6; source=M84;
+     station=Nn:    0 sec:  190 sec: 5579.474 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 5148.705 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec: 4287.169 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 5641.011 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 4625.630 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 3251.274 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 2615.378 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec:  707.690 GB:   :       : 1;
+endscan;
+scan 101-0240;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d02h40m00s; mode=band6; source=M87;
+     station=Aa:    0 sec:   60 sec: 4820.501 GB:   :       : 1;
+endscan;
+scan 101-0244;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d02h44m00s; mode=band6; source=3C279;
+     station=Gl:    0 sec:  120 sec: 4482.041 GB:   :       : 1;
+     station=Ax:    0 sec:  120 sec: 5835.882 GB:   :       : 1;
+     station=Sz:    0 sec:  120 sec: 1969.226 GB:   :       : 1;
+     station=Aa:    0 sec:  120 sec: 4882.039 GB:   :       : 1;
+     station=Lm:    0 sec:  120 sec: 3446.146 GB:   :       : 1;
+     station=Kt:    0 sec:  120 sec: 2810.250 GB:   :       : 1;
+endscan;
+scan 101-0248;
+     start=2024y101d02h48m00s; mode=band6; source=SOMBRERO;
+     station=Nn:    0 sec:  180 sec: 5774.345 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec: 5343.576 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 5958.959 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec: 2092.303 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 3569.222 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 2933.326 GB:   :       : 1;
+endscan;
+scan 101-0249;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d02h49m00s; mode=band6; source=OJ287;
+     station=Gl:    0 sec:  120 sec: 4605.117 GB:   :       : 1;
+     station=Aa:    0 sec:  120 sec: 5005.116 GB:   :       : 1;
+     station=Mg:    0 sec:  120 sec:  902.562 GB:   :       : 1;
+endscan;
+scan 101-0300;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+* intent = "ALMA:SCHEDBLOCK_STARTER:m84"
+     start=2024y101d03h00m00s; mode=band6; source=3C273;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Nn:    0 sec:  180 sec: 5958.959 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec: 5528.191 GB:   :       : 1;
+     station=Gl:    0 sec:  180 sec: 4728.194 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 6143.574 GB:   :       : 1;
+     station=Aa:    0 sec:  180 sec: 5128.192 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 3753.837 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 3117.941 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 1025.638 GB:   :       : 1;
+endscan;
+scan 101-0306;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d03h06m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec: 6143.574 GB:   :       : 1;
+     station=Pv:    0 sec:   70 sec: 5712.806 GB:   :       : 1;
+     station=Gl:    0 sec:   70 sec: 4912.809 GB:   :       : 1;
+     station=Ax:    0 sec:   70 sec: 6328.188 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec: 5312.807 GB:   :       : 1;
+     station=Lm:    0 sec:   70 sec: 3938.452 GB:   :       : 1;
+     station=Kt:    0 sec:   70 sec: 3302.556 GB:   :       : 1;
+     station=Mg:    0 sec:   70 sec: 1210.253 GB:   :       : 1;
+endscan;
+scan 101-0308;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d03h08m00s; mode=band6; source=M84;
+     station=Nn:    0 sec:  190 sec: 6215.369 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 5784.601 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec: 4984.604 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 6399.983 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 5384.602 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 4010.247 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 3374.351 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 1282.048 GB:   :       : 1;
+endscan;
+scan 101-0312;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d03h12m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec: 6410.240 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec: 5579.473 GB:   :       : 1;
+endscan;
+scan 101-0314;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d03h14m00s; mode=band6; source=M84;
+     station=Nn:    0 sec:  190 sec: 6482.035 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 5979.472 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec: 5179.475 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 6594.854 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 5651.268 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 4205.118 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 3569.222 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 1476.919 GB:   :       : 1;
+endscan;
+scan 101-0318;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d03h18m00s; mode=band6; source=M87;
+     station=Aa:    0 sec:   60 sec: 5846.139 GB:   :       : 1;
+endscan;
+scan 101-0322;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d03h22m00s; mode=band6; source=3C279;
+     station=Gl:    0 sec:  120 sec: 5374.346 GB:   :       : 1;
+     station=Ax:    0 sec:  120 sec: 6789.726 GB:   :       : 1;
+     station=Sz:    0 sec:  120 sec: 2276.918 GB:   :       : 1;
+     station=Aa:    0 sec:  120 sec: 5907.677 GB:   :       : 1;
+     station=Lm:    0 sec:  120 sec: 4399.989 GB:   :       : 1;
+     station=Kt:    0 sec:  120 sec: 3764.094 GB:   :       : 1;
+     station=Mg:    0 sec:  120 sec: 1671.791 GB:   :       : 1;
+endscan;
+scan 101-0326;
+     start=2024y101d03h26m00s; mode=band6; source=SOMBRERO;
+     station=Nn:    0 sec:  180 sec: 6676.906 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec: 6174.343 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 6912.802 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec: 2399.994 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 4523.066 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 3887.170 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 1794.867 GB:   :       : 1;
+endscan;
+scan 101-0327;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d03h27m00s; mode=band6; source=OJ287;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Gl:    0 sec:  120 sec: 5497.422 GB:   :       : 1;
+     station=Aa:    0 sec:  120 sec: 6030.754 GB:   :       : 1;
+     station=Sw:    0 sec:  120 sec:    0.000 GB:   :       : 1;
+     station=Mm:    0 sec:  120 sec:    0.000 GB:   :       : 1;
+endscan;
+scan 101-0338;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+* intent = "ALMA:SCHEDBLOCK_STARTER:m84"
+     start=2024y101d03h38m00s; mode=band6; source=3C273;
+     station=Nn:    0 sec:  180 sec: 6861.521 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec: 6358.958 GB:   :       : 1;
+     station=Gl:    0 sec:  180 sec: 5620.499 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 7097.417 GB:   :       : 1;
+     station=Aa:    0 sec:  180 sec: 6153.831 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 4707.681 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 4071.785 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 1979.482 GB:   :       : 1;
+endscan;
+scan 101-0344;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d03h44m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec: 7046.136 GB:   :       : 1;
+     station=Pv:    0 sec:   70 sec: 6543.572 GB:   :       : 1;
+     station=Gl:    0 sec:   70 sec: 5805.114 GB:   :       : 1;
+     station=Ax:    0 sec:   70 sec: 7282.032 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec: 6338.445 GB:   :       : 1;
+     station=Lm:    0 sec:   70 sec: 4892.295 GB:   :       : 1;
+     station=Kt:    0 sec:   70 sec: 4256.400 GB:   :       : 1;
+     station=Mg:    0 sec:   70 sec: 2164.097 GB:   :       : 1;
+endscan;
+scan 101-0346;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d03h46m00s; mode=band6; source=M84;
+     station=Nn:    0 sec:  190 sec: 7117.931 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 6615.367 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec: 5876.909 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 7353.827 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 6410.240 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 4964.090 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 4328.195 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 2235.892 GB:   :       : 1;
+endscan;
+scan 101-0350;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d03h50m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec: 7312.802 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec: 6605.111 GB:   :       : 1;
+endscan;
+scan 101-0352;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d03h52m00s; mode=band6; source=M84;
+     station=Nn:    0 sec:  190 sec: 7384.597 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 6810.238 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec: 6071.780 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 7548.698 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 6676.906 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 5158.961 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 4523.066 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 2430.763 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec:  123.077 GB:   :       : 1;
+endscan;
+scan 101-0356;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d03h56m00s; mode=band6; source=M87;
+     station=Aa:    0 sec:   60 sec: 6871.777 GB:   :       : 1;
+endscan;
+scan 101-0400;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d04h00m00s; mode=band6; source=3C279;
+     station=Nn:    0 sec:  120 sec: 7579.468 GB:   :       : 1;
+     station=Gl:    0 sec:  120 sec: 6266.651 GB:   :       : 1;
+     station=Ax:    0 sec:  120 sec: 7743.569 GB:   :       : 1;
+     station=Sz:    0 sec:  120 sec: 2584.609 GB:   :       : 1;
+     station=Aa:    0 sec:  120 sec: 6933.315 GB:   :       : 1;
+     station=Lm:    0 sec:  120 sec: 5353.833 GB:   :       : 1;
+     station=Kt:    0 sec:  120 sec: 4717.937 GB:   :       : 1;
+     station=Mg:    0 sec:  120 sec: 2625.635 GB:   :       : 1;
+endscan;
+scan 101-0404;
+     start=2024y101d04h04m00s; mode=band6; source=SOMBRERO;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Pv:    0 sec:  180 sec: 7005.109 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 7866.646 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec: 2707.686 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 5476.909 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 4841.014 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 2748.711 GB:   :       : 1;
+endscan;
+scan 101-0414;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+* intent = "ALMA:SCHEDBLOCK_STARTER:m84"
+     start=2024y101d04h14m00s; mode=band6; source=3C273;
+     station=Nn:    0 sec:  180 sec: 7702.544 GB:   :       : 1;
+     station=Pv:    0 sec:  180 sec: 7189.724 GB:   :       : 1;
+     station=Gl:    0 sec:  180 sec: 6389.728 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 8051.260 GB:   :       : 1;
+     station=Aa:    0 sec:  180 sec: 7056.392 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 5661.524 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 5025.628 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 2933.326 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec:  317.948 GB:   :       : 1;
+endscan;
+scan 101-0420;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d04h20m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec: 7887.159 GB:   :       : 1;
+     station=Pv:    0 sec:   70 sec: 7374.339 GB:   :       : 1;
+     station=Gl:    0 sec:   70 sec: 6574.342 GB:   :       : 1;
+     station=Ax:    0 sec:   70 sec: 8235.875 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec: 7241.007 GB:   :       : 1;
+     station=Lm:    0 sec:   70 sec: 5846.139 GB:   :       : 1;
+     station=Kt:    0 sec:   70 sec: 5210.243 GB:   :       : 1;
+     station=Mg:    0 sec:   70 sec: 3117.941 GB:   :       : 1;
+     station=Mm:    0 sec:   70 sec:  502.563 GB:   :       : 1;
+endscan;
+scan 101-0422;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d04h22m00s; mode=band6; source=M84;
+     station=Nn:    0 sec:  190 sec: 7958.954 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 7446.134 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec: 6646.137 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 8307.670 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 7312.802 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 5917.934 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 5282.038 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 3189.736 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec:  123.077 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec:  574.358 GB:   :       : 1;
+endscan;
+scan 101-0426;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d04h26m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec: 8153.825 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec: 7507.673 GB:   :       : 1;
+     station=Sw:    0 sec:   70 sec:  317.948 GB:   :       : 1;
+endscan;
+scan 101-0428;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d04h28m00s; mode=band6; source=M84;
+     station=Nn:    0 sec:  190 sec: 8225.620 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 7641.005 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec: 6841.008 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 8502.541 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 7579.468 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 6112.805 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 5476.909 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 3384.607 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec:  389.743 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec:  769.229 GB:   :       : 1;
+endscan;
+scan 101-0432;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d04h32m00s; mode=band6; source=M87;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Aa:    0 sec:   60 sec: 7774.339 GB:   :       : 1;
+endscan;
+scan 101-0436;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d04h36m00s; mode=band6; source=3C279;
+     station=Pv:    0 sec:  120 sec: 7835.876 GB:   :       : 1;
+     station=Gl:    0 sec:  120 sec: 7035.879 GB:   :       : 1;
+     station=Ax:    0 sec:  120 sec: 8697.412 GB:   :       : 1;
+     station=Sz:    0 sec:  120 sec: 2892.301 GB:   :       : 1;
+     station=Aa:    0 sec:  120 sec: 7835.877 GB:   :       : 1;
+     station=Lm:    0 sec:  120 sec: 6307.676 GB:   :       : 1;
+     station=Kt:    0 sec:  120 sec: 5671.780 GB:   :       : 1;
+     station=Mg:    0 sec:  120 sec: 3579.479 GB:   :       : 1;
+endscan;
+scan 101-0440;
+     start=2024y101d04h40m00s; mode=band6; source=SOMBRERO;
+     station=Ax:    0 sec:  180 sec: 8820.488 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec: 3015.378 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 6430.752 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 5794.857 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 3702.555 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec:  964.100 GB:   :       : 1;
+endscan;
+scan 101-0448;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+* intent = "ALMA:SCHEDBLOCK_STARTER:m84"
+     start=2024y101d04h48m00s; mode=band6; source=3C273;
+     station=Gl:    0 sec:  180 sec: 7158.956 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 9005.104 GB:   :       : 1;
+     station=Aa:    0 sec:  180 sec: 7958.954 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 6615.367 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 5979.472 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 3887.170 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec:  584.614 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 1148.715 GB:   :       : 1;
+endscan;
+scan 101-0454;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d04h54m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec: 8420.491 GB:   :       : 1;
+     station=Pv:    0 sec:   70 sec: 7958.953 GB:   :       : 1;
+     station=Gl:    0 sec:   70 sec: 7343.571 GB:   :       : 1;
+     station=Ax:    0 sec:   70 sec: 9189.719 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec: 8143.568 GB:   :       : 1;
+     station=Lm:    0 sec:   70 sec: 6799.982 GB:   :       : 1;
+     station=Kt:    0 sec:   70 sec: 6164.086 GB:   :       : 1;
+     station=Mg:    0 sec:   70 sec: 4071.785 GB:   :       : 1;
+     station=Sw:    0 sec:   70 sec:  769.229 GB:   :       : 1;
+     station=Mm:    0 sec:   70 sec: 1333.330 GB:   :       : 1;
+endscan;
+scan 101-0456;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d04h56m00s; mode=band6; source=M84;
+     station=Nn:    0 sec:  190 sec: 8492.286 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 8030.748 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec: 7415.366 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 9261.514 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 8215.363 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 6871.777 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 6235.881 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 4143.580 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec:  841.023 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 1405.125 GB:   :       : 1;
+endscan;
+scan 101-0500;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d05h00m00s; mode=band6; source=M87;
+     station=Nn:    0 sec:   70 sec: 8687.157 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec: 8410.234 GB:   :       : 1;
+     station=Sw:    0 sec:   70 sec: 1035.895 GB:   :       : 1;
+endscan;
+scan 101-0502;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d05h02m00s; mode=band6; source=M84;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Nn:    0 sec:  190 sec: 8758.952 GB:   :       : 1;
+     station=Pv:    0 sec:  190 sec: 8225.619 GB:   :       : 1;
+     station=Gl:    0 sec:  190 sec: 7610.237 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec: 9456.385 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 8482.029 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 7066.648 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 6430.752 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 4338.451 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 1107.689 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 1599.996 GB:   :       : 1;
+endscan;
+scan 101-0506;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d05h06m00s; mode=band6; source=M87;
+     station=Aa:    0 sec:   60 sec: 8676.900 GB:   :       : 1;
+endscan;
+scan 101-0510;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d05h10m00s; mode=band6; source=3C279;
+     station=Gl:    0 sec:  120 sec: 7805.108 GB:   :       : 1;
+     station=Ax:    0 sec:  120 sec: 9651.256 GB:   :       : 1;
+     station=Sz:    0 sec:  120 sec: 3199.993 GB:   :       : 1;
+     station=Aa:    0 sec:  120 sec: 8738.438 GB:   :       : 1;
+     station=Lm:    0 sec:  120 sec: 7261.519 GB:   :       : 1;
+     station=Kt:    0 sec:  120 sec: 6625.624 GB:   :       : 1;
+     station=Mg:    0 sec:  120 sec: 4533.322 GB:   :       : 1;
+     station=Mm:    0 sec:  120 sec: 1794.867 GB:   :       : 1;
+endscan;
+scan 101-0514;
+     start=2024y101d05h14m00s; mode=band6; source=SOMBRERO;
+     station=Ax:    0 sec:  180 sec: 9774.332 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec: 3323.069 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 7384.596 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 6748.700 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 4656.399 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 1302.561 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 1917.944 GB:   :       : 1;
+endscan;
+scan 101-0522;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+* intent = "ALMA:SCHEDBLOCK_STARTER:m84"
+     start=2024y101d05h22m00s; mode=band6; source=3C273;
+     station=Gl:    0 sec:  180 sec: 7928.185 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec: 9958.947 GB:   :       : 1;
+     station=Aa:    0 sec:  180 sec: 8861.515 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 7569.210 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 6933.315 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 4841.014 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 1487.176 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 2102.559 GB:   :       : 1;
+endscan;
+scan 101-0528;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d05h28m00s; mode=band6; source=M87;
+     station=Gl:    0 sec:   70 sec: 8112.799 GB:   :       : 1;
+     station=Ax:    0 sec:   70 sec:10143.562 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec: 9046.130 GB:   :       : 1;
+     station=Lm:    0 sec:   70 sec: 7753.825 GB:   :       : 1;
+     station=Kt:    0 sec:   70 sec: 7117.930 GB:   :       : 1;
+     station=Mg:    0 sec:   70 sec: 5025.628 GB:   :       : 1;
+     station=Sw:    0 sec:   70 sec: 1671.791 GB:   :       : 1;
+     station=Mm:    0 sec:   70 sec: 2287.174 GB:   :       : 1;
+endscan;
+scan 101-0530;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d05h30m00s; mode=band6; source=M84;
+     station=Gl:    0 sec:  190 sec: 8184.594 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec:10215.357 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 9117.925 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 7825.620 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 7189.725 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 5097.423 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 1743.585 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 2358.969 GB:   :       : 1;
+endscan;
+scan 101-0534;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d05h34m00s; mode=band6; source=M87;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Aa:    0 sec:   70 sec: 9312.796 GB:   :       : 1;
+     station=Sw:    0 sec:   70 sec: 1938.457 GB:   :       : 1;
+endscan;
+scan 101-0536;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d05h36m00s; mode=band6; source=M84;
+     station=Gl:    0 sec:  190 sec: 8379.466 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec:10410.229 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 9384.591 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 8020.491 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 7384.596 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 5292.294 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 2010.251 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 2553.840 GB:   :       : 1;
+endscan;
+scan 101-0540;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d05h40m00s; mode=band6; source=M87;
+     station=Aa:    0 sec:   60 sec: 9579.462 GB:   :       : 1;
+endscan;
+scan 101-0544;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d05h44m00s; mode=band6; source=3C279;
+     station=Gl:    0 sec:  190 sec: 8574.337 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec:10605.100 GB:   :       : 1;
+     station=Sz:    0 sec:  190 sec: 3507.684 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec: 9641.000 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 8215.362 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 7579.467 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 5487.166 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 2205.123 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 2748.711 GB:   :       : 1;
+endscan;
+scan 101-0548;
+     start=2024y101d05h48m00s; mode=band6; source=SOMBRERO;
+     station=Ax:    0 sec:  180 sec:10799.971 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec: 3702.556 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 8410.233 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 7774.338 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 5682.037 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 2399.994 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 2943.583 GB:   :       : 1;
+endscan;
+scan 101-0556;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+* intent = "ALMA:SCHEDBLOCK_STARTER:m84"
+     start=2024y101d05h56m00s; mode=band6; source=3C273;
+     station=Gl:    0 sec:  180 sec: 8769.208 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec:10984.586 GB:   :       : 1;
+     station=Aa:    0 sec:  180 sec: 9835.871 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 8594.849 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 7958.953 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 5866.651 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 2584.609 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 3128.198 GB:   :       : 1;
+endscan;
+scan 101-0602;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d06h02m00s; mode=band6; source=M87;
+     station=Gl:    0 sec:   70 sec: 8953.823 GB:   :       : 1;
+     station=Ax:    0 sec:   70 sec:11169.201 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec:10020.486 GB:   :       : 1;
+     station=Lm:    0 sec:   70 sec: 8779.464 GB:   :       : 1;
+     station=Kt:    0 sec:   70 sec: 8143.567 GB:   :       : 1;
+     station=Mg:    0 sec:   70 sec: 6051.266 GB:   :       : 1;
+     station=Sw:    0 sec:   70 sec: 2769.224 GB:   :       : 1;
+     station=Mm:    0 sec:   70 sec: 3312.813 GB:   :       : 1;
+endscan;
+scan 101-0604;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d06h04m00s; mode=band6; source=M84;
+     station=Gl:    0 sec:  190 sec: 9025.618 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec:11240.996 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec:10092.281 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 8851.259 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 8215.362 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 6123.061 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 2841.019 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 3384.607 GB:   :       : 1;
+endscan;
+scan 101-0608;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d06h08m00s; mode=band6; source=M87;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Aa:    0 sec:   70 sec:10287.152 GB:   :       : 1;
+     station=Sw:    0 sec:   70 sec: 3035.890 GB:   :       : 1;
+endscan;
+scan 101-0610;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d06h10m00s; mode=band6; source=M84;
+     station=Gl:    0 sec:  190 sec: 9220.489 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec:11435.867 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec:10358.947 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 9046.130 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 8410.233 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 6317.932 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 3107.685 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 3579.479 GB:   :       : 1;
+endscan;
+scan 101-0614;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d06h14m00s; mode=band6; source=M87;
+     station=Aa:    0 sec:   60 sec:10553.818 GB:   :       : 1;
+endscan;
+scan 101-0618;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d06h18m00s; mode=band6; source=3C279;
+     station=Gl:    0 sec:  190 sec: 9415.360 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec:11630.738 GB:   :       : 1;
+     station=Sz:    0 sec:  190 sec: 3887.171 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec:10615.356 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 9241.001 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 8605.104 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 6512.803 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 3302.556 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 3774.350 GB:   :       : 1;
+endscan;
+scan 101-0622;
+     start=2024y101d06h22m00s; mode=band6; source=SOMBRERO;
+     station=Ax:    0 sec:  180 sec:11825.609 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec: 4082.042 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 9435.872 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 8799.976 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 6707.674 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 3497.427 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 3969.221 GB:   :       : 1;
+endscan;
+scan 101-0630;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+* intent = "ALMA:SCHEDBLOCK_STARTER:m84"
+     start=2024y101d06h30m00s; mode=band6; source=3C273;
+     station=Gl:    0 sec:  180 sec: 9610.231 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec:12010.225 GB:   :       : 1;
+     station=Aa:    0 sec:  180 sec:10810.228 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec: 9620.487 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 8984.591 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 6892.289 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 3682.042 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 4153.836 GB:   :       : 1;
+endscan;
+scan 101-0636;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d06h36m00s; mode=band6; source=M87;
+     station=Gl:    0 sec:   70 sec: 9794.847 GB:   :       : 1;
+     station=Ax:    0 sec:   70 sec:12194.840 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec:10994.843 GB:   :       : 1;
+     station=Lm:    0 sec:   70 sec: 9805.103 GB:   :       : 1;
+     station=Kt:    0 sec:   70 sec: 9169.206 GB:   :       : 1;
+     station=Mg:    0 sec:   70 sec: 7076.904 GB:   :       : 1;
+     station=Sw:    0 sec:   70 sec: 3866.657 GB:   :       : 1;
+     station=Mm:    0 sec:   70 sec: 4338.451 GB:   :       : 1;
+endscan;
+scan 101-0638;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d06h38m00s; mode=band6; source=M84;
+     station=Gl:    0 sec:  190 sec: 9866.642 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec:12266.635 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec:11066.638 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec: 9876.897 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 9241.001 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 7148.699 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 3938.452 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 4410.246 GB:   :       : 1;
+endscan;
+scan 101-0642;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d06h42m00s; mode=band6; source=M87;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Aa:    0 sec:   70 sec:11261.509 GB:   :       : 1;
+     station=Sw:    0 sec:   70 sec: 4133.323 GB:   :       : 1;
+endscan;
+scan 101-0644;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d06h44m00s; mode=band6; source=M84;
+     station=Gl:    0 sec:  190 sec:10061.513 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec:12461.506 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec:11333.304 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec:10071.769 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 9435.872 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 7343.570 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 4205.118 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 4605.117 GB:   :       : 1;
+endscan;
+scan 101-0648;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d06h48m00s; mode=band6; source=M87;
+     station=Aa:    0 sec:   60 sec:11528.175 GB:   :       : 1;
+endscan;
+scan 101-0652;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d06h52m00s; mode=band6; source=3C279;
+     station=Ax:    0 sec:  190 sec:12656.377 GB:   :       : 1;
+     station=Sz:    0 sec:  190 sec: 4266.657 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec:11589.713 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec:10266.640 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec: 9630.743 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 7538.441 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 4399.989 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 4799.988 GB:   :       : 1;
+endscan;
+scan 101-0656;
+     start=2024y101d06h56m00s; mode=band6; source=SOMBRERO;
+     station=Ax:    0 sec:  180 sec:12851.248 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec: 4461.528 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec:10461.511 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec: 9825.614 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 7733.312 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 4594.860 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 4994.859 GB:   :       : 1;
+endscan;
+scan 101-0704;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+* intent = "ALMA:SCHEDBLOCK_STARTER:m84"
+     start=2024y101d07h04m00s; mode=band6; source=3C273;
+     station=Gl:    0 sec:  180 sec:10256.384 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec:13035.863 GB:   :       : 1;
+     station=Aa:    0 sec:  180 sec:11784.584 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec:10646.126 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:10010.229 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 7917.927 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 4779.475 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 5179.474 GB:   :       : 1;
+endscan;
+scan 101-0710;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d07h10m00s; mode=band6; source=M87;
+     station=Gl:    0 sec:   70 sec:10440.999 GB:   :       : 1;
+     station=Ax:    0 sec:   70 sec:13220.479 GB:   :       : 1;
+     station=Aa:    0 sec:   70 sec:11969.199 GB:   :       : 1;
+     station=Lm:    0 sec:   70 sec:10830.741 GB:   :       : 1;
+     station=Kt:    0 sec:   70 sec:10194.845 GB:   :       : 1;
+     station=Mg:    0 sec:   70 sec: 8102.542 GB:   :       : 1;
+     station=Sw:    0 sec:   70 sec: 4964.090 GB:   :       : 1;
+     station=Mm:    0 sec:   70 sec: 5364.089 GB:   :       : 1;
+endscan;
+scan 101-0712;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d07h12m00s; mode=band6; source=M84;
+     station=Gl:    0 sec:  190 sec:10512.794 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec:13292.273 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec:12040.994 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec:10902.536 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec:10266.640 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 8174.336 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 5035.885 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 5435.884 GB:   :       : 1;
+endscan;
+scan 101-0716;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d07h16m00s; mode=band6; source=M87;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Aa:    0 sec:   70 sec:12235.865 GB:   :       : 1;
+     station=Sw:    0 sec:   70 sec: 5230.756 GB:   :       : 1;
+endscan;
+scan 101-0718;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_APPLY"
+     start=2024y101d07h18m00s; mode=band6; source=M84;
+     station=Gl:    0 sec:  190 sec:10707.665 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec:13487.145 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec:12307.660 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec:11097.407 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec:10461.511 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 8369.208 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 5302.551 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 5630.755 GB:   :       : 1;
+endscan;
+scan 101-0722;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+     start=2024y101d07h22m00s; mode=band6; source=M87;
+     station=Aa:    0 sec:   60 sec:12502.531 GB:   :       : 1;
+endscan;
+scan 101-0726;
+* intent = "apsmode = fast-abs"
+* intent = "ALMA:AUTOPHASE_DETERMINE"
+* intent = "ALMA:PROJECT_FINAL_SCAN:m84"
+     start=2024y101d07h26m00s; mode=band6; source=3C279;
+     station=Ax:    0 sec:  190 sec:13682.016 GB:   :       : 1;
+     station=Sz:    0 sec:  190 sec: 4646.143 GB:   :       : 1;
+     station=Aa:    0 sec:  190 sec:12564.069 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec:11292.278 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec:10656.382 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 8564.079 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 5497.422 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 5825.626 GB:   :       : 1;
+endscan;
+scan 101-0730;
+*     Note a COMMENT was inserted during scheduling: 
+*       ALMA drops out
+     start=2024y101d07h30m00s; mode=band6; source=SOMBRERO;
+     station=Ax:    0 sec:  180 sec:13876.887 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec: 4841.014 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec:11487.149 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:10851.253 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 8758.950 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 5692.293 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 6020.497 GB:   :       : 1;
+endscan;
+scan 101-0743;
+     start=2024y101d07h43m00s; mode=band6; source=3C273;
+     station=Gl:    0 sec:  180 sec:10902.536 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec:14061.502 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec:11671.765 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:11035.868 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 8943.565 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 5876.908 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 6205.112 GB:   :       : 1;
+endscan;
+scan 101-0749;
+     start=2024y101d07h49m00s; mode=band6; source=M87;
+     station=Gl:    0 sec:   70 sec:11087.151 GB:   :       : 1;
+     station=Ax:    0 sec:   70 sec:14246.117 GB:   :       : 1;
+     station=Lm:    0 sec:   70 sec:11856.380 GB:   :       : 1;
+     station=Kt:    0 sec:   70 sec:11220.483 GB:   :       : 1;
+     station=Mg:    0 sec:   70 sec: 9128.181 GB:   :       : 1;
+     station=Sw:    0 sec:   70 sec: 6061.522 GB:   :       : 1;
+     station=Mm:    0 sec:   70 sec: 6389.727 GB:   :       : 1;
+endscan;
+scan 101-0751;
+     start=2024y101d07h51m00s; mode=band6; source=M84;
+     station=Gl:    0 sec:  190 sec:11158.946 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec:14317.912 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec:11928.175 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec:11292.278 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 9199.976 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 6133.317 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 6461.521 GB:   :       : 1;
+endscan;
+scan 101-0755;
+     start=2024y101d07h55m00s; mode=band6; source=M87;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Sw:    0 sec:   70 sec: 6328.188 GB:   :       : 1;
+endscan;
+scan 101-0757;
+     start=2024y101d07h57m00s; mode=band6; source=M84;
+     station=Gl:    0 sec:  180 sec:11353.817 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec:14512.783 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec:12123.046 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:11487.149 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 9394.847 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 6399.983 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 6656.393 GB:   :       : 1;
+endscan;
+scan 101-0803;
+     start=2024y101d08h03m00s; mode=band6; source=3C279;
+     station=Ax:    0 sec:  190 sec:14697.398 GB:   :       : 1;
+     station=Sz:    0 sec:  190 sec: 5025.628 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec:12307.661 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec:11671.765 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec: 9579.462 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 6584.598 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 6841.007 GB:   :       : 1;
+endscan;
+scan 101-0807;
+     start=2024y101d08h07m00s; mode=band6; source=SOMBRERO;
+     station=Ax:    0 sec:  180 sec:14892.270 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec: 5220.500 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec:12502.532 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:11866.636 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 9774.333 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 6779.469 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 7035.878 GB:   :       : 1;
+endscan;
+scan 101-0820;
+     start=2024y101d08h20m00s; mode=band6; source=3C273;
+     station=Gl:    0 sec:  180 sec:11538.433 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec:15076.885 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec:12687.147 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:12051.251 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec: 9958.948 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 6964.084 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 7220.493 GB:   :       : 1;
+endscan;
+scan 101-0826;
+     start=2024y101d08h26m00s; mode=band6; source=M87;
+     station=Gl:    0 sec:   70 sec:11723.048 GB:   :       : 1;
+     station=Ax:    0 sec:   70 sec:15261.500 GB:   :       : 1;
+     station=Lm:    0 sec:   70 sec:12871.763 GB:   :       : 1;
+     station=Kt:    0 sec:   70 sec:12235.866 GB:   :       : 1;
+     station=Mg:    0 sec:   70 sec:10143.563 GB:   :       : 1;
+     station=Sw:    0 sec:   70 sec: 7148.699 GB:   :       : 1;
+     station=Mm:    0 sec:   70 sec: 7405.108 GB:   :       : 1;
+endscan;
+scan 101-0828;
+     start=2024y101d08h28m00s; mode=band6; source=M84;
+     station=Gl:    0 sec:  190 sec:11794.843 GB:   :       : 1;
+     station=Ax:    0 sec:  190 sec:15333.295 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec:12943.558 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec:12307.661 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec:10215.358 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 7220.494 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 7476.903 GB:   :       : 1;
+endscan;
+scan 101-0832;
+     start=2024y101d08h32m00s; mode=band6; source=M87;
+     station=Sw:    0 sec:   70 sec: 7415.365 GB:   :       : 1;
+endscan;
+scan 101-0834;
+     start=2024y101d08h34m00s; mode=band6; source=M84;
+     station=Gl:    0 sec:  180 sec:11989.714 GB:   :       : 1;
+     station=Ax:    0 sec:  180 sec:15528.166 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec:13138.429 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:12502.532 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec:10410.229 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 7487.160 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 7671.774 GB:   :       : 1;
+endscan;
+scan 101-0841;
+     start=2024y101d08h41m00s; mode=band6; source=3C279;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Ax:    0 sec:  190 sec:15712.781 GB:   :       : 1;
+     station=Sz:    0 sec:  190 sec: 5405.114 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec:13323.044 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec:12687.147 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec:10594.845 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 7671.774 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 7856.389 GB:   :       : 1;
+endscan;
+scan 101-0845;
+     start=2024y101d08h45m00s; mode=band6; source=SOMBRERO;
+     station=Ax:    0 sec:  180 sec:15907.652 GB:   :       : 1;
+     station=Sz:    0 sec:  180 sec: 5599.985 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec:13517.915 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:12882.019 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec:10789.716 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 7866.646 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 8051.260 GB:   :       : 1;
+endscan;
+scan 101-0858;
+     start=2024y101d08h58m00s; mode=band6; source=3C273;
+     station=Lm:    0 sec:  180 sec:13702.530 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:13066.634 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec:10974.331 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 8051.260 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 8235.875 GB:   :       : 1;
+endscan;
+scan 101-0904;
+     start=2024y101d09h04m00s; mode=band6; source=M87;
+     station=Gl:    0 sec:   70 sec:12174.329 GB:   :       : 1;
+     station=Lm:    0 sec:   70 sec:13887.146 GB:   :       : 1;
+     station=Kt:    0 sec:   70 sec:13251.249 GB:   :       : 1;
+     station=Mg:    0 sec:   70 sec:11158.946 GB:   :       : 1;
+     station=Sw:    0 sec:   70 sec: 8235.875 GB:   :       : 1;
+     station=Mm:    0 sec:   70 sec: 8420.490 GB:   :       : 1;
+endscan;
+scan 101-0906;
+     start=2024y101d09h06m00s; mode=band6; source=M84;
+     station=Gl:    0 sec:  190 sec:12246.124 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec:13958.940 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec:13323.044 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec:11230.741 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 8307.670 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 8492.285 GB:   :       : 1;
+endscan;
+scan 101-0910;
+     start=2024y101d09h10m00s; mode=band6; source=M87;
+     station=Sw:    0 sec:   70 sec: 8502.541 GB:   :       : 1;
+endscan;
+scan 101-0912;
+     start=2024y101d09h12m00s; mode=band6; source=M84;
+     station=Gl:    0 sec:  180 sec:12440.995 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec:14153.812 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:13517.915 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec:11425.612 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 8574.336 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 8687.156 GB:   :       : 1;
+endscan;
+scan 101-0919;
+     start=2024y101d09h19m00s; mode=band6; source=3C279;
+     station=Sz:    0 sec:  190 sec: 5784.600 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec:14338.427 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec:13702.530 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec:11610.228 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 8758.951 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 8871.771 GB:   :       : 1;
+endscan;
+scan 101-0923;
+     start=2024y101d09h23m00s; mode=band6; source=SOMBRERO;
+     station=Sz:    0 sec:  180 sec: 5979.471 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec:14533.298 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:13897.401 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec:11805.099 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 8953.822 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 9066.643 GB:   :       : 1;
+endscan;
+scan 101-0936;
+     start=2024y101d09h36m00s; mode=band6; source=3C273;
+     station=Lm:    0 sec:  180 sec:14717.913 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:14082.017 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec:11989.714 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 9138.438 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 9251.258 GB:   :       : 1;
+endscan;
+scan 101-0942;
+     start=2024y101d09h42m00s; mode=band6; source=M87;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Gl:    0 sec:   70 sec:12625.610 GB:   :       : 1;
+     station=Lm:    0 sec:   70 sec:14902.528 GB:   :       : 1;
+     station=Kt:    0 sec:   70 sec:14266.632 GB:   :       : 1;
+     station=Mg:    0 sec:   70 sec:12174.329 GB:   :       : 1;
+     station=Sw:    0 sec:   70 sec: 9323.053 GB:   :       : 1;
+     station=Mm:    0 sec:   70 sec: 9435.873 GB:   :       : 1;
+endscan;
+scan 101-0944;
+     start=2024y101d09h44m00s; mode=band6; source=M84;
+     station=Gl:    0 sec:  190 sec:12697.405 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec:14974.323 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec:14338.427 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec:12246.124 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 9394.848 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 9507.668 GB:   :       : 1;
+endscan;
+scan 101-0948;
+     start=2024y101d09h48m00s; mode=band6; source=M87;
+     station=Sw:    0 sec:   70 sec: 9589.719 GB:   :       : 1;
+endscan;
+scan 101-0950;
+     start=2024y101d09h50m00s; mode=band6; source=M84;
+     station=Gl:    0 sec:  180 sec:12892.276 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec:15169.194 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:14533.298 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec:12440.995 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec: 9661.514 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec: 9702.539 GB:   :       : 1;
+endscan;
+scan 101-0957;
+     start=2024y101d09h57m00s; mode=band6; source=3C279;
+     station=Sz:    0 sec:  190 sec: 6164.086 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec:15353.810 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec:14717.913 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec:12625.610 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec: 9846.129 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec: 9887.154 GB:   :       : 1;
+endscan;
+scan 101-1001;
+     start=2024y101d10h01m00s; mode=band6; source=SOMBRERO;
+     station=Sz:    0 sec:  180 sec: 6358.957 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec:15548.681 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:14912.784 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec:12820.481 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec:10041.000 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec:10082.025 GB:   :       : 1;
+endscan;
+scan 101-1014;
+     start=2024y101d10h14m00s; mode=band6; source=3C273;
+     station=Lm:    0 sec:  180 sec:15733.296 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:15097.399 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec:13005.097 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec:10225.615 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec:10266.641 GB:   :       : 1;
+endscan;
+scan 101-1020;
+     start=2024y101d10h20m00s; mode=band6; source=M87;
+     station=Gl:    0 sec:   70 sec:13076.892 GB:   :       : 1;
+     station=Lm:    0 sec:   70 sec:15917.911 GB:   :       : 1;
+     station=Kt:    0 sec:   70 sec:15282.015 GB:   :       : 1;
+     station=Mg:    0 sec:   70 sec:13189.712 GB:   :       : 1;
+     station=Sw:    0 sec:   70 sec:10410.230 GB:   :       : 1;
+     station=Mm:    0 sec:   70 sec:10451.256 GB:   :       : 1;
+endscan;
+scan 101-1022;
+     start=2024y101d10h22m00s; mode=band6; source=M84;
+     station=Gl:    0 sec:  190 sec:13148.687 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec:15989.706 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec:15353.810 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec:13261.507 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec:10482.025 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec:10523.051 GB:   :       : 1;
+endscan;
+scan 101-1026;
+     start=2024y101d10h26m00s; mode=band6; source=M87;
+     station=Sw:    0 sec:   70 sec:10676.896 GB:   :       : 1;
+endscan;
+scan 101-1028;
+     start=2024y101d10h28m00s; mode=band6; source=M84;
+*              :data_good:data_stop:goto_foot: pass:  wrap :driv:tape at
+     station=Gl:    0 sec:  180 sec:13343.558 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec:16184.577 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:15548.681 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec:13456.378 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec:10748.691 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec:10717.922 GB:   :       : 1;
+endscan;
+scan 101-1035;
+     start=2024y101d10h35m00s; mode=band6; source=3C279;
+     station=Sz:    0 sec:  190 sec: 6543.572 GB:   :       : 1;
+     station=Lm:    0 sec:  190 sec:16369.192 GB:   :       : 1;
+     station=Kt:    0 sec:  190 sec:15733.296 GB:   :       : 1;
+     station=Mg:    0 sec:  190 sec:13640.993 GB:   :       : 1;
+     station=Sw:    0 sec:  190 sec:10933.307 GB:   :       : 1;
+     station=Mm:    0 sec:  190 sec:10902.537 GB:   :       : 1;
+endscan;
+scan 101-1039;
+     start=2024y101d10h39m00s; mode=band6; source=SOMBRERO;
+     station=Sz:    0 sec:  180 sec: 6738.443 GB:   :       : 1;
+     station=Lm:    0 sec:  180 sec:16564.064 GB:   :       : 1;
+     station=Kt:    0 sec:  180 sec:15928.167 GB:   :       : 1;
+     station=Mg:    0 sec:  180 sec:13835.864 GB:   :       : 1;
+     station=Sw:    0 sec:  180 sec:11128.178 GB:   :       : 1;
+     station=Mm:    0 sec:  180 sec:11097.408 GB:   :       : 1;
+endscan;
