@@ -1,0 +1,18 @@
+* Ensure these settings are captured regardless of control-file concatenation order by introducing an (effectively) 'if true' statement
+if scan > 001-000000
+
+* set band-specific reference frequency
+
+* [2026-05-20 03:26:42] lblackburn@holy7c02106.rc.fas.harvard.edu:/n/holylabs/doeleman_lab/Lab/lblackburn/workshop/e24b19-run1/hops-b3$ /n/home09/lblackburn/bin/mkchanids 0.bootstrap/data/3841/094-2238/GG.B.1.49RCHR
+
+* ref_freq 264594.046875 * original from fringe file
+ref_freq 265531.25 * band center
+
+chan_ids abcdefghijklmnopqrstuvwxyzABCDEF
+    264594.046875 264652.640625 264711.234375 264769.828125 264828.421875
+    264887.015625 264945.609375 265004.203125 265062.796875 265121.390625
+    265179.984375 265238.578125 265297.171875 265355.765625 265414.359375
+    265472.953125 265531.546875 265590.140625 265648.734375 265707.328125
+    265765.921875 265824.515625 265883.109375 265941.703125 266000.296875
+    266058.890625 266117.484375 266176.078125 266234.671875 266293.265625
+    266351.859375 266410.453125
