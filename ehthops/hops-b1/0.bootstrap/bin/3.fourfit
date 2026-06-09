@@ -15,13 +15,10 @@ cat cf*_bx_* cf*_${BAND}_* > temp/cf_all
 find . -maxdepth 1 -type f -name 'cf*' -not -name 'cf*_b?_*' -exec cat {} + >> temp/cf_all
 
 if [[ "${SLURM_JOB_NUM_NODES:-1}" -gt 1 ]]; then
-    # Multi-node Slurm: dispatch each fourfit call as a Slurm task step via srun.
-    # srun inherits the full environment from the calling process, so no SSH,
-    # no wrapper scripts, and no environment export are needed.
-    PARALLEL_DIST="--jobs ${SLURM_NTASKS:-$(nproc)}"
+    _srun_step_divisor=8
+    PARALLEL_DIST="--jobs $(( ${SLURM_NTASKS:-$(nproc)} / _srun_step_divisor ))"
     FOURFIT_CMD="srun --ntasks=1 --cpus-per-task=1 fourfit"
 else
-    # Single-node Slurm or interactive: original local behaviour.
     PARALLEL_DIST="--load 95%"
     FOURFIT_CMD="fourfit"
 fi
