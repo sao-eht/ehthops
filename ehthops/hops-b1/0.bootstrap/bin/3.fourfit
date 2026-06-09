@@ -13,9 +13,22 @@ N=$(basename $PWD | sed 's/^\([0-9]*\)\..*/\1/')
 # concatenate control files in order: all bands, band-specific, stage-specific (including past stages)
 cat cf*_bx_* cf*_${BAND}_* > temp/cf_all
 find . -maxdepth 1 -type f -name 'cf*' -not -name 'cf*_b?_*' -exec cat {} + >> temp/cf_all
+
+if [[ "${SLURM_JOB_NUM_NODES:-1}" -gt 1 ]]; then
+    # Multi-node Slurm: dispatch each fourfit call as a Slurm task step via srun.
+    # srun inherits the full environment from the calling process, so no SSH,
+    # no wrapper scripts, and no environment export are needed.
+    PARALLEL_DIST="--jobs ${SLURM_NTASKS:-$(nproc)}"
+    FOURFIT_CMD="srun --ntasks=1 --cpus-per-task=1 fourfit"
+else
+    # Single-node Slurm or interactive: original local behaviour.
+    PARALLEL_DIST="--load 95%"
+    FOURFIT_CMD="fourfit"
+fi
+
 #(time parallel --bar --joblog log/parallel.log \
-(time parallel --nice 15 --load 95% --joblog log/parallel.log \
-	"fourfit -c temp/cf_all {} > {}.out 2> {}.err" \
+(time parallel --nice 15 $PARALLEL_DIST --joblog log/parallel.log \
+	"$FOURFIT_CMD -c temp/cf_all {} > {}.out 2> {}.err" \
 	::: "$DATADIR"/*/*/??[^.]*.?????? 2>&1) 2> log/parallel.time
 
 cat "$DATADIR"/*/*/*.out > log/fourfit.out
