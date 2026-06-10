@@ -14,19 +14,67 @@ N=$(basename $PWD | sed 's/^\([0-9]*\)\..*/\1/')
 cat cf*_bx_* cf*_${BAND}_* > temp/cf_all
 find . -maxdepth 1 -type f -name 'cf*' -not -name 'cf*_b?_*' -exec cat {} + >> temp/cf_all
 
-if [[ "${SLURM_JOB_NUM_NODES:-1}" -gt 1 ]]; then
-    _srun_step_divisor=8
-    PARALLEL_DIST="--jobs $(( ${SLURM_NTASKS:-$(nproc)} / _srun_step_divisor ))"
-    FOURFIT_CMD="srun --ntasks=1 --cpus-per-task=1 fourfit"
+# Find root files in $DATADIR
+if [[ -n "${ZSH_VERSION:-}" ]]; then
+    setopt NULL_GLOB
 else
-    PARALLEL_DIST="--load 95%"
-    FOURFIT_CMD="fourfit"
+    shopt -s nullglob
+fi
+_rootfiles=( "$DATADIR"/*/*/??[^.]*.?????? )
+if [[ -n "${ZSH_VERSION:-}" ]]; then
+    unsetopt NULL_GLOB
+else
+    shopt -u nullglob
 fi
 
-#(time parallel --bar --joblog log/parallel.log \
-(time parallel --nice 15 $PARALLEL_DIST --joblog log/parallel.log \
-	"$FOURFIT_CMD -c temp/cf_all {} > {}.out 2> {}.err" \
-	::: "$DATADIR"/*/*/??[^.]*.?????? 2>&1) 2> log/parallel.time
+if [[ ${#_rootfiles[@]} -eq 0 ]]; then
+    echo "ERROR: no root files found in $DATADIR" >&2
+    return 1
+fi
+
+printf '%s\n' "${_rootfiles[@]}" > log/filelist.txt
+_n_files=${#_rootfiles[@]}
+
+if [[ -n "${SLURM_JOB_ID:-}" ]]; then
+    # WRKDIR is a plain shell variable (not exported by 0.launch) so must be
+    # passed explicitly. HOPS_SETUP_SCRIPT is exported by ehthops_slurm.job
+    # and is accounted for via --export=ALL.
+    _cap=${config[SET_FOURFIT_ARRAY_CAP]:-200}
+    echo "Submitting fourfit array: $_n_files tasks, cap $_cap"
+    _t0=$(date +%s)
+
+    mkdir -p "$WRKDIR/log/slurm" 
+
+    _array_jid=$(sbatch \
+        --parsable \
+        --array=1-${_n_files}%${_cap} \
+        --ntasks=1 --cpus-per-task=1 \
+        --mem=4G \
+        --time=4:00:00 \
+        --output=/dev/null \
+        --error="$WRKDIR/log/slurm/%a.err" \
+        --partition="${SLURM_JOB_PARTITION:-blackhole}" \
+        ${SLURM_JOB_ACCOUNT:+--account="$SLURM_JOB_ACCOUNT"} \
+        --export=ALL,WRKDIR="$WRKDIR",FILELIST="$WRKDIR/log/filelist.txt" \
+        "$WRKDIR/bin/3.fourfit_worker.sh") \
+        || { echo "ERROR: sbatch failed" >&2; return 1; }
+
+    echo "Array job $_array_jid submitted, waiting..."
+    while squeue --job "$_array_jid" --noheader 2>/dev/null | grep -q .; do
+        sleep 30
+    done
+
+    _t1=$(date +%s)
+    echo "Fourfit array $_array_jid completed in $((_t1 - _t0))s" | tee log/parallel.time
+    find "$WRKDIR/log/slurm" -empty -delete
+
+else
+    # Non-Slurm fallback: local GNU parallel, reading from the filelist
+    # built above using the same root file selection.
+    (time parallel --nice 15 --load 95% --joblog log/parallel.log \
+        "fourfit -c temp/cf_all {} > {}.out 2> {}.err" \
+        :::: log/filelist.txt 2>&1) 2> log/parallel.time
+fi
 
 cat "$DATADIR"/*/*/*.out > log/fourfit.out
 cat "$DATADIR"/*/*/*.err > log/fourfit.err
