@@ -1,1 +1,0 @@
-../../../hops-b1/0.bootstrap/bin/3.fourfit_worker.sh
