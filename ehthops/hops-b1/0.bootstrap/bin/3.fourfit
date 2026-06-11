@@ -76,6 +76,13 @@ fi
 fourfit -c "$WRKDIR/temp/cf_all" "$ROOTFILE" \
     > "$ROOTFILE.out" \
     2> "$ROOTFILE.err"
+_rc=$?
+if [[ $_rc -ge 128 ]]; then
+    echo "ERROR: fourfit killed by signal (exit ${_rc}) on ${ROOTFILE}" >&2
+    exit $_rc
+elif [[ $_rc -ne 0 ]]; then
+    echo "NOTE: fourfit exit code ${_rc} on ${ROOTFILE}" >&2
+fi
 FOURFIT_WORKER
     chmod +x "$WRKDIR/temp/fourfit_worker.sh"
 
