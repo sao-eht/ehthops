@@ -121,5 +121,6 @@ fi
 
 cat "$DATADIR"/*/*/*.out > log/fourfit.out
 cat "$DATADIR"/*/*/*.err > log/fourfit.err
+cat log/slurm/*.err > log/fourfit_error_codes.err 2>/dev/null
 
 echo "DONE"
