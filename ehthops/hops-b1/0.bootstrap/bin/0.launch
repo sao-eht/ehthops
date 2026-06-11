@@ -86,11 +86,6 @@ METADIR=${SET_METADIR:-$DEFAULT_METADIR}       # location of preset control file
 DEFAULT_SHRDIR="$TOPDIR/../share"
 SHRDIR=${SET_SHRDIR:-$DEFAULT_SHRDIR}          # location of shared resources (summary notebooks, etc)
 
-# Default values can be adjusted by defining SET_* env variables prior to running launch
-FILTERSTRING=${SET_FILTERSTRING:-""}           # optional filterstring to match data to keep
-MIXEDPOL=${SET_MIXEDPOL:-"false"}              # passed to pipeline scripts to control behavior
-HAXP=${SET_HAXP:-"false"}                      # flag to mix-in haxp products into source data
-
 # special handling for 2017, only two bands exist ("b3" => "lo" and "b4" => "hi")
 if [[ $OBSYEAR = "2017" ]]; then
 	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
@@ -102,6 +97,11 @@ if [[ $OBSYEAR = "2017" ]]; then
 else
 	BAND=${SET_BAND:-$(echo $WRKDIR | sed 's|.*/hops-\(..\)/.*$|\1|')} # band to process
 fi
+
+# Default values can be adjusted by defining SET_* env variables prior to running launch
+FILTERSTRING=${SET_FILTERSTRING:-"[-_/]$BAND[-_/]"}  # explicit filterstring to match data to keep
+MIXEDPOL=${SET_MIXEDPOL:-"false"}                    # passed to pipeline scripts to control behavior
+HAXP=${SET_HAXP:-"false"}                            # flag to mix-in haxp products into source data
 
 # Parse remaining command-line arguments, overwrite any existing settings
 OPTIND=1 # start from the first argument (ignore existing shell state)
