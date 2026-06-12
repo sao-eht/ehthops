@@ -10,43 +10,17 @@ Arguments are passed only to the ``0.launch`` step which sets environment variab
 Some of the arguments define environment variables and are set using ``SET_ENVVAR=VALUE`` syntax.
 The rest of the arguments are passed to the pipeline as command-line arguments.
 
-The launch script can be run with the ``-h`` option to display the help message::
+The launch script can be run with the ``-h`` option to display all available options.
 
-   Usage: [SET_ENVVAR1=...] && [SET_ENVVAR2=...] && source bin/0.launch [options]
+The fastest and the simplest way to launch the pipeline is to use the ``ehthops_pipeline.sh`` script which runs
+all stages of the pipeline in sequence. This script can be used with a configuration file (e.g., ``settings.config``)
+that defines the environment variables and command-line arguments for the launch stage. On a SLURM cluster,
+the pipeline can be launched by submitting the ``ehthops_slurm.job`` script with appropriate modifications.
 
-   Useful environment variables:
-   =============================
-   SET_CORRDAT     Correlation releases to use for SRC data, higher precedence comes first (colon-separated list)
-   SET_WRKDIR      Working directory for pipeline process (default: PWD)
-   SET_TOPDIR      Top level dir for all stages (default: WRKDIR/..)
-   SET_DATADIR     Input/output data location for HOPS (default: WRKDIR/data)
-   SET_METADIR     Location of preset control files, META tables, ZBL flux estimates for netcal, etc
-   SET_SRCDIR      Single input data location for correlator source data
-   SET_SHRDIR      Location of shared resources (summary notebooks, etc)
-   SET_OBSYEAR     Campaign year
-   SET_FILTERSTRING  Regex pattern to filter directories to process
-   SET_MIXEDPOL    Enable mixed polarization calibration
-   SET_HAXP        Use HAXP data for ALMA (i.e. assume linearpol ALMA data present in -haxp directories)
+.. bash::
+   sbatch ehthops_slurm.job
 
-   If these are not set and no command-line options are given, then reasonable defaults are used (not always guaranteed to work!).
-
-   Command-line options:
-   =====================
-   -y <yyyy>       Campaign year
-   -m              Enable mixed polarization calibration
-   -x              Use HAXP data for ALMA (i.e. assume linearpol ALMA data present in -haxp directories)
-   -S <dir>        Set the base data source directory (i.e. single input data location) 
-   -C <colon-separated-list-of-dirs>    Set the correlation releases/tags to use in order of precedence
-   -M <dir>        Set the metadata directory (e.g. preset control files, META tables, ZBL flux estimates for netcal)
-   -F <regex>      Set the filter string to select which directories to process
-   -h, --help      Display this help message and exit
-
-   Note:
-   - The equivalent command-line options take precedence over the SET_* environment variables.
-   - The SET_* environment variables take precedence over the default values.
-
-   Example:
-   SET_SRCDIR=/path/to/data/archive && SET_CORRDAT="Rev1-Cal:Rev1-Sci" && SET_METADIR=/path/to/metadata && SET_OBSYEAR=2021 source bin/0.launch
+The maximum number of concurrent ``fourfit`` jobs can be set using ``SET_JOBARRAY_CAP`` in ``settings.config``.
 
 Some notes on the environment variables and running the stages manually (the following are taken care of automatically by ``scripts/ehthops_pipeline.sh``):
 
