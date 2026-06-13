@@ -30,6 +30,7 @@ show_help() {
     echo "  SET_FILTERSTRING  Regex pattern to filter directories to process"
     echo "  SET_MIXEDPOL    Enable mixed polarization calibration"
     echo "  SET_HAXP        Use HAXP data for ALMA (i.e. assume linearpol ALMA data present in -haxp directories)"
+    echo "  SET_JOBARRAY_CAP  Maximum number of concurrent jobs in the SLURM job array"
     echo
     echo "If these are not set and no command-line options are given, then reasonable defaults are used (not always guaranteed to work!)."
     echo
@@ -38,6 +39,7 @@ show_help() {
     echo "  -y <yyyy>       Campaign year"
     echo "  -m              Enable mixed polarization calibration"
     echo "  -x              Use HAXP data for ALMA (i.e. assume linearpol ALMA data present in -haxp directories)"
+    echo "  -j <num>        Set the maximum number of concurrent jobs in the SLURM job array"
     echo "  -S <dir>        Set the base data source directory (i.e. single input data location) "
     echo "  -C <colon-separated-list-of-dirs>    Set the correlation releases/tags to use in order of precedence"
     echo "  -M <dir>        Set the metadata directory (e.g. preset control files, META tables, ZBL flux estimates for netcal)"
@@ -49,7 +51,7 @@ show_help() {
     echo "  - The SET_* environment variables take precedence over the default values."
     echo
     echo "Example:"
-    echo "  SET_SRCDIR=/path/to/data/archive && SET_CORRDAT=\"Rev1-Cal:Rev1-Sci\" && SET_METADIR=/path/to/metadata && SET_OBSYEAR=2021 source bin/0.launch"
+    echo "  SET_SRCDIR=/path/to/data/archive && SET_CORRDAT=\"Rev1-Cal:Rev1-Sci\" && SET_METADIR=/path/to/metadata && SET_OBSYEAR=2021 && SET_JOBARRAY_CAP=100 source bin/0.launch"
 }
 
 if [ -f /.dockerenv ]; then
@@ -102,10 +104,11 @@ fi
 FILTERSTRING=${SET_FILTERSTRING:-"[-_/]$BAND[-_/]"}  # explicit filterstring to match data to keep
 MIXEDPOL=${SET_MIXEDPOL:-"false"}                    # passed to pipeline scripts to control behavior
 HAXP=${SET_HAXP:-"false"}                            # flag to mix-in haxp products into source data
+JOBARRAY_CAP=${SET_JOBARRAY_CAP:-200}        # maximum number of concurrent jobs in the SLURM job array
 
 # Parse remaining command-line arguments, overwrite any existing settings
 OPTIND=1 # start from the first argument (ignore existing shell state)
-while getopts "y:mxS:C:M:F:h" opt; do
+while getopts "y:mxj:S:C:M:F:h" opt; do
         case $opt in
                 y)
                         OBSYEAR=$OPTARG # already handled above
@@ -115,6 +118,9 @@ while getopts "y:mxS:C:M:F:h" opt; do
                         ;;
                 x)
                         HAXP=true
+                        ;;
+                j)
+                        JOBARRAY_CAP=$OPTARG
                         ;;
                 S)
                         SRCDIR=$OPTARG
@@ -193,6 +199,7 @@ if [ x"$USE_DOCKER" = x"true" ]; then
         echo "  Campaign year, OBSYEAR:        $OBSYEAR"
         echo "  Mixed polarization calibration, MIXEDPOL:        $MIXEDPOL"
         echo "  Use HAXP data for ALMA, HAXP:        $HAXP"
+        echo "  Job array cap, JOBARRAY_CAP:        $JOBARRAY_CAP"
         echo "  Command:     $@"
 
 	if [ $# = 0 ]; then # no command line argument
@@ -217,6 +224,7 @@ if [ x"$USE_DOCKER" = x"true" ]; then
 		-e "OBSYEAR=$OBSYEAR"                  \
 		-e "MIXEDPOL=$MIXEDPOL"                \
                 -e "HAXP=$HAXP"                        \
+                -e "JOBARRAY_CAP=$JOBARRAY_CAP"        \
 		$PORTFORWARD                           \
 		eventhorizontelescope/eat-notebook     \
 		"$@"
@@ -235,6 +243,7 @@ else
         echo "  Campaign year, OBSYEAR:        $OBSYEAR"
         echo "  Mixed polarization calibration, MIXEDPOL:        $MIXEDPOL"
         echo "  Use HAXP data for ALMA, HAXP:        $HAXP"
+        echo "  Job array cap, JOBARRAY_CAP:        $JOBARRAY_CAP"
         echo "  Command:     $@"
 
 	# Add more HOPS setup scripts here if needed
