@@ -4,7 +4,7 @@ echo "7. Compute adhoc phases"
 
 cd $WRKDIR
 
-alma_adhoc -o $DATADIR/adhoc -d $DATADIR -q $DATADIR/alist.v6.2s.avg 2> log/adhoc.err
+alma_adhoc -o $DATADIR/adhoc -d $DATADIR -q $DATADIR/alist.v6.2s.avg -t 6.5 2> log/adhoc.err
 cp $DATADIR/adhoc/adhoc_cfcodes $DATADIR/cf3_adhoc
 echo >> $DATADIR/cf3_adhoc
 echo "DONE"
