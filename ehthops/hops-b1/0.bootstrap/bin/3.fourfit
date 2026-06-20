@@ -4,6 +4,7 @@ echo "2. Running fourfit..."
 echo "  Container work directory, WRKDIR: \"$WRKDIR\""
 echo "  Container HOPS data output, DATADIR:    \"$DATADIR\""
 echo "  Maximum concurrent jobs in SLURM job array, JOBARRAY_CAP:    \"$JOBARRAY_CAP\""
+echo "  (if JOBARRAY_CAP is empty, GNU parallel is used to parallelize fourfit on local machine/single node)."
 echo "  Band, BAND:    \"$BAND\""
 
 cd $WRKDIR
@@ -36,7 +37,13 @@ fi
 printf '%s\n' "${_rootfiles[@]}" > log/filelist.txt
 _n_files=${#_rootfiles[@]}
 
-if [[ -n "${SLURM_JOB_ID:-}" ]]; then
+# if JOBARRAY_CAP is not set use GNU parallel to parallelize fourfit on local machine/single node.
+if [[ -n "${JOBARRAY_CAP:-}" ]]; then
+    if ! command -v sbatch >/dev/null 2>&1; then
+        echo "ERROR: JOBARRAY_CAP set to $JOBARRAY_CAP, but sbatch not found in PATH" >&2
+        return 1
+    fi
+
     # WRKDIR is a plain shell variable (not exported by 0.launch) so must be
     # passed explicitly. HOPS_SETUP_SCRIPT is exported by ehthops_slurm.job
     # and is accounted for via --export=ALL.

@@ -30,7 +30,11 @@ show_help() {
     echo "  SET_FILTERSTRING  Regex pattern to filter directories to process"
     echo "  SET_MIXEDPOL    Enable mixed polarization calibration"
     echo "  SET_HAXP        Use HAXP data for ALMA (i.e. assume linearpol ALMA data present in -haxp directories)"
-    echo "  SET_JOBARRAY_CAP  Maximum number of concurrent jobs in the SLURM job array"
+    echo "  SET_JOBARRAY_CAP  Maximum number of concurrent fourfit SLURM job array tasks."
+    echo "                    Setting this (here or via -j) dispatches the SLURM job array."
+    echo "                    If unset, fourfit always runs via local GNU parallel "
+    echo "                    even inside a SLURM allocation (e.g. an interactive node)."
+    echo "                    Interactive SLURM allocations are NOT, by themselves, a request for job arrays."
     echo
     echo "If these are not set and no command-line options are given, then reasonable defaults are used (not always guaranteed to work!)."
     echo
@@ -39,7 +43,8 @@ show_help() {
     echo "  -y <yyyy>       Campaign year"
     echo "  -m              Enable mixed polarization calibration"
     echo "  -x              Use HAXP data for ALMA (i.e. assume linearpol ALMA data present in -haxp directories)"
-    echo "  -j <num>        Set the maximum number of concurrent jobs in the SLURM job array"
+    echo "  -j <num>        Set the maximum number of concurrent SLURM job array tasks for fourfit."
+    echo "                  Passing this will trigger a SLURM job array dispatch (default: off)."
     echo "  -S <dir>        Set the base data source directory (i.e. single input data location) "
     echo "  -C <colon-separated-list-of-dirs>    Set the correlation releases/tags to use in order of precedence"
     echo "  -M <dir>        Set the metadata directory (e.g. preset control files, META tables, ZBL flux estimates for netcal)"
@@ -104,7 +109,8 @@ fi
 FILTERSTRING=${SET_FILTERSTRING:-"[-_/]$BAND[-_/]"}  # explicit filterstring to match data to keep
 MIXEDPOL=${SET_MIXEDPOL:-"false"}                    # passed to pipeline scripts to control behavior
 HAXP=${SET_HAXP:-"false"}                            # flag to mix-in haxp products into source data
-JOBARRAY_CAP=${SET_JOBARRAY_CAP:-200}        # maximum number of concurrent jobs in the SLURM job array
+JOBARRAY_CAP=${SET_JOBARRAY_CAP:-}                   # unset by default. Its mere presence (via SET_JOBARRAY_CAP
+                                                     # or -j) triggers fourfit SLURM job array dispatch.                                                 
 
 # Parse remaining command-line arguments, overwrite any existing settings
 OPTIND=1 # start from the first argument (ignore existing shell state)
@@ -274,4 +280,3 @@ fi
 		echo "WARNING: No control files matching cf${N}_bx_* or cf${N}_${BAND}_* in ${METADIR}/cf/. Nothing to copy during launch." >&2
 	fi
 )
-
