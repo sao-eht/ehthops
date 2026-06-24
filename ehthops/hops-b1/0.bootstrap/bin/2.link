@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# A wrapper script that delegates the expensive per-scan linking work to Python.
+# NOTE: this file is sourced (not executed), and must work with both bash and zsh.
+
 echo "1. Linking HOPS directories"
 echo "  Container work directory, WRKDIR: \"$WRKDIR\""
 echo "  Container data source, SRCDIR:    \"$SRCDIR\""
@@ -14,105 +17,12 @@ echo "  Use HAXP data for ALMA, HAXP:         $HAXP"
 cd "$WRKDIR"
 mkdir -p "$DATADIR" tests temp log
 
-# add some more token delimiters
-IFS=$' \t\n:,'
-
-# root file pattern to match
-ROOTFILENAME="^[a-zA-Z0-9+_-]+\.[a-zA-Z0-9]{6}$"
-
-# Initialize a variable to keep track of the previous source scan directory
-# This is used to check if the current scan directory is the same as the previous one
-# and check for duplicate root code extensions only if so.
-prev_src_scan_dir=""
-# Populate $DATADIR
-for d in $CORRDAT; do
-    # Find all files matching the pattern and process them
-    find -L "$SRCDIR/$d" -type f | while read -r root_file; do
-        if [[ $(basename "$root_file") =~ $ROOTFILENAME ]]; then
-            # Skip files if the path contains the pattern "haxp/"
-            if [[ "$root_file" == *haxp/* ]]; then
-                continue
-            fi
-            # Skip files if the path does not match $FILTERSTRING (default is "[-_/]$BAND[-_/]").
-            if [[ -n "${FILTERSTRING:-}" ]]; then
-                if [[ "$root_file" != *${FILTERSTRING}* ]]; then
-                    continue
-                fi
-            fi
-            # Get the parent (scan) and the grand-parent (expt_no) directories of the root file
-            src_scan_dir=$(dirname "$root_file")
-            src_expt_dir=$(dirname "$(dirname "$root_file")")
-
-            # Skip files if src_expt_dir is not a valid expt_no
-            if [[ ! $(basename "$src_expt_dir") =~ ^[0-9]{4,5}$ ]]; then
-                echo "Skipping $src_expt_dir with $root_file"
-                continue
-            fi
-            echo $root_file
-            
-            # Create the corresponding directory structure in the output directory
-            dest_expt_dir="$DATADIR/$(basename "$src_expt_dir")"
-            dest_scan_dir="$dest_expt_dir/$(basename "$src_scan_dir")"
-
-            # Extract the extension from the current root_file
-            extension=$(echo "$root_file" | grep -oE '[a-zA-Z0-9]{6}$')
-
-            # Compare the extensions
-            if [[ -d "$dest_scan_dir" ]]; then
-                # Check if the current scan directory is the same as the previous one;
-                # if so, proceed with the rootcode comparison
-                if [[ "$src_scan_dir" == "$prev_src_scan_dir" ]]; then
-                    # Extract the 6-character alphanumeric ext from dest_scan_dir (all files in here should have the same ext anyway)
-                    dest_extensions=$(find -L "$dest_scan_dir" -type f | grep -oE '[a-zA-Z0-9]{6}$' | sort | uniq)                
-                    if [[ -n "$dest_extensions" ]]; then
-                        max_dest_extension=$(echo "$dest_extensions" | sort | tail -n 1)
-                        if [[ "$extension" < "$max_dest_extension" || "$extension" == "$max_dest_extension" ]]; then
-                            echo "Skipping $extension in favour of $max_dest_extension"
-                            # Set the previous source scan directory to the current one for the next iteration
-                            prev_src_scan_dir="$src_scan_dir"
-                            continue
-                        else
-                            echo "Replacing $dest_extensions with extension $extension"
-                            rm -rf "$dest_scan_dir"
-                        fi
-                    fi
-                else
-                    # If the current scan directory is different from the previous one,
-                    # update prev_src_scan_dir and continue on to the next iteration
-                    prev_src_scan_dir="$src_scan_dir"
-                    continue
-                fi
-            fi
-            
-            # Create the dest scan dir -- either this is the first pass, or the dest scan dir was deleted
-            mkdir -p "$dest_scan_dir"
-
-            # Create symbolic links to all files in the scan directory matching the extension.
-            # In the second grep expression, we begin the pattern without '^' since the previous grep returns
-            # the full path input to the find command and so the leading characters must be accounted for.
-            find -L "$src_scan_dir" -type f | grep -E "\.$extension$" | grep -vE "[A-Za-z]{2}\.[A-Za-z]\.[0-9]+\.[A-Za-z0-9]{6}$" | while read -r scan_file; do
-                ln -s "$scan_file" "$dest_scan_dir/$(basename "$scan_file")"
-            done
-
-            # keep track of previous src_scan_dir
-            prev_src_scan_dir="$src_scan_dir"
-
-            # If HAXP=true then replace ALMA data with the contents of "haxp" directories
-            if [[ "$HAXP" == true ]]; then
-                # Generate haxp parent directory names by replacing the last occurrence of "hops" with "haxp"
-                haxp_src_scan_dir=$(echo "$src_scan_dir" | sed 's|\(.*\)hops/|\1haxp/|')
-
-                # remove all files starting with "A" in the dest scan dir
-                find "$dest_scan_dir" -name "A*" -exec rm {} \;
-
-                # Create symbolic links to all files in the scan directory matching the extension
-                find -L "$haxp_src_scan_dir" -type f | grep -vE "[A-Za-z]{2}\.[A-Za-z]\.[0-9]+\.[A-Za-z0-9]{6}$" | while read -r haxp_scan_file; do
-                    ln -s "$haxp_scan_file" "$dest_scan_dir/$(basename "$haxp_scan_file")"
-                done
-            fi
-        fi
-    done
-done
+# Populate $DATADIR. Run in a subshell purely so that `export` below does not
+# leak the state of exported environment variables states into the caller.
+(
+    export SRCDIR DATADIR CORRDAT FILTERSTRING HAXP
+    link_hops_scans.py
+)
 
 # Rename silly root files to standard names
 find "$DATADIR" -name '*_3*' |
@@ -120,8 +30,6 @@ find "$DATADIR" -name '*_3*' |
         new=$(echo $bad | sed 's/_3//g')
         echo "$bad |-> $new"
         mv "$bad" "$new"
-        # Symlinking instead of renaming
-        # ln -s $(realbad "$bad") "$new"
     done
 
 if ! find "$DATADIR" -mindepth 1 -maxdepth 1 -type d -name '[0-9][0-9][0-9][0-9]*' -print -quit | grep -q .; then
