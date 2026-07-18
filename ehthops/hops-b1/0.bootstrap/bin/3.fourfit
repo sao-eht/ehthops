@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+step_start "3.fourfit"
+
 echo "2. Running fourfit..."
 echo "  Container work directory, WRKDIR: \"$WRKDIR\""
 echo "  Container HOPS data output, DATADIR:    \"$DATADIR\""
@@ -30,17 +32,28 @@ else
 fi
 
 if [[ ${#_rootfiles[@]} -eq 0 ]]; then
-    echo "ERROR: no root files found in $DATADIR" >&2
+    error "No root files found in ${DATADIR}"
     return 1
 fi
 
-printf '%s\n' "${_rootfiles[@]}" > log/filelist.txt
-_n_files=${#_rootfiles[@]}
+if [[ ${#_rootfiles[@]} -eq 0 ]]; then
+    error "No root files found in ${DATADIR}"
+    return 1
+fi
+
+if [[ -f "${WRKDIR}/log/fourfit_retry.txt" ]]; then
+    info "Retry mode: $(wc -l < "${WRKDIR}/log/fourfit_retry.txt") scans from previous incomplete run"
+    cp "${WRKDIR}/log/fourfit_retry.txt" log/filelist.txt
+    rm "${WRKDIR}/log/fourfit_retry.txt"
+else
+    printf '%s\n' "${_rootfiles[@]}" > log/filelist.txt
+fi
+_n_files=$(wc -l < log/filelist.txt)
 
 # if JOBARRAY_CAP is not set use GNU parallel to parallelize fourfit on local machine/single node.
 if [[ -n "${JOBARRAY_CAP:-}" ]]; then
     if ! command -v sbatch >/dev/null 2>&1; then
-        echo "ERROR: JOBARRAY_CAP set to $JOBARRAY_CAP, but sbatch not found in PATH" >&2
+        error "JOBARRAY_CAP=${JOBARRAY_CAP} but sbatch not found in PATH"
         return 1
     fi
 
@@ -84,11 +97,20 @@ fourfit -c "$WRKDIR/temp/cf_all" "$ROOTFILE" \
     > "$ROOTFILE.out" \
     2> "$ROOTFILE.err"
 _rc=$?
+_sig=$(( _rc - 128 ))
+
 if [[ $_rc -ge 128 ]]; then
-    echo "ERROR: fourfit killed by signal (exit ${_rc}) on ${ROOTFILE}" >&2
+    case $_sig in
+        9)  _signame="SIGKILL (likely OOM)" ;;
+        15) _signame="SIGTERM (likely Slurm walltime)" ;;
+        24) _signame="SIGXCPU (CPU time limit)" ;;
+        *)  _signame="signal ${_sig}" ;;
+    esac
+    echo "ERROR: fourfit killed by ${_signame} (exit ${_rc}) on ${ROOTFILE}" >&2
+    echo "${ROOTFILE}" > "${WRKDIR}/log/slurm/${SLURM_ARRAY_TASK_ID}.retry"
     exit $_rc
 elif [[ $_rc -ne 0 ]]; then
-    echo "NOTE: fourfit exit code ${_rc} on ${ROOTFILE}" >&2
+    echo "NOTE: fourfit: ${_rc} fringe failure(s) on $(basename "${ROOTFILE}")" >&2
 fi
 FOURFIT_WORKER
     chmod +x "$WRKDIR/temp/fourfit_worker.sh"
@@ -107,7 +129,7 @@ FOURFIT_WORKER
         ${SLURM_JOB_ACCOUNT:+--account="$SLURM_JOB_ACCOUNT"} \
         --export=ALL,WRKDIR="$WRKDIR",FILELIST="$WRKDIR/log/filelist.txt" \
         "$WRKDIR/temp/fourfit_worker.sh") \
-        || { echo "ERROR: sbatch failed" >&2; return 1; }
+        || { error "sbatch failed"; return 1; }
 
     echo "Array job $_array_jid submitted, waiting..."
     while squeue --job "$_array_jid" --noheader 2>/dev/null | grep -q .; do
@@ -118,16 +140,64 @@ FOURFIT_WORKER
     echo "Fourfit array $_array_jid completed in $((_t1 - _t0))s" | tee log/parallel.time
     find "$WRKDIR/log/slurm" -empty -delete
 
+    find "$WRKDIR/log/slurm" -name "*.retry" -exec cat {} + \
+    > "$WRKDIR/log/fourfit_retry.txt" 2>/dev/null
+    find "$WRKDIR/log/slurm" -name "*.retry" -delete
+
 else
     # Non-Slurm fallback: local GNU parallel, reading from the filelist
     # built above using the same root file selection.
     (time parallel --nice 15 --load 95% --joblog log/parallel.log \
         "fourfit -c temp/cf_all {} > {}.out 2> {}.err" \
         :::: log/filelist.txt 2>&1) 2> log/parallel.time
+
+    if [[ -f log/parallel.log ]]; then
+        awk -F'\t' 'NR>1 && $8+0>0 {print $1}' log/parallel.log | \
+            while IFS= read -r _seq; do
+                sed -n "${_seq}p" log/filelist.txt
+            done > log/fourfit_retry.txt
+    fi
+
 fi
 
 cat "$DATADIR"/*/*/*.out > log/fourfit.out
 cat "$DATADIR"/*/*/*.err > log/fourfit.err
 cat log/slurm/*.err > log/fourfit_error_codes.err 2>/dev/null
 
+# Handling fourfit exit codes
+_signal_kills=0
+if [[ -n "${JOBARRAY_CAP:-}" ]]; then
+    if grep -q "killed by" log/fourfit_error_codes.err 2>/dev/null; then
+        _signal_kills=1
+    fi
+else
+    if [[ -f log/parallel.log ]] && \
+       awk -F'\t' 'NR>1 && $8+0>0 {found=1; exit} END {exit !found}' log/parallel.log; then
+        _signal_kills=1
+    fi
+fi
+
+# Add summary of fourfit results
+_n_submitted=$(wc -l < log/filelist.txt)
+_n_kills=$(wc -l < log/fourfit_retry.txt 2>/dev/null || echo 0)
+
+if [[ -n "${JOBARRAY_CAP:-}" ]]; then
+    _n_failures=$(awk '/^NOTE: fourfit:/ {s+=$3} END {print s+0}' \
+        log/fourfit_error_codes.err 2>/dev/null || echo 0)
+else
+    _n_failures=$(awk -F'\t' 'NR>1 && $8+0==0 && $7+0>0 {s+=$7} END {print s+0}' \
+        log/parallel.log 2>/dev/null || echo 0)
+fi
+
+info "fourfit: ${_n_submitted} scans submitted, ${_n_kills} signal-killed, ${_n_failures} total fringe failures"
+
+if [[ $_signal_kills -eq 1 ]]; then
+    error "One or more fourfit tasks killed by signal, possibly OOM or walltime. Check log/fourfit_error_codes.err."
+    error "Failed scans listed in log/fourfit_retry.txt. Re-run the pipeline to retry them."
+else
+    touch "${WRKDIR}/log/.done.3.fourfit"
+fi
+
 echo "DONE"
+
+step_end "3.fourfit"

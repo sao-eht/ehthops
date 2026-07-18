@@ -34,7 +34,7 @@ if ls data/cf* 1>/dev/null 2>&1; then
 	found_cf_files=true
 fi
 if ! $found_cf_files; then
-	echo "  WARNING: No control files found to copy to the next stage! This is expected for stage 0.bootstrap." >&2
+	warning "No control files found to copy to next stage ${NEXT}"
 	echo "  Otherwise, check if the current stage has generated the necessary control files." >&2
 fi
 #------------------------------------------------------------------------------

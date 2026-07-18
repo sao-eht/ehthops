@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+step_start "1.version"
+
 echo $HOPS_PREFIX $HOPS_ARCH > $WRKDIR/version
 
 if command -v uv &> /dev/null
@@ -11,3 +13,5 @@ then
 else
   pip freeze >> $WRKDIR/version
 fi
+
+step_end "1.version"

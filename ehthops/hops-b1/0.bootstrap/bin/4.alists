@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+step_start "4.alists"
+
 echo "3. Creating summary alist"
 echo "	Container work directory, WRKDIR: \"$WRKDIR\""
 echo "	Container HOPS data output, DATADIR:    \"$DATADIR\""
@@ -66,3 +68,5 @@ popd
 echo "DONE aedit close + average"
 
 echo "DONE postproc"
+
+step_end "4.alists"

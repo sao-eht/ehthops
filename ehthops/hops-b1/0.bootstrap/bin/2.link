@@ -3,6 +3,8 @@
 # A wrapper script that delegates the expensive per-scan linking work to Python.
 # NOTE: this file is sourced (not executed), and must work with both bash and zsh.
 
+step_start "2.link"
+
 echo "1. Linking HOPS directories"
 echo "  Container work directory, WRKDIR: \"$WRKDIR\""
 echo "  Container data source, SRCDIR:    \"$SRCDIR\""
@@ -15,13 +17,13 @@ echo "  Mixed pol calibration, MIXEDPOL:        $MIXEDPOL"
 echo "  Use HAXP data for ALMA, HAXP:         $HAXP"
 
 cd "$WRKDIR"
-mkdir -p "$DATADIR" tests temp log
+mkdir -p "$DATADIR"
 
 # Populate $DATADIR. Run in a subshell purely so that `export` below does not
 # leak the state of exported environment variables states into the caller.
 (
     export SRCDIR DATADIR CORRDAT FILTERSTRING HAXP
-    link_hops_scans.py
+    /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/src/eat/bin/link_hops_scans.py
 )
 
 # Rename silly root files to standard names
@@ -33,9 +35,10 @@ find "$DATADIR" -name '*_3*' |
     done
 
 if ! find "$DATADIR" -mindepth 1 -maxdepth 1 -type d -name '[0-9][0-9][0-9][0-9]*' -print -quit | grep -q .; then
-    echo "ERROR: No data in the archive to link for filter string $FILTERSTRING." >&2
-    echo "       SRCDIR=$SRCDIR" >&2
-    echo "       CORRDAT=$CORRDAT" >&2
-    echo "       Ensure that the above paths exist and the patterns '$FILTERSTRING' exist somewhere along the path to the data archive." >&2
+    error "No data in the archive to link for filter string ${FILTERSTRING}"
     return 1 2>/dev/null || exit 1
 fi
+
+touch "${WRKDIR}/log/.done.2.link"
+
+step_end "2.link"

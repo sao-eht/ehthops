@@ -13,6 +13,13 @@ elif [ -n "$BASH_VERSION" ]; then
 fi
 if [ "$_sourced" -eq 1 ]; then _bail=return; else _bail=exit; fi
 
+# Source the shared logging library located at ehthops/ehthops/lib.
+# cd into the directory containing 0.launch, obtain its absolute path,
+# then walk up three levels:  bin/ -> N.stage/ -> hops-b[1234]/ -> ehthops/
+_launch_bin=$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)
+source "${_launch_bin}/../../../lib/log.sh"
+unset _launch_bin
+
 # Function to display help message
 show_help() {
     echo "Usage: [SET_ENVVAR1=...] && [SET_ENVVAR2=...] && source bin/$(basename "${BASH_SOURCE[0]:-$0}") [options]"
@@ -159,15 +166,15 @@ done
 
 # Perform some basic checks
 if [ ! -d "$METADIR" ]; then
-        echo "From $(basename "${BASH_SOURCE[0]:-$0}") ERROR:: METADIR=${METADIR} does not exist! Exiting..."
+        error "METADIR=${METADIR} does not exist"
         $_bail 1
 fi
 if [ ! -d "$SRCDIR" ]; then
-        echo "From $(basename "${BASH_SOURCE[0]:-$0}") ERROR:: SRCDIR=${SRCDIR} does not exist! Exiting..."
+        error "SRCDIR=${SRCDIR} does not exist"
         $_bail 1
 fi
 if [ ! -d "$SHRDIR" ]; then
-        echo "From $(basename "${BASH_SOURCE[0]:-$0}") WARNING:: SHRDIR=${SHRDIR} does not exist! Continuing without generating summary notebooks..."
+        warning "SHRDIR=${SHRDIR} does not exist. Continuing without summary notebooks"
 fi
 
 # if MIXEDPOL=false and HAXP=true, then set MIXEDPOL=true and throw a warning
@@ -178,8 +185,12 @@ fi
 
 # Warn if FILTERSTRING is empty
 if [ -z "${FILTERSTRING}" ]; then
-        echo "WARNING:: FILTERSTRING not set. Will filter data only by band and mixedpol status."
+        warning "FILTERSTRING not set. Will filter data only by band and mixedpol status"
 fi
+
+mkdir -p "${WRKDIR}/log" "${WRKDIR}/temp" "${WRKDIR}/tests"
+export LOG_FILE="${WRKDIR}/log/pipeline.tsv"
+export STAGE="$(basename "${WRKDIR}")"
 
 # Parse arguments
 USE_DOCKER=${USE_DOCKER:-false}

@@ -1,18 +1,34 @@
 #!/usr/bin/env bash
-
+step_start "6.summary"
 echo "5. Summary unexpected errors"
-echo "	Container work directory, WRKDIR: \"$WRKDIR\""
-echo "	Container HOPS data output, DATADIR:    \"$DATADIR\""
+echo "  Container work directory, WRKDIR: \"$WRKDIR\""
+echo "  Container HOPS data output, DATADIR:    \"$DATADIR\""
 
 cd $WRKDIR
 
+echo "=== Sentinel check ==="
+if [[ ! -f "log/.done.2.link" ]]; then
+    error "Sentinel missing -- 2.link did not complete."
+fi
+if [[ ! -f "log/.done.3.fourfit" ]]; then
+    error "Sentinel missing -- one or more fourfit tasks failed. Check log/fourfit_error_codes.err."
+fi
+
+echo "=== Pipeline timeline ==="
+awk -F'\t' '$2 == "INFO"' log/pipeline.tsv
+
+echo "=== Warnings and errors ==="
+awk -F'\t' '$2 == "WARNING" || $2 == "ERROR"' log/pipeline.tsv
+
+echo "=== Tool stderr summary ==="
 for f in log/*.err; do
-	echo "======== $f ========"
-	grep -v Warning $f | uniq
+    echo "======== $f ========"
+    grep -v Warning $f | uniq
 done |
-	grep -v 'alist: Successfully wrote'   |
-	grep -v 'alist: comprised of'         |
-	grep -v 'fringex: Getting files from' >\
-	log/summary_err.out
+grep -v 'alist: Successfully wrote'   |
+grep -v 'alist: comprised of'         |
+grep -v 'fringex: Getting files from' >\
+log/summary_err.out
 
 echo "DONE"
+step_end "6.summary"
