@@ -113,11 +113,16 @@ else
 fi
 
 # Default values can be adjusted by defining SET_* env variables prior to running launch
-FILTERSTRING=${SET_FILTERSTRING:-"[-_/]$BAND[-_/]"}  # explicit filterstring to match data to keep
 MIXEDPOL=${SET_MIXEDPOL:-"false"}                    # passed to pipeline scripts to control behavior
 HAXP=${SET_HAXP:-"false"}                            # flag to mix-in haxp products into source data
 JOBARRAY_CAP=${SET_JOBARRAY_CAP:-}                   # unset by default. Its mere presence (via SET_JOBARRAY_CAP
                                                      # or -j) triggers fourfit SLURM job array dispatch.                                                 
+HMIX=${SET_HMIX:-"false"}                            # new hmix packaging
+if [[ "$HMIX" == "true" ]]; then
+    FILTERSTRING=${SET_FILTERSTRING:-"[-_/]$BAND[-_/]*hmix/"}  # explicit filterstring to match data to keep
+else
+    FILTERSTRING=${SET_FILTERSTRING:-"[-_/]$BAND[-_/]*hops/"}  # explicit filterstring to match data to keep
+fi
 
 # Parse remaining command-line arguments, overwrite any existing settings
 OPTIND=1 # start from the first argument (ignore existing shell state)
