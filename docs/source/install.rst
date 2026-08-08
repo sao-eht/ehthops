@@ -2,11 +2,11 @@
 Installing the EHT-HOPS pipeline
 ================================================
 
-This page describes how to prepare the *meta environment* required to run the EHT-HOPS pipeline under SLURM.
-This environment consists of:
+This page describes how to prepare the *meta environment* required to run ``EHT-HOPS``. This environment consists of:
 
-1. A ``HOPS`` installation [version 3.26],
-2. A Python virtual environment shipped alongside ``ehthops`` (+ local copies of ``EAT`` and ``eht-imaging``).
+1. A local ``hops`` installation [version 3.26],
+2. A local copy of ``ehthops``, with a ``uv`` environment to be setup for every reduction.
+3. Local copies of ``eat`` and ``eht-imaging`` to be installed inside the ``uv`` environment for every reduction.
 
 HOPS (one-time setup)
 --------------------------------
@@ -19,7 +19,7 @@ Pre-requisites
 .. code-block:: bash
 
    sudo apt update
-   sudo apt install gcc make gfortran libx11-dev ghostscript libfftw3-dev
+   sudo apt install gcc make gfortran libx11-dev ghostscript libfftw3-dev libgsl-dev
    sudo apt install gdb flex bison pkg-config autoconf automake gettext libtool
 
 On a shared HPC system, you may not have ``sudo`` access and the system may not
@@ -94,16 +94,16 @@ discoverable by HOPS during compilation:
 Downloading and installing HOPS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The public release of HOPS does not contain some astronomy-specific utilities. Some parts of the pipeline
-(such as the ``average`` command) may not exist or work as expected. The utilities missing from public
-HOPS releases will be ported to ``eat`` in a future release, until which time ``ehthops`` relies on a
-custom version of HOPS 3.26 with the necessary utilities included.
+The latest public release of ``hops`` (3.26-4602) downloaded from
+`here <https://www.haystack.mit.edu/haystack-observatory-postprocessing-system-hops/>`_.
 
 .. warning::
-   **Please contact the EHT-HOPS pipeline developers** to obtain the correct version of HOPS
-   compatible with ``ehthops``.
+   Earlier public releases of ``hops`` did not contain some astronomy-specific utilities, without which some
+   parts of the pipeline (such as the ``average`` command) would not work. **Please contact the EHT-HOPS
+   pipeline developers** to obtain a custom version of ``hops`` if you find yourself unable to obtain the
+   latest public version.
 
-The developers of HOPS recommend building the software in an isolated ``build`` directory and installing it in
+The developers of ``hops`` recommend building the software in an isolated ``build`` directory and installing it in
 a separate location specified using ``configure --prefix``. Assuming that we are unpacking the custom
 HOPS 3.26 version obtained from the developers to ``/home/user/software/src`` and installing it under
 ``/home/user/software/installed/hops-3.26``, the installation steps would be as follows:
@@ -136,7 +136,7 @@ Pre-requisites
 ^^^^^^^^^^^^^^^^^
 
 .. note::
-   We support and recommend ``uv`` to ensure that the Python environment is properly isolated and
+   We support and recommend ``uv`` to ensure that the python environment is properly isolated and
    reproducible across different systems and users. Other tools such as ``conda`` or ``mamba``
    may also be used, but the user is responsible for ensuring that the correct versions of all
    dependencies are installed and that the environment is properly activated when running the pipeline.
@@ -165,7 +165,7 @@ Otherwise, ask the system administrators to install it or provide it through the
    is installed and that the environment is properly activated when running the pipeline.
    Note that the ``uv`` environment created in the next step is independent of any ``micromamba`` environment.
 
-2. The EHT-HOPS pipeline is managed by the fast Python package manager ``uv``. The best way to install
+2. The EHT-HOPS pipeline is managed by the fast python package manager ``uv``. The best way to install
 ``uv`` on an HPC cluster is via ``pipx`` which installs ``uv`` in an isolated environment.
 Install ``pipx`` `via pip <https://pipx.pypa.io/stable/installation/>`_ or `from
 source <https://github.com/pypa/pipx>`_ and add it to your ``PATH`` environment variable. Then install
@@ -187,20 +187,21 @@ suppress hardlink warnings by telling ``uv`` to copy files instead of linking th
 Without the above setting ``uv`` will copy files after throwing warnings about hardlinking.
 These can be safely ignored as long as the ``uv sync`` command in the next section completes successfully.
 
-Installing the base ``ehthops`` Python environment
+Installing the base ``ehthops`` python environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. note::
    We recommend repeating the following steps every time ``ehthops`` is cloned and set up for a new data reduction
-   to ensure that the Python environment is properly configured.
+   to ensure that the python environment is properly configured.
 
-Clone `the EHT-HOPS repository <https://github.com/sao-eht/ehthops>`_ and install the Python environment locally:
+Clone `ehthops <https://github.com/sao-eht/ehthops>`_ and install the python environment locally.
+If necessary you can specify the python version for the ``uv`` environment at sync time with ``-p``:
 
 .. code-block:: bash
 
    git clone https://github.com/sao-eht/ehthops.git
    cd ehthops
-   uv sync --all-extras
+   uv sync --all-extras # add '-p 3.11' to specify python version
 
 The local virtual environment will be created in the repository root under ``.venv/`` and can be activated with
 
@@ -208,33 +209,29 @@ The local virtual environment will be created in the repository root under ``.ve
 
    source .venv/bin/activate
 
-Updating the Python environment
+Updating the python environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Ensure that the ``uv`` environment is active in the shell before proceeding to install the editable dependencies.
 
-The pipeline requires a local copy of the ``EAT`` package which can be obtained `here <https://github.com/sao-eht/eat>`_.
-Change directory to a suitable location, clone the repository, and install it in editable mode:
+The pipeline requires ``eat`` and the ``dev`` branch of ``eht-imaging``. Only the post-processing stages of ``ehthops``
+require ``eht-imaging`` and hence is optional but highly recommended, since post-processing is often a part of EHT data
+reduction. ``cd`` to a suitable location and install them in editable mode:
 
 .. code-block:: bash
 
    git clone https://github.com/sao-eht/eat.git
    uv pip install -e eat
 
-For post-processing stages of the pipeline, an editable installation of ``eht-imaging`` is also required. Change to a suitable location,
-clone the ``dev`` branch of ``eht-imaging``, and install it in editable mode:
-
-.. code-block:: bash
-
    git clone --branch dev https://github.com/achael/eht-imaging.git
    uv pip install -e eht-imaging
 
-Once the above steps are completed, the Python environment should be properly set up to run the EHT-HOPS pipeline.
-All four bands can be processed with the same environment since the dependencies are shared across bands.
+Once the above steps are completed, the python environment for running ``ehthops`` should be ready. While the four bands are
+reduced independently, they share the same uv environment and need not be set up separately.
 
 .. note::
    
    By default, the pipeline will create all the output data products in the same directory as the input data and code.
    The easiest way to recalibrate the same data with new settings or calibrate new data, is to clone ``ehthops``
-   anew and set the Python environment up in the new clone.
+   anew and set the python environment up in the new clone.
 
