@@ -150,7 +150,7 @@ fi
 IFS=$'\t' read -r ROOTFILE SETARGS <<< "$_line"
 [[ "$SETARGS" == "-" ]] && SETARGS=""
 
-fourfit -c "$WRKDIR/temp/cf_all" ${SETARGS:+set $SETARGS} "$ROOTFILE" \
+fourfit -c "$WRKDIR/temp/cf_all" "$ROOTFILE" ${SETARGS:+set $SETARGS} \
     > "$ROOTFILE.${SLURM_ARRAY_TASK_ID}.out" \
     2> "$ROOTFILE.${SLURM_ARRAY_TASK_ID}.err"
 _rc=$?
@@ -211,7 +211,7 @@ else
     # become separate fourfit arguments; see the SLURM worker script above for
     # why this is safe.
     (time parallel --nice 15 --load 95% --joblog log/parallel.log --colsep '\t' \
-        'args={2}; [[ "$args" == "-" ]] && args=""; fourfit -c temp/cf_all ${args:+set $args} {1} > {1}.{#}.out 2> {1}.{#}.err' \
+        'args={2}; [[ "$args" == "-" ]] && args=""; fourfit -c temp/cf_all {1} ${args:+set $args} > {1}.{#}.out 2> {1}.{#}.err' \
         :::: log/filelist.txt 2>&1) 2> log/parallel.time
 
     if [[ -f log/parallel.log ]]; then
