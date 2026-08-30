@@ -42,7 +42,8 @@ show_help() {
     echo "                    If unset, fourfit always runs via local GNU parallel "
     echo "                    even inside a SLURM allocation (e.g. an interactive node)."
     echo "                    Interactive SLURM allocations are NOT, by themselves, a request for job arrays."
-    echo "  SET_FOURFIT_MAX_BASELINES_PER_JOB  Maximum number of baselines processed by a single fourfit job (default: 15)."
+    echo "  SET_MAX_BASELINES_PER_FOURFIT_JOB  Maximum number of baselines processed by a single fourfit job."
+    echo "                    If unset, derived as the 75th percentile of baseline counts across all scans in DATADIR (minimum 8 baselines)."
     echo
     echo "If these are not set and no command-line options are given, then reasonable defaults are used (not always guaranteed to work!)."
     echo
@@ -118,8 +119,11 @@ MIXEDPOL=${SET_MIXEDPOL:-"false"}                    # passed to pipeline script
 HAXP=${SET_HAXP:-"false"}                            # flag to mix-in haxp products into source data
 JOBARRAY_CAP=${SET_JOBARRAY_CAP:-}                   # unset by default. Its mere presence (via SET_JOBARRAY_CAP
                                                      # or -j) triggers fourfit SLURM job array dispatch.
-MAX_BASELINES_PER_JOB=${SET_FOURFIT_MAX_BASELINES_PER_JOB:-15}  # scans with more baselines than this are split
-                                                     # into multiple fourfit jobs by baseline subset.
+MAX_BASELINES_PER_FOURFIT_JOB=${SET_MAX_BASELINES_PER_FOURFIT_JOB:-}  # scans with more baselines than this are split
+                                                     # into multiple fourfit jobs by baseline subset. Left
+                                                     # unset by default so 3.fourfit derives it per-run from
+                                                     # the actual baseline-count distribution; set explicitly
+                                                     # here to force a fixed threshold instead.
 HMIX=${SET_HMIX:-"false"}                            # new hmix packaging
 if [[ "$HMIX" == "true" ]]; then
     FILTERSTRING=${SET_FILTERSTRING:-"[-_/]$BAND[-_/]*hmix/"}  # explicit filterstring to match data to keep
@@ -225,7 +229,7 @@ if [ x"$USE_DOCKER" = x"true" ]; then
         echo "  Mixed polarization calibration, MIXEDPOL:        $MIXEDPOL"
         echo "  Use HAXP data for ALMA, HAXP:        $HAXP"
         echo "  Job array cap, JOBARRAY_CAP:        $JOBARRAY_CAP"
-        echo "  Max baselines per fourfit job, MAX_BASELINES_PER_JOB:        $MAX_BASELINES_PER_JOB"
+        echo "  Max baselines per fourfit job, MAX_BASELINES_PER_FOURFIT_JOB:        $MAX_BASELINES_PER_FOURFIT_JOB"
         echo "  Command:     $@"
 
 	if [ $# = 0 ]; then # no command line argument
@@ -251,7 +255,7 @@ if [ x"$USE_DOCKER" = x"true" ]; then
 		-e "MIXEDPOL=$MIXEDPOL"                \
                 -e "HAXP=$HAXP"                        \
                 -e "JOBARRAY_CAP=$JOBARRAY_CAP"        \
-                -e "MAX_BASELINES_PER_JOB=$MAX_BASELINES_PER_JOB" \
+                -e "MAX_BASELINES_PER_FOURFIT_JOB=$MAX_BASELINES_PER_FOURFIT_JOB" \
 		$PORTFORWARD                           \
 		eventhorizontelescope/eat-notebook     \
 		"$@"
@@ -271,7 +275,7 @@ else
         echo "  Mixed polarization calibration, MIXEDPOL:        $MIXEDPOL"
         echo "  Use HAXP data for ALMA, HAXP:        $HAXP"
         echo "  Job array cap, JOBARRAY_CAP:        $JOBARRAY_CAP"
-        echo "  Max baselines per fourfit job, MAX_BASELINES_PER_JOB:        $MAX_BASELINES_PER_JOB"
+        echo "  Max baselines per fourfit job, MAX_BASELINES_PER_FOURFIT_JOB:        $MAX_BASELINES_PER_FOURFIT_JOB"
         echo "  Command:     $@"
 
 	# Add more HOPS setup scripts here if needed

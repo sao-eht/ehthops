@@ -2,15 +2,21 @@
 
 step_start "3.fourfit"
 
-# To avoid empty/unset MAX_BASELINES_PER_JOB (e.g. if 0.launch was skipped).
-MAX_BASELINES_PER_JOB=${MAX_BASELINES_PER_JOB:-15}
+# If MAX_BASELINES_PER_FOURFIT_JOB is not set, it is derived automatically as
+# a percentile of the actual per-scan baseline count distribution.
+MAX_BASELINES_PERCENTILE=${MAX_BASELINES_PERCENTILE:-75}
+MAX_BASELINES_PER_FOURFIT_JOB_FLOOR=${MAX_BASELINES_PER_FOURFIT_JOB_FLOOR:-15}
 
 echo "2. Running fourfit..."
 echo "  Container work directory, WRKDIR: \"$WRKDIR\""
 echo "  Container HOPS data output, DATADIR:    \"$DATADIR\""
 echo "  Maximum concurrent jobs in SLURM job array, JOBARRAY_CAP:    \"$JOBARRAY_CAP\""
 echo "  (if JOBARRAY_CAP is empty, GNU parallel is used to parallelize fourfit on local machine/single node)."
-echo "  Maximum baselines per fourfit job, MAX_BASELINES_PER_JOB:    \"$MAX_BASELINES_PER_JOB\""
+if [[ -n "${MAX_BASELINES_PER_FOURFIT_JOB:-}" ]]; then
+    echo "MAX_BASELINES_PER_FOURFIT_JOB (set explicitly):    \"$MAX_BASELINES_PER_FOURFIT_JOB\""
+else
+    echo "MAX_BASELINES_PER_FOURFIT_JOB (computed as): (${MAX_BASELINES_PERCENTILE}-th percentile of baselines count per scan, with a minimum threshold of ${MAX_BASELINES_PER_FOURFIT_JOB_FLOOR})."
+fi
 echo "  Band, BAND:    \"$BAND\""
 
 cd $WRKDIR
@@ -47,23 +53,44 @@ if [[ -f "${WRKDIR}/log/fourfit_retry.txt" ]]; then
 else
     # Build the task list. Each line is TAB-separated: ROOTFILE, fourfit "set"
     # override arguments ("-" means "no override, use temp/cf_all as-is").
-    #
-    # When a scan's baseline count exceeds MAX_BASELINES_PER_JOB it is split into
-    # ceil(n/MAX_BASELINES_PER_JOB) fourfit tasks. Each task's exclusion set is
-    # passed to fourfit via its "set <control-file-syntax>" argument (see
-    # fourfit.doc), e.g. "set baseline AB or baseline CD skip true". fourfit
-    # applies this with the same last-statement-wins semantics as a control file,
-    # so existing "skip false/true" statements in temp/cf_all are honoured and
-    # only ever narrowed further, without ever touching disk.
-    : > log/filelist.txt # truncate the file to start fresh
+    : > log/filelist.txt # truncate the file to start afresh
 
+    # First pass: collect each scan's baseline codes once, indexed in parallel with _rootfiles.
+    # Also feeds the automatic percentile calculation.
+    _scan_bl_codes=()
+    _scan_n_baselines=()
     for _rootfile in "${_rootfiles[@]}"; do
         _scandir=$(dirname "$_rootfile")
-        # Extract baselines found in the current scan directory
         _basefiles=( "$_scandir"/??..?????? )
-        _n_baselines=${#_basefiles[@]}
+        _bl_codes=()
+        for _bf in "${_basefiles[@]}"; do
+            _bn=$(basename "$_bf")
+            _bl_codes+=( "${_bn:0:2}" )
+        done
+        _scan_bl_codes+=( "${_bl_codes[*]}" )
+        _scan_n_baselines+=( "${#_bl_codes[@]}" )
+    done
 
-        if (( _n_baselines <= MAX_BASELINES_PER_JOB )); then
+    if [[ -z "${MAX_BASELINES_PER_FOURFIT_JOB:-}" ]]; then
+        _sorted_counts=( $(printf '%s\n' "${_scan_n_baselines[@]}" | sort -n) )
+        _n_scans_total=${#_sorted_counts[@]}
+        # Nearest-rank percentile, 1-based index ceil(p*N/100), clamped to [1,N].
+        _idx=$(( (MAX_BASELINES_PERCENTILE * _n_scans_total + 99) / 100 ))
+        (( _idx < 1 )) && _idx=1
+        (( _idx > _n_scans_total )) && _idx=_n_scans_total
+        MAX_BASELINES_PER_FOURFIT_JOB=${_sorted_counts[$((_idx - 1))]}
+        (( MAX_BASELINES_PER_FOURFIT_JOB < MAX_BASELINES_PER_FOURFIT_JOB_FLOOR )) && \
+            MAX_BASELINES_PER_FOURFIT_JOB=$MAX_BASELINES_PER_FOURFIT_JOB_FLOOR
+        info "Setting MAX_BASELINES_PER_FOURFIT_JOB=${MAX_BASELINES_PER_FOURFIT_JOB} (p${MAX_BASELINES_PERCENTILE} of ${_n_scans_total} scans, minimum ${MAX_BASELINES_PER_FOURFIT_JOB_FLOOR})"
+    fi
+
+    # Second pass: split based on MAX_BASELINES_PER_FOURFIT_JOB; reuse the counts/codes
+    # cached in the first pass instead of re-globbing each scan directory.
+    for _i_rootfile in "${!_rootfiles[@]}"; do
+        _rootfile=${_rootfiles[$_i_rootfile]}
+        _n_baselines=${_scan_n_baselines[$_i_rootfile]}
+
+        if (( _n_baselines <= MAX_BASELINES_PER_FOURFIT_JOB )); then
             # "-" (rather than an empty field) marks "no override", since a
             # trailing empty column is fragile to split on reliably across
             # both `read` and GNU parallel's --colsep.
@@ -71,15 +98,11 @@ else
             continue
         fi
 
-        _bl_codes=()
-        for _bf in "${_basefiles[@]}"; do
-            _bn=$(basename "$_bf")
-            _bl_codes+=( "${_bn:0:2}" )
-        done
+        _bl_codes=( ${_scan_bl_codes[$_i_rootfile]} )
 
-        for ((_i=0; _i<_n_baselines; _i+=MAX_BASELINES_PER_JOB)); do
+        for ((_i=0; _i<_n_baselines; _i+=MAX_BASELINES_PER_FOURFIT_JOB)); do
             _setargs=""
-            for _excluded in "${_bl_codes[@]:0:_i}" "${_bl_codes[@]:$((_i + MAX_BASELINES_PER_JOB))}"; do
+            for _excluded in "${_bl_codes[@]:0:_i}" "${_bl_codes[@]:$((_i + MAX_BASELINES_PER_FOURFIT_JOB))}"; do
                 if [[ -z "$_setargs" ]]; then
                     _setargs="baseline $_excluded"
                 else
