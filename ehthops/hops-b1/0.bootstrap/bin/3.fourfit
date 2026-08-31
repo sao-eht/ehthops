@@ -125,6 +125,9 @@ _n_files=$(wc -l < log/filelist.txt)
 _n_scans=$(cut -f1 log/filelist.txt | sort -u | wc -l)
 _n_split_scans=$(cut -f1 log/filelist.txt | sort | uniq -c | awk '$1>1' | wc -l)
 
+# fourfit's per-task stdout/stderr go here to avoid hops2uvfits file-matching pattern issues.
+mkdir -p "$WRKDIR/log/fourfit"
+
 # if JOBARRAY_CAP is not set use GNU parallel to parallelize fourfit on local machine/single node.
 if [[ -n "${JOBARRAY_CAP:-}" ]]; then
     if ! command -v sbatch >/dev/null 2>&1; then
@@ -174,8 +177,8 @@ IFS=$'\t' read -r ROOTFILE SETARGS <<< "$_line"
 [[ "$SETARGS" == "-" ]] && SETARGS=""
 
 fourfit -c "$WRKDIR/temp/cf_all" "$ROOTFILE" ${SETARGS:+set $SETARGS} \
-    > "$ROOTFILE.${SLURM_ARRAY_TASK_ID}.out" \
-    2> "$ROOTFILE.${SLURM_ARRAY_TASK_ID}.err"
+    > "$WRKDIR/log/fourfit/$(basename "$ROOTFILE").${SLURM_ARRAY_TASK_ID}.out" \
+    2> "$WRKDIR/log/fourfit/$(basename "$ROOTFILE").${SLURM_ARRAY_TASK_ID}.err"
 _rc=$?
 _sig=$(( _rc - 128 ))
 
@@ -234,7 +237,7 @@ else
     # become separate fourfit arguments; see the SLURM worker script above for
     # why this is safe.
     (time parallel --nice 15 --load 95% --joblog log/parallel.log --colsep '\t' \
-        'args={2}; [[ "$args" == "-" ]] && args=""; fourfit -c temp/cf_all {1} ${args:+set $args} > {1}.{#}.out 2> {1}.{#}.err' \
+        'args={2}; [[ "$args" == "-" ]] && args=""; fourfit -c temp/cf_all {1} ${args:+set $args} > log/fourfit/$(basename {1}).{#}.out 2> log/fourfit/$(basename {1}).{#}.err' \
         :::: log/filelist.txt 2>&1) 2> log/parallel.time
 
     if [[ -f log/parallel.log ]]; then
@@ -251,8 +254,8 @@ else
 
 fi
 
-cat "$DATADIR"/*/*/*.out > log/fourfit.out
-cat "$DATADIR"/*/*/*.err > log/fourfit.err
+cat log/fourfit/*.out > log/fourfit.out
+cat log/fourfit/*.err > log/fourfit.err
 cat log/slurm/*.err > log/fourfit_error_codes.err 2>/dev/null
 
 # Handling fourfit exit codes
