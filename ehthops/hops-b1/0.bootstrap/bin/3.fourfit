@@ -2,11 +2,21 @@
 
 step_start "3.fourfit"
 
+# If MAX_BASELINES_PER_FOURFIT_JOB is not set, it is derived automatically as
+# a percentile of the actual per-scan baseline count distribution.
+MAX_BASELINES_PERCENTILE=${MAX_BASELINES_PERCENTILE:-75}
+MAX_BASELINES_PER_FOURFIT_JOB_FLOOR=${MAX_BASELINES_PER_FOURFIT_JOB_FLOOR:-15}
+
 echo "2. Running fourfit..."
 echo "  Container work directory, WRKDIR: \"$WRKDIR\""
 echo "  Container HOPS data output, DATADIR:    \"$DATADIR\""
 echo "  Maximum concurrent jobs in SLURM job array, JOBARRAY_CAP:    \"$JOBARRAY_CAP\""
 echo "  (if JOBARRAY_CAP is empty, GNU parallel is used to parallelize fourfit on local machine/single node)."
+if [[ -n "${MAX_BASELINES_PER_FOURFIT_JOB:-}" ]]; then
+    echo "MAX_BASELINES_PER_FOURFIT_JOB (set explicitly):    \"$MAX_BASELINES_PER_FOURFIT_JOB\""
+else
+    echo "MAX_BASELINES_PER_FOURFIT_JOB (computed as): (${MAX_BASELINES_PERCENTILE}-th percentile of baselines count per scan, with a minimum threshold of ${MAX_BASELINES_PER_FOURFIT_JOB_FLOOR})."
+fi
 echo "  Band, BAND:    \"$BAND\""
 
 cd $WRKDIR
@@ -25,30 +35,98 @@ else
     shopt -s nullglob
 fi
 _rootfiles=( "$DATADIR"/*/*/??[^.]*.?????? )
+
+if [[ ${#_rootfiles[@]} -eq 0 ]]; then
+    error "No root files found in ${DATADIR}"
+    if [[ -n "${ZSH_VERSION:-}" ]]; then
+        unsetopt NULL_GLOB
+    else
+        shopt -u nullglob
+    fi
+    return 1
+fi
+
+if [[ -f "${WRKDIR}/log/fourfit_retry.txt" ]]; then
+    info "Retry mode: $(wc -l < "${WRKDIR}/log/fourfit_retry.txt") fourfit tasks from previous incomplete run"
+    cp "${WRKDIR}/log/fourfit_retry.txt" log/filelist.txt
+    rm "${WRKDIR}/log/fourfit_retry.txt"
+else
+    # Build the task list. Each line is TAB-separated: ROOTFILE, fourfit "set"
+    # override arguments ("-" means "no override, use temp/cf_all as-is").
+    : > log/filelist.txt # truncate the file to start afresh
+
+    # First pass: collect each scan's baseline codes once, indexed in parallel with _rootfiles.
+    # Also feeds the automatic percentile calculation.
+    _scan_bl_codes=()
+    _scan_n_baselines=()
+    for _rootfile in "${_rootfiles[@]}"; do
+        _scandir=$(dirname "$_rootfile")
+        _basefiles=( "$_scandir"/??..?????? )
+        _bl_codes=()
+        for _bf in "${_basefiles[@]}"; do
+            _bn=$(basename "$_bf")
+            _bl_codes+=( "${_bn:0:2}" )
+        done
+        _scan_bl_codes+=( "${_bl_codes[*]}" )
+        _scan_n_baselines+=( "${#_bl_codes[@]}" )
+    done
+
+    if [[ -z "${MAX_BASELINES_PER_FOURFIT_JOB:-}" ]]; then
+        _sorted_counts=( $(printf '%s\n' "${_scan_n_baselines[@]}" | sort -n) )
+        _n_scans_total=${#_sorted_counts[@]}
+        # Nearest-rank percentile, 1-based index ceil(p*N/100), clamped to [1,N].
+        _idx=$(( (MAX_BASELINES_PERCENTILE * _n_scans_total + 99) / 100 ))
+        (( _idx < 1 )) && _idx=1
+        (( _idx > _n_scans_total )) && _idx=_n_scans_total
+        MAX_BASELINES_PER_FOURFIT_JOB=${_sorted_counts[$((_idx - 1))]}
+        (( MAX_BASELINES_PER_FOURFIT_JOB < MAX_BASELINES_PER_FOURFIT_JOB_FLOOR )) && \
+            MAX_BASELINES_PER_FOURFIT_JOB=$MAX_BASELINES_PER_FOURFIT_JOB_FLOOR
+        info "Setting MAX_BASELINES_PER_FOURFIT_JOB=${MAX_BASELINES_PER_FOURFIT_JOB} (p${MAX_BASELINES_PERCENTILE} of ${_n_scans_total} scans, minimum ${MAX_BASELINES_PER_FOURFIT_JOB_FLOOR})"
+    fi
+
+    # Second pass: split based on MAX_BASELINES_PER_FOURFIT_JOB; reuse the counts/codes
+    # cached in the first pass instead of re-globbing each scan directory.
+    for _i_rootfile in "${!_rootfiles[@]}"; do
+        _rootfile=${_rootfiles[$_i_rootfile]}
+        _n_baselines=${_scan_n_baselines[$_i_rootfile]}
+
+        if (( _n_baselines <= MAX_BASELINES_PER_FOURFIT_JOB )); then
+            # "-" (rather than an empty field) marks "no override", since a
+            # trailing empty column is fragile to split on reliably across
+            # both `read` and GNU parallel's --colsep.
+            printf '%s\t-\n' "$_rootfile" >> log/filelist.txt
+            continue
+        fi
+
+        _bl_codes=( ${_scan_bl_codes[$_i_rootfile]} )
+
+        for ((_i=0; _i<_n_baselines; _i+=MAX_BASELINES_PER_FOURFIT_JOB)); do
+            _setargs=""
+            for _excluded in "${_bl_codes[@]:0:_i}" "${_bl_codes[@]:$((_i + MAX_BASELINES_PER_FOURFIT_JOB))}"; do
+                if [[ -z "$_setargs" ]]; then
+                    _setargs="baseline $_excluded"
+                else
+                    _setargs="$_setargs or baseline $_excluded"
+                fi
+            done
+            _setargs="$_setargs skip true"
+            printf '%s\t%s\n' "$_rootfile" "$_setargs" >> log/filelist.txt
+        done
+    done
+fi
+
 if [[ -n "${ZSH_VERSION:-}" ]]; then
     unsetopt NULL_GLOB
 else
     shopt -u nullglob
 fi
 
-if [[ ${#_rootfiles[@]} -eq 0 ]]; then
-    error "No root files found in ${DATADIR}"
-    return 1
-fi
-
-if [[ ${#_rootfiles[@]} -eq 0 ]]; then
-    error "No root files found in ${DATADIR}"
-    return 1
-fi
-
-if [[ -f "${WRKDIR}/log/fourfit_retry.txt" ]]; then
-    info "Retry mode: $(wc -l < "${WRKDIR}/log/fourfit_retry.txt") scans from previous incomplete run"
-    cp "${WRKDIR}/log/fourfit_retry.txt" log/filelist.txt
-    rm "${WRKDIR}/log/fourfit_retry.txt"
-else
-    printf '%s\n' "${_rootfiles[@]}" > log/filelist.txt
-fi
 _n_files=$(wc -l < log/filelist.txt)
+_n_scans=$(cut -f1 log/filelist.txt | sort -u | wc -l)
+_n_split_scans=$(cut -f1 log/filelist.txt | sort | uniq -c | awk '$1>1' | wc -l)
+
+# fourfit's per-task stdout/stderr go here to avoid hops2uvfits file-matching pattern issues.
+mkdir -p "$WRKDIR/log/fourfit"
 
 # if JOBARRAY_CAP is not set use GNU parallel to parallelize fourfit on local machine/single node.
 if [[ -n "${JOBARRAY_CAP:-}" ]]; then
@@ -86,16 +164,21 @@ HOPS_SETUP=false source "$HOPS_SETUP_SCRIPT"
 
 # uv venv not sourced since fourfit is a C binary and does not need Python.
 
-# Look up this task's root file (array is 1-indexed to match filelist line numbers).
-ROOTFILE=$(sed -n "${SLURM_ARRAY_TASK_ID}p" "$FILELIST")
-if [[ -z "$ROOTFILE" ]]; then
+# Look up this task's (ROOTFILE, fourfit "set" override) pair (array is
+# 1-indexed to match filelist line numbers). SETARGS is deliberately
+# word-split (unquoted) below to become separate fourfit arguments;
+# its content is fully controlled by 3.fourfit, so this is safe.
+_line=$(sed -n "${SLURM_ARRAY_TASK_ID}p" "$FILELIST")
+if [[ -z "$_line" ]]; then
     echo "ERROR: no entry for task ${SLURM_ARRAY_TASK_ID} in ${FILELIST}" >&2
     exit 1
 fi
+IFS=$'\t' read -r ROOTFILE SETARGS <<< "$_line"
+[[ "$SETARGS" == "-" ]] && SETARGS=""
 
-fourfit -c "$WRKDIR/temp/cf_all" "$ROOTFILE" \
-    > "$ROOTFILE.out" \
-    2> "$ROOTFILE.err"
+fourfit -c "$WRKDIR/temp/cf_all" "$ROOTFILE" ${SETARGS:+set $SETARGS} \
+    > "$WRKDIR/log/fourfit/$(basename "$ROOTFILE").${SLURM_ARRAY_TASK_ID}.out" \
+    2> "$WRKDIR/log/fourfit/$(basename "$ROOTFILE").${SLURM_ARRAY_TASK_ID}.err"
 _rc=$?
 _sig=$(( _rc - 128 ))
 
@@ -107,7 +190,7 @@ if [[ $_rc -ge 128 ]]; then
         *)  _signame="signal ${_sig}" ;;
     esac
     echo "ERROR: fourfit killed by ${_signame} (exit ${_rc}) on ${ROOTFILE}" >&2
-    echo "${ROOTFILE}" > "${WRKDIR}/log/slurm/${SLURM_ARRAY_TASK_ID}.retry"
+    echo "${_line}" > "${WRKDIR}/log/slurm/${SLURM_ARRAY_TASK_ID}.retry"
     exit $_rc
 elif [[ $_rc -ne 0 ]]; then
     echo "NOTE: fourfit: ${_rc} fringe failure(s) on $(basename "${ROOTFILE}")" >&2
@@ -145,14 +228,25 @@ FOURFIT_WORKER
     find "$WRKDIR/log/slurm" -name "*.retry" -delete
 
 else
-    # Non-Slurm fallback: local GNU parallel, reading from the filelist
-    # built above using the same root file selection.
-    (time parallel --nice 15 --load 95% --joblog log/parallel.log \
-        "fourfit -c temp/cf_all {} > {}.out 2> {}.err" \
+    # Non-Slurm fallback: local GNU parallel, reading (ROOTFILE, fourfit "set"
+    # override) pairs from the filelist built above. {2} is "-" for unsplit
+    # scans, in which case no override is passed. GNU parallel's job sequence
+    # number {#} matches the filelist line number and log/parallel.log's column
+    # 1; so it doubles as a collision-free suffix for split scan logs.
+    # $args is deliberately word-split (unquoted, via ${args:+set $args}) to
+    # become separate fourfit arguments; see the SLURM worker script above for
+    # why this is safe.
+    (time parallel --nice 15 --load 95% --joblog log/parallel.log --colsep '\t' \
+        'args={2}; [[ "$args" == "-" ]] && args=""; fourfit -c temp/cf_all {1} ${args:+set $args} > log/fourfit/$(basename {1}).{#}.out 2> log/fourfit/$(basename {1}).{#}.err' \
         :::: log/filelist.txt 2>&1) 2> log/parallel.time
 
     if [[ -f log/parallel.log ]]; then
-        awk -F'\t' 'NR>1 && $8+0>0 {print $1}' log/parallel.log | \
+        # A signal-killed command is usually a grandchild of parallel (it
+        # runs the job through a shell because of the redirections above),
+        # so the wrapping shell reports the translated 128+signal exit code
+        # in Exitval ($7) while parallel's own Signal column ($8) stays 0.
+        # Check both so OOM/walltime kills are reliably queued for retry.
+        awk -F'\t' 'NR>1 && ($8+0>0 || $7+0>=128) {print $1}' log/parallel.log | \
             while IFS= read -r _seq; do
                 sed -n "${_seq}p" log/filelist.txt
             done > log/fourfit_retry.txt
@@ -160,8 +254,8 @@ else
 
 fi
 
-cat "$DATADIR"/*/*/*.out > log/fourfit.out
-cat "$DATADIR"/*/*/*.err > log/fourfit.err
+cat log/fourfit/*.out > log/fourfit.out
+cat log/fourfit/*.err > log/fourfit.err
 cat log/slurm/*.err > log/fourfit_error_codes.err 2>/dev/null
 
 # Handling fourfit exit codes
@@ -172,7 +266,7 @@ if [[ -n "${JOBARRAY_CAP:-}" ]]; then
     fi
 else
     if [[ -f log/parallel.log ]] && \
-       awk -F'\t' 'NR>1 && $8+0>0 {found=1; exit} END {exit !found}' log/parallel.log; then
+       awk -F'\t' 'NR>1 && ($8+0>0 || $7+0>=128) {found=1; exit} END {exit !found}' log/parallel.log; then
         _signal_kills=1
     fi
 fi
@@ -185,11 +279,11 @@ if [[ -n "${JOBARRAY_CAP:-}" ]]; then
     _n_failures=$(awk '/^NOTE: fourfit:/ {s+=$3} END {print s+0}' \
         log/fourfit_error_codes.err 2>/dev/null || echo 0)
 else
-    _n_failures=$(awk -F'\t' 'NR>1 && $8+0==0 && $7+0>0 {s+=$7} END {print s+0}' \
+    _n_failures=$(awk -F'\t' 'NR>1 && $8+0==0 && $7+0>0 && $7+0<128 {s+=$7} END {print s+0}' \
         log/parallel.log 2>/dev/null || echo 0)
 fi
 
-info "fourfit: ${_n_submitted} scans submitted, ${_n_kills} signal-killed, ${_n_failures} total fringe failures"
+info "fourfit: ${_n_scans} scans submitted as ${_n_submitted} fourfit tasks (${_n_split_scans} scans split for load balancing), ${_n_kills} signal-killed, ${_n_failures} total fringe failures"
 
 if [[ $_signal_kills -eq 1 ]]; then
     error "One or more fourfit tasks killed by signal, possibly OOM or walltime. Check log/fourfit_error_codes.err."

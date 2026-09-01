@@ -22,6 +22,11 @@ the pipeline can be launched by submitting the ``ehthops_slurm.job`` script with
 
 The maximum number of concurrent ``fourfit`` jobs can be set using ``SET_JOBARRAY_CAP`` in ``settings.config``.
 
+Scans with more baselines than ``SET_MAX_BASELINES_PER_FOURFIT_JOB`` in ``settings.config`` are split into
+multiple ``fourfit`` jobs by baseline subset, so that a handful of large scans do not dominate the wall-time
+of the fringe-fitting step. If left unset, ``3.fourfit`` auto-derives the threshold as the 75th percentile of
+baseline counts across all scans (floor: 15).
+
 Some notes on the environment variables and running the stages manually (the following are taken care of automatically by ``scripts/ehthops_pipeline.sh``):
 
 - ``0.launch`` attempts to set reasonable defaults for the environment variables if they are not specified. We recommend setting/verifying the values of at least ``SRCDIR``, ``CORRDAT``, ``METADIR``, and ``OBSYEAR`` every time ``0.launch`` is run.

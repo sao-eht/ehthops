@@ -30,8 +30,12 @@ Prune data products from an ehthops pipeline run based on LEVEL.
 In every pruned data/ directory:
   * files directly under data/ are preserved
   * the directory structure under data/ is preserved
-  * inside any subdirectory, only *.out, *.err and *.uvfits files are kept;
+  * inside any subdirectory, only *.uvfits files are kept;
     all other files (including .dat under data/adhoc) are deleted
+
+Note: 3.fourfit's per-scan/per-task fourfit logs are NOT under data/ -- they
+are written to 0.bootstrap/log/fourfit/, which this script never touches
+(it only ever modifies data/ directories).
 
 Options:
   -l LEVEL   Cleanup level to perform (required). One of:
@@ -75,10 +79,15 @@ _ehc_prune_data() {
     # deleted, so the tree structure is preserved. The adhoc/ subtree is
     # excluded here via -path and handled separately below, because it follows
     # a different rule.
+    #
+    # *.out/*.err are no longer carved out here: 3.fourfit now logs to
+    # log/fourfit/ instead of into data/ scan directories (so that a stray log
+    # file can never be mistaken for a type-2 fringe file by downstream
+    # filename-pattern-based tools, e.g. hops2uvfits.py), and nothing else
+    # writes *.out/*.err under data/. If that ever changes, this rule will
+    # delete them like any other non-uvfits file.
     find "$data_dir" -mindepth 2 \( -type f -o -type l \) \
         ! -path "$data_dir/adhoc/*" \
-        ! -name '*.out' \
-        ! -name '*.err' \
         ! -name '*.uvfits' \
         "$action"
 
