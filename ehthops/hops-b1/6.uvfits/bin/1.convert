@@ -8,10 +8,20 @@ mkdir log
 # find all directories in $INPUTDIR that are named with expt numbers
 directories=$(find $INPUTDIR -maxdepth 1 -type d -name "[0-9]*" | sort)
 
+# Split the total number of available cores (SLURM-allocated cores or from `nproc`) evenly
+# across epochs for each per-epoch invocation of hops2uvfits.py to parallelize across.
+ncores=${SLURM_CPUS_PER_TASK:-$(nproc)}
+
+ndirs=$(echo "$directories" | grep -c .)
+[ "$ndirs" -lt 1 ] && ndirs=1
+workers=$(( (ncores + ndirs - 1) / ndirs ))
+[ "$workers" -lt 1 ] && workers=1
+
 for d in $directories; do
 	mkdir -p $(basename $d)
 	/usr/bin/time -v hops2uvfits.py     \
 	        --computebluvfits --discardbluvfits --recomputeuv --fixsrcname --loglevel DEBUG \
+	        --workers $workers \
 	        $d $(basename $d)      \
 		>  log/uvfits-$(basename $d).log        \
 		2> log/uvfits-$(basename $d).err        &
