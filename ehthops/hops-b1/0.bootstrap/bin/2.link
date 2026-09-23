@@ -16,6 +16,11 @@ echo "  Band, BAND:        $BAND"
 echo "  Mixed pol calibration, MIXEDPOL:        $MIXEDPOL"
 echo "  Use HAXP data for ALMA, HAXP:         $HAXP"
 
+if ! command -v link_hops_scans.py >/dev/null 2>&1; then
+    error "link_hops_scans.py not found! Ensure that the eat library is installed in the current environment."
+    return 1 2>/dev/null || exit 1
+fi
+
 cd "$WRKDIR"
 mkdir -p "$DATADIR"
 
@@ -23,7 +28,7 @@ mkdir -p "$DATADIR"
 # leak the state of exported environment variables states into the caller.
 (
     export SRCDIR DATADIR CORRDAT FILTERSTRING HAXP
-    /n/holylfs05/LABS/bhi/Lab/doeleman_lab/inatarajan/software/src/eat/bin/link_hops_scans.py
+    link_hops_scans.py
 )
 
 # Rename silly root files to standard names
