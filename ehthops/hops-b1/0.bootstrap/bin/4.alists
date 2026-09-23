@@ -22,7 +22,7 @@ fringex -i30 -r $DATADIR/alist.v6 \
 	>  $DATADIR/alist.v6.30s \
 	2> log/fringex.30.err &&\
 cat $DATADIR/alist.v6.30s | average \
-	>  $DATADIR/alist.v6.30s.avg \
+	-o  $DATADIR/alist.v6.30s.avg \
 	2> log/average.30.err &&\
 echo "DONE 30s" &
 
@@ -31,7 +31,7 @@ fringex -i8 -r $DATADIR/alist.v6 \
 	>  $DATADIR/alist.v6.8s \
 	2> log/fringex.8.err &&\
 cat $DATADIR/alist.v6.8s | average \
-	>  $DATADIR/alist.v6.8s.avg \
+	-o  $DATADIR/alist.v6.8s.avg \
 	2> log/average.8.err &&\
 echo "DONE 8s" &
 
@@ -40,7 +40,7 @@ fringex -i4 -r $DATADIR/alist.v6 \
     >  $DATADIR/alist.v6.4s \
     2> log/fringex.4.err &&\
 cat $DATADIR/alist.v6.4s | average \
-    >  $DATADIR/alist.v6.4s.avg \
+    -o  $DATADIR/alist.v6.4s.avg \
     2> log/average.4.err &&\
 gzip $DATADIR/alist.v6.4s &&\
 echo "DONE 4s" &
@@ -50,7 +50,7 @@ fringex -i2 -r $DATADIR/alist.v6 \
 	>  $DATADIR/alist.v6.2s \
 	2> log/fringex.2.err &&\
 cat $DATADIR/alist.v6.2s | average \
-	>  $DATADIR/alist.v6.2s.avg \
+	-o  $DATADIR/alist.v6.2s.avg \
 	2> log/average.2.err &&\
 gzip $DATADIR/alist.v6.2s &&\
 echo "DONE 2s" &
