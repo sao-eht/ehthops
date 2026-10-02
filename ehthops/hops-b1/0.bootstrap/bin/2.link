@@ -32,7 +32,7 @@ mkdir -p "$DATADIR"
 )
 
 # Rename silly root files to standard names
-find "$DATADIR" -name '*_3*' |
+find "$DATADIR" -mindepth 3 -maxdepth 3 -name '*_3*' |
     while read bad; do
         new=$(echo $bad | sed 's/_3//g')
         echo "$bad |-> $new"
