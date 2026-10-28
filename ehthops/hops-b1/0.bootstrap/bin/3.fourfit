@@ -215,8 +215,18 @@ FOURFIT_WORKER
         || { error "sbatch failed"; return 1; }
 
     echo "Array job $_array_jid submitted, waiting..."
-    while squeue --job "$_array_jid" --noheader 2>/dev/null | grep -q .; do
+    # Wait until no task of the array is left in the queue. To prevent the stage from
+    # continuing while tasks are still pending/running when squeue fails for some
+    # reason, the array is deemed finished only when squeue succeeds AND no task is
+    # pending/running, or if the job id is invalid (SLURM has already removed the
+    # finished job). On any other error, ask again.
+    while :; do
         sleep 30
+        if _q=$(squeue --job "$_array_jid" --noheader 2>&1); then
+            [[ -z "$_q" ]] && break                 # squeue succeeded, no tasks left
+        elif [[ "$_q" == *"Invalid job id"* ]]; then
+            break                                   # SLURM has already forgotten the job: finished
+        fi                                          # any other error: try again in 30 s
     done
 
     _t1=$(date +%s)
