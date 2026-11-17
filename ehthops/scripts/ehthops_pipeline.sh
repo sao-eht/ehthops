@@ -118,9 +118,17 @@ do
     if [ $stage == "6.uvfits" ]
     then
         SET_EHTIMPATH="${config[SET_EHTIMPATH]}" && SET_INPUTDIR="$workdir/5.+close/data" && SET_METADIR="${config[SET_METADIR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_CAMPAIGN="${config[SET_CAMPAIGN]}" && source bin/0.launch
-        source bin/1.convert
+        if ! source bin/1.convert; then
+            echo "ERROR: 1.convert failed in stage $stage. Aborting!" >&2
+            cd "$workdir"
+            return 1
+        fi
         source bin/2.import
-        source bin/3.average
+        if ! source bin/3.average; then
+            echo "ERROR: 3.average failed in stage $stage. Aborting!" >&2
+            cd "$workdir"
+            return 1
+        fi
         source bin/4.metadata
     fi
 
@@ -131,7 +139,11 @@ do
         source bin/1.antab2sefd
         source bin/2.applycal
         source bin/3.import
-        source bin/4.average
+        if ! source bin/4.average; then
+            echo "ERROR: 4.average failed in stage $stage. Aborting!" >&2
+            cd "$workdir"
+            return 1
+        fi
     fi
 
     # Run stage 8 after the 7 apriori stage; INPUTDIR is now 7.+apriori
@@ -140,7 +152,11 @@ do
         SET_EHTIMPATH="${config[SET_EHTIMPATH]}" && SET_INPUTDIR="$workdir/7.+apriori" && SET_METADIR="${config[SET_METADIR]}" && SET_MIXEDPOL="${config[SET_MIXEDPOL]}" && SET_OBSYEAR="${config[SET_OBSYEAR]}" && SET_CAMPAIGN="${config[SET_CAMPAIGN]}" && source bin/0.launch
         source bin/1.gainratiocal
         source bin/2.import
-        source bin/3.average
+        if ! source bin/3.average; then
+            echo "ERROR: 3.average failed in stage $stage. Aborting!" >&2
+            cd "$workdir"
+            return 1
+        fi
     fi
 
     # copy control files and necessary scripts to the next stage

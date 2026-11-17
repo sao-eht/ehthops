@@ -17,14 +17,38 @@ ndirs=$(echo "$directories" | grep -c .)
 workers=$(( (ncores + ndirs - 1) / ndirs ))
 [ "$workers" -lt 1 ] && workers=1
 
+# Remember each epoch's PID so that its exit status can be checked later
+uvfits_pids=()
+uvfits_epochs=()
 for d in $directories; do
 	mkdir -p $(basename $d)
 	/usr/bin/time -v hops2uvfits.py     \
 	        --computebluvfits --discardbluvfits --recomputeuv --fixsrcname --loglevel DEBUG \
-	        --workers $workers \
+	        --workers $workers --continue-on-error \
 	        $d $(basename $d)      \
 		>  log/uvfits-$(basename $d).log        \
 		2> log/uvfits-$(basename $d).err        &
+	uvfits_pids+=($!)
+	uvfits_epochs+=($(basename $d))
 done
 
-wait $(jobs -p)
+# Wait for every epoch and check its exit status to determine if it succeeded, partially succeeded, or failed.
+uvfits_failed=()
+uvfits_partial=()
+for i in "${!uvfits_pids[@]}"; do
+	wait "${uvfits_pids[$i]}"
+	case $? in
+		0) ;;
+		3) uvfits_partial+=("${uvfits_epochs[$i]}") ;;
+		*) uvfits_failed+=("${uvfits_epochs[$i]}") ;;
+	esac
+done
+
+if [ ${#uvfits_partial[@]} -gt 0 ]; then
+	echo "WARNING: some scans/sources failed and were skipped in epoch(s): ${uvfits_partial[*]}; continuing. See log/uvfits-<epoch>.err" >&2
+fi
+
+if [ ${#uvfits_failed[@]} -gt 0 ]; then
+	echo "ERROR: hops2uvfits.py failed for epoch(s): ${uvfits_failed[*]}. See log/uvfits-<epoch>.err" >&2
+	return 1 2>/dev/null || exit 1
+fi

@@ -1,31 +1,113 @@
 #!/usr/bin/env bash
 
-/usr/bin/env python - << EOF >log/average.log 2>log/average.err
+# Coherently average uvfits files to 10 s, writing <name>+avg.uvfits next to each input.
+
+echo "3. Coherently averaging UVFITS files with a 10-second integration time..."
+
+mkdir -p log
+ncores=${SLURM_CPUS_PER_TASK:-$(nproc)}
+# Memory, not cores, limits this: averaging a file needs ~6x its size on disk, so peak memory is
+# ~6x the combined size of the AVERAGE_WORKERS largest files. Override with AVERAGE_WORKERS.
+avg_workers=${AVERAGE_WORKERS:-$(( ncores < 4 ? ncores : 4 ))}
+if ! [[ "$avg_workers" =~ ^[1-9][0-9]*$ ]]; then
+	echo "ERROR: AVERAGE_WORKERS must be a positive whole number, got \"$avg_workers\"" >&2
+	return 1 2>/dev/null || exit 1
+fi
+echo "	Files averaged simultaneously, AVERAGE_WORKERS: $avg_workers"
+
+/usr/bin/env python - "$avg_workers" << 'EOF' >log/average.log 2>log/average.err
+import glob
+import os
+import signal
+import subprocess
+import sys
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+# Run in a separate process per file, so a crash or out-of-memory kill loses only that file
+AVERAGE_ONE_FILE = r'''
 import os
 import sys
-import glob
 import ehtim as eh
 
-print("3. Coherently averaging UVFITS files with a 10-second integration time...")
+uvf = sys.argv[1]
+(base, ext) = os.path.splitext(uvf)
+obs = eh.obsdata.load_uvfits(uvf, polrep='circ')
+# use cuts in calibrate.py
+obs = obs.flag_sites(["SR"])
+for snrfield in ['llsnr', 'rrsnr']:
+    try:
+        obs = obs.flag_anomalous(snrfield, robust_nsigma_cut=3.0)
+    except Exception as e:
+        sys.stderr.write(f'Error flagging anomalous data in {uvf}.: {e}\nContinuing without flagging anomalous data.\n')
+obs = obs.avg_coherent(10.)
+# Save to .tmp and rename when complete, so a killed process never leaves a half-written +avg.uvfits
+outname = f'{base}+avg{ext}'
+obs.save_uvfits(f'{outname}.tmp')
+os.replace(f'{outname}.tmp', outname)
+'''
 
-daylist = sorted([int(i) for i in glob.glob('[0-9]*')])
-for day in daylist:
-    for uvf in glob.glob(f'{day}/*.uvfits'):
-        # Skip the uvfits files that have already been averaged
-        if uvf.endswith('+avg.uvfits'):
-            continue
-        try:
-            (base, ext) = os.path.splitext(uvf)
-            obs = eh.obsdata.load_uvfits(uvf, polrep='circ')
-            # use cuts in calibrate.py
-            obs = obs.flag_sites(["SR"])
-            for snrfield in ['llsnr', 'rrsnr']:
-                try:
-                    obs = obs.flag_anomalous(snrfield, robust_nsigma_cut=3.0)
-                except Exception as e:
-                    sys.stderr.write(f'Error flagging anomalous data in {uvf}.: {e}\nContinuing without flagging anomalous data.\n')
-            obs = obs.avg_coherent(10.)
-            obs.save_uvfits(f'{base}+avg{ext}')
-        except Exception as e:
-            sys.stderr.write(f'Error averaging {uvf}: {e}\n')
+def average(uvf):
+    """Average one file in its own process. Returns (exit code, seconds, log file)."""
+    logname = f"log/average-{os.path.splitext(os.path.basename(uvf))[0]}.log"
+    start = time.time()
+    with open(logname, 'w') as log:
+        # -u keeps output and errors in the log in the order they happened
+        proc = subprocess.run([sys.executable, '-u', '-c', AVERAGE_ONE_FILE, uvf], stdout=log, stderr=subprocess.STDOUT)
+    return proc.returncode, time.time() - start, logname
+
+def describe(code):
+    if code == 0:
+        return "done"
+    if code == -signal.SIGKILL:
+        return "FAILED (killed by SIGKILL, most likely out of memory)"
+    if code < 0:
+        return f"FAILED (killed by signal {-code})"
+    return f"FAILED (exit code {code})"
+
+workers = int(sys.argv[1])
+
+# Largest files first, so the slowest ones don't start last
+uvfiles = [f for f in glob.glob('[0-9]*/*.uvfits') if not f.endswith('+avg.uvfits')]
+uvfiles.sort(key=os.path.getsize, reverse=True)
+print(f"Averaging {len(uvfiles)} files, {workers} simultaneously", flush=True)
+
+# Threads are enough: each one only waits for its file's process
+results = {}
+with ThreadPoolExecutor(max_workers=workers) as pool:
+    futures = {pool.submit(average, uvf): uvf for uvf in uvfiles}
+    try:
+        for n, fut in enumerate(as_completed(futures), start=1):
+            uvf = futures[fut]
+            code, secs, logname = fut.result()
+            print(f"[{n}/{len(uvfiles)}] {uvf}: {describe(code)} in {secs:.0f} s", flush=True)
+            results[uvf] = (code, logname)
+    except BaseException:
+        # On Ctrl-C, don't start the files still waiting
+        pool.shutdown(wait=False, cancel_futures=True)
+        raise
+
+# A file killed by SIGKILL most likely ran out of memory alongside the others, so retry each one alone
+killed = [uvf for uvf, (code, _) in results.items() if code == -signal.SIGKILL]
+if killed:
+    print(f"Retrying {len(killed)} file(s) killed by SIGKILL, one at a time", flush=True)
+for n, uvf in enumerate(killed, start=1):
+    code, secs, logname = average(uvf)
+    print(f"[retry {n}/{len(killed)}] {uvf}: {describe(code)} in {secs:.0f} s", flush=True)
+    results[uvf] = (code, logname)
+
+# Report failed files; they don't stop the stage
+for uvf, (code, logname) in results.items():
+    if code != 0:
+        sys.stderr.write(f"Error averaging {uvf}; see {logname}\n")
 EOF
+
+# Non-zero only if averaging could not run (e.g. interrupted), not when individual files fail
+if [ $? -ne 0 ]; then
+	echo "ERROR: averaging did not complete. See log/average.err" >&2
+	return 1 2>/dev/null || exit 1
+fi
+
+if [ -s log/average.err ]; then
+	echo "WARNING: some files failed to average and have no +avg.uvfits; continuing. See log/average.err" >&2
+fi
